@@ -198,22 +198,22 @@ void LinkedList::printItems(){
     }cout <<endl;
 }
 
-// int LinkedList::search(int item){
-//     /*Print out the position of a node that contains a given 
-//       value if exist, else print 0 */
-//     int pos = 1;
-//     Node * temp = *(&head);
-//     while (temp != NULL){
-//         if (temp->getDat() == item){
-//           cout << pos <<" ";
-//           return pos;
-//         }
-//         temp = temp->getNext(); 
-//         pos++;
-//     }
-//     cout << "0 ";
-//     return 0;
-// }
+int LinkedList::search(int item){
+    /*Print out the position of a node that contains a given 
+      value if exist, else print 0 */
+    int pos = 1;
+    Node * temp = *(&head);
+    while (temp != NULL){
+        if (temp->data == item){
+          cout << pos <<"\n";
+          return pos;
+        }
+        temp = temp->next; 
+        pos++;
+    }
+    cout << "0\n";
+    return 0;
+}
 
 int LinkedList::getItem(int p) {
     if (p < 1) {

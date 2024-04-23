@@ -13,7 +13,7 @@ vector<string> takeInput(int * nNodes){
     string in;
     vector<string> pp;
     std::cout << "";
-    getline (std::cin, in);
+    getline (cin, in);
     //Check whether a string has been meet
     bool metOrder = false;
     int len = in.length(); //length of input
@@ -43,29 +43,38 @@ vector<string> takeInput(int * nNodes){
 
 int main(){
     // assume inputs are of correct format
-    //Get input
-    int * nNodes=new int(0);
-    vector<string> ins = takeInput( nNodes);
-    
-    //Take in the list of nodes value   
-    vector<int> arr; //vector that holds the node values
-    for (int i = 0; i < *nNodes; i++){
-        arr.push_back(stoi(ins[i].c_str()));
+    //Get number of queries
+    int n=0;
+    string numInp="";
+    while (n < 1){
+        cout << "Enter number of queries:\t";
+        getline(cin,numInp);
+        n=stoi(numInp);
     }
-    //Make a linked list object using above values
-    LinkedList ll(arr,*nNodes);
-    //Operations to be performed
-    string order = ins[*nNodes];
-    if (order == "AF") ll.addFront(stoi(ins[*nNodes + 1].c_str()));
-    else if (order == "AE") ll.addEnd(stoi(ins[*nNodes + 1].c_str()));
-    else if (order == "AP") ll.addAtPosition(stoi(ins[*nNodes + 1].c_str()), stoi(ins[*nNodes + 2].c_str()));
-    else if (order == "DF") ll.deleteFront();
-    else if (order == "DE") ll.deleteEnd();
-    else if (order == "DP") ll.deletePosition(stoi(ins[*nNodes + 1].c_str()));
-    // else if (order == "S") ll.search(stoi(ins[nNodes + 1].c_str()));
-    else if (order == "GI") ll.getItem(stoi(ins[*nNodes + 1].c_str()));
-    else cout << "Invalid command\n";
-    //Print out result
-    ll.printItems();
-    delete nNodes; // Free memory
+    for (int i=0; i < n;i++){    //Get input
+        int * nNodes=new int(0);
+        vector<string> ins = takeInput( nNodes);
+        
+        //Take in the list of nodes value   
+        vector<int> arr; //vector that holds the node values
+        for (int i = 0; i < *nNodes; i++){
+            arr.push_back(stoi(ins[i].c_str()));
+        }
+        //Make a linked list object using above values
+        LinkedList ll(arr,*nNodes);
+        //Operations to be performed
+        string order = ins[*nNodes];
+        if (order == "AF") ll.addFront(stoi(ins[*nNodes + 1].c_str()));
+        else if (order == "AE") ll.addEnd(stoi(ins[*nNodes + 1].c_str()));
+        else if (order == "AP") ll.addAtPosition(stoi(ins[*nNodes + 1].c_str()), stoi(ins[*nNodes + 2].c_str()));
+        else if (order == "DF") ll.deleteFront();
+        else if (order == "DE") ll.deleteEnd();
+        else if (order == "DP") ll.deletePosition(stoi(ins[*nNodes + 1].c_str()));
+        else if (order == "S") ll.search(stoi(ins[*nNodes + 1].c_str()));
+        else if (order == "GI") ll.getItem(stoi(ins[*nNodes + 1].c_str()));
+        else cout << "Invalid command\n";
+        //Print out result
+        ll.printItems();
+        delete nNodes; // Free memory
+    }
 }
