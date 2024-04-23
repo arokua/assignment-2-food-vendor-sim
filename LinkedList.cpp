@@ -215,25 +215,23 @@ void LinkedList::printItems(){
 //     return 0;
 // }
 
-// int LinkedList::getItem(int p){
-//     //Print out node value at postion p, int_max if out of range
-//     Node * temp = *(&head);
-//     if (p < 1 ) {
-//         cout << numeric_limits < int >::max() <<" ";
-        
-//     }
-//     int pos = 1;
-//     while (temp != NULL){
-//         if (pos == p){
-//           cout << temp->getDat() <<" ";
-//           return temp->getDat();
-//         }
-//         temp = temp->getNext(); 
-//         pos++;
-//     }
-//     cout << numeric_limits < int >::max() <<" ";
-//     return numeric_limits < int >::max();
-// }
+int LinkedList::getItem(int p) {
+    if (p < 1) {
+        cout << numeric_limits<int>::max() << "\n";
+        return numeric_limits<int>::max();
+    }
+    
+    Node* temp = head;
+    for (int pos = 1; temp != nullptr && pos <= p; ++pos, temp = temp->next) {
+        if (pos == p) {
+            cout << temp->data << "\n";
+            return temp->data;
+        }
+    }
+    
+    cout << numeric_limits<int>::max() << "\n";
+    return numeric_limits<int>::max();
+}
 
 //List destructor
 LinkedList::~LinkedList(){

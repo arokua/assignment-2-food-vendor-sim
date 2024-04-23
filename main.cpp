@@ -6,8 +6,8 @@
 
 using namespace std;
 //Holds the numbers of original nodes from input
-static int nNodes;
-vector<string> takeInput(){
+
+vector<string> takeInput(int * nNodes){
     // Get input from console
     // Split them by spaces and store to a vector
     string in;
@@ -23,7 +23,7 @@ vector<string> takeInput(){
         if (current != ' '){
             temp += current;
             if ( !isdigit(current) && !metOrder){
-                nNodes = pp.size() - 1;
+                *nNodes = pp.size() - 1;
                 metOrder = true;
             }
         }
@@ -35,31 +35,37 @@ vector<string> takeInput(){
             pp.push_back(temp);
         }
     }
-    nNodes++;
+    (*nNodes)++;
     return pp;
 }
 
+
+
 int main(){
+    // assume inputs are of correct format
     //Get input
-    vector<string> ins = takeInput();
+    int * nNodes=new int(0);
+    vector<string> ins = takeInput( nNodes);
+    
     //Take in the list of nodes value   
     vector<int> arr; //vector that holds the node values
-    for (int i = 0; i < nNodes; i++){
+    for (int i = 0; i < *nNodes; i++){
         arr.push_back(stoi(ins[i].c_str()));
     }
     //Make a linked list object using above values
-    LinkedList ll(arr,nNodes);
+    LinkedList ll(arr,*nNodes);
     //Operations to be performed
-    string order = ins[nNodes];
-    if (order == "AF") ll.addFront(stoi(ins[nNodes + 1].c_str()));
-    else if (order == "AE") ll.addEnd(stoi(ins[nNodes + 1].c_str()));
-    else if (order == "AP") ll.addAtPosition(stoi(ins[nNodes + 1].c_str()), stoi(ins[nNodes + 2].c_str()));
+    string order = ins[*nNodes];
+    if (order == "AF") ll.addFront(stoi(ins[*nNodes + 1].c_str()));
+    else if (order == "AE") ll.addEnd(stoi(ins[*nNodes + 1].c_str()));
+    else if (order == "AP") ll.addAtPosition(stoi(ins[*nNodes + 1].c_str()), stoi(ins[*nNodes + 2].c_str()));
     else if (order == "DF") ll.deleteFront();
     else if (order == "DE") ll.deleteEnd();
-    else if (order == "DP") ll.deletePosition(stoi(ins[nNodes + 1].c_str()));
+    else if (order == "DP") ll.deletePosition(stoi(ins[*nNodes + 1].c_str()));
     // else if (order == "S") ll.search(stoi(ins[nNodes + 1].c_str()));
-    // else if (order == "GI") ll.getItem(stoi(ins[nNodes + 1].c_str()));
+    else if (order == "GI") ll.getItem(stoi(ins[*nNodes + 1].c_str()));
     else cout << "Invalid command\n";
     //Print out result
     ll.printItems();
+    delete nNodes; // Free memory
 }
