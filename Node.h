@@ -68,7 +68,7 @@ public:
     Node(Node& other);
     ~Node();
     // pointer to the data held for the node 
-    // FoodItem* data;
+    // FoodItem* dataFood;
 	int data;
     // pointer to the next node in the list 
     Node* next;

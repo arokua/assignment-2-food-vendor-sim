@@ -79,7 +79,7 @@ int main(int argc, char ** argv){
             else cout << "Invalid command\n";
             //Print out result
             ll.printItems();
-            delete nNodes; // Free memory
+            // delete nNodes; // Free memory
         }
     }else{
         //Incorrect number of file inputs
