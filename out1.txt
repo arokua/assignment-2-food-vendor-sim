@@ -1,0 +1,36 @@
+current coins denominator:	5 10 20 50 100 200 500 1000 2000 5000 
+current amounts:	20 20 20 20 20 20 20 20 20 20 
+For n = 2
+No solution exists
+New count:
+	20 20 20 20 20 20 20 20 20 20 
+For n = 135
+Minimum coins used: 4
+Coins used:
+5 x 1
+10 x 1
+20 x 1
+100 x 1
+New count:
+	19 19 19 20 19 20 20 20 20 20 
+For n = 502
+No solution exists
+New count:
+	19 19 19 20 19 20 20 20 20 20 
+For n = 4750
+Minimum coins used: 5
+Coins used:
+50 x 1
+200 x 1
+500 x 1
+2000 x 2
+New count:
+	19 19 19 19 19 19 19 20 18 20 
+For n = 5210
+Minimum coins used: 3
+Coins used:
+10 x 1
+200 x 1
+5000 x 1
+New count:
+	19 18 19 19 19 18 19 20 18 19 

@@ -22,9 +22,9 @@ int change_making(const std::vector<int>& coins, std::vector<int>& counts, int n
     // Thus, additional comparision is made to see if the original optimal deno is suitable
     // Then, a tracking matrix is used to keep track of all possible solutions
     int numCoins = coins.size();
-    // Use int instead of double for minimum number of coins (always integer)
+    
     std::vector<int> m(n + 1, std::numeric_limits<int>::max());
-    // Use 2D vector of size (n+1) for tracking used coins (avoid unnecessary 3rd dimension)
+    // Use 2D vector of size (n+1) for tracking used coins 
     std::vector<std::vector<int>> used_coins(n + 1);
 
     // Initialize the zero amount case
@@ -35,7 +35,6 @@ int change_making(const std::vector<int>& coins, std::vector<int>& counts, int n
         for (int c = 0; c < numCoins; ++c) {
             int coin = coins[c];
             if (coin <= amount) {
-                // Consider using std::min for cleaner comparison
                 if (m[amount - coin] + 1 < m[amount] && counts[c] > 0) {
                     m[amount] = m[amount - coin] + 1;
                     used_coins[amount] = used_coins[amount - coin];
