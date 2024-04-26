@@ -176,7 +176,9 @@ int main(int argc, char ** argv){
     for (auto& n:changeTest){
         cout <<"For n = "<<n<<endl;
         int changes=change_making(coinsExample,coinCounts,n);
-        cout <<"New count:\n\t";
-        vectorPrint(coinCounts);
+        if (changes > 0){
+            cout <<"New count:\n\t";
+            vectorPrint(coinCounts);
+        }
     }
 }

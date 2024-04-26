@@ -11,7 +11,7 @@ LinkedList::LinkedList(){
     head = NULL;
     mySize = 0;
 }
-LinkedList::LinkedList(vector<int> a, int n):LinkedList(){
+LinkedList::LinkedList(vector<int> a, int n){
     //Create a list from a given array
     for (int i = n - 1; i > -1; i--){
         addFront(a[i]);
