@@ -1,4 +1,4 @@
-![image](https://github.com/arokua/assignment-2-cosc1076/assets/57876746/df549dd8-3ca6-49a0-93c0-657ee4c98bd7)Repository for RMIT course Advanced Programming techinques Food Vendor assginment.
+Repository for RMIT course Advanced Programming techinques Food Vendor assginment.
 
 This will have an implementation of a list of food items as a linked list, where each foods is fundamentally a Node with some extra data.
 
@@ -19,5 +19,6 @@ Delete queries are : "DF", "DE", "DP" for Delete front, delete node at end, dele
 Search query (S) will print out the position of the node with data equal to arg1, get query (GI) will print out the value of index at arg1 , the indexes here are also 1-indexed.
 Example:
 ![image](https://github.com/arokua/assignment-2-cosc1076/assets/57876746/01c5f0de-d90b-4225-b77a-e729b094be23)
+
 After the linked list run is complete, the program will print out a list of change making values to give an example of the result of the change making algorithm
 
