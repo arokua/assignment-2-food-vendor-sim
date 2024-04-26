@@ -2,7 +2,6 @@
 #define LINKEDLIST_H
 
 #include "Node.h"
-#include <vector>
 
 class LinkedList{
 	private:
