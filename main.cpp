@@ -122,8 +122,8 @@ int main(int argc, char ** argv){
     
     // assume inputs are of correct format
     //Get number of queries
-    if (argc ==1 || argc ==3){
-        //ar
+    if (argc ==1 || argc ==3 || argc==4){
+        //argc is 4 when testing with text file input, 3 when take 2 files and run in terminal
         int n=0;
         string numInp="";
         if (argc==3) cout << "File names:\t" << argv[1]<<", "<< argv[2]<<endl;
