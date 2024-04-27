@@ -1,8 +1,6 @@
 #include "Node.h"
 #include "LinkedList.h"
-#include <vector>
-#include <iostream>
-#include <limits>
+
 
 using namespace std;
 //size of the linked list
@@ -237,6 +235,6 @@ int LinkedList::getItem(int p) {
 LinkedList::~LinkedList(){
     //Delete all remaining nodes
     while (mySize > 0){
-        deleteFront();
+      if (head != NULL) deleteFront(); //Extra check, incase there is a null node while deleting
     }
 }

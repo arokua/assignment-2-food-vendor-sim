@@ -7,13 +7,6 @@
 #include <string>
 
 using namespace std;
-#include <iostream>
-#include <vector>
-#include <limits>
-#include <string>
-#include <algorithm>
-
-using namespace std;
 int change_making(const std::vector<int>& coins, std::vector<int>& counts, int n) {
     //Modified function based on wikipedia.org/Change_making_problem
     //This function return the minimum number of coins used to make the amount n

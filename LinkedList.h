@@ -3,6 +3,8 @@
 
 #include "Node.h"
 #include <vector>
+#include <iostream>
+#include <limits>
 
 class LinkedList{
 	private:
