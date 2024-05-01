@@ -1,6 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
 #include <string> 
+#include <memory> 
 #include "Coin.h"
 
 
@@ -22,18 +23,6 @@
 //The number of denominations of currency available in the system 
 #define NUM_DENOMS 8
 
-/**
- * a structure to represent a price. One of the problems with the floating
- * point formats in C++ like float and double is that they have minor issues
- * of inaccuracy due to rounding. In the case of currency this really is
- * not acceptable so we introduce our own type to keep track of currency.
- **/
-class Price
-{
-public:
-    // The dollar value, and the cents value for some price
-    unsigned dollars, cents;
-};
 
 /**
  * data structure to represent a food item within the system
@@ -50,28 +39,37 @@ public:
     //the description of this food item   
     std::string description;
     
-    //the price of this food item
-    Price price;
+    //the price of this food item (base value is 1 cent)
+    unsigned int price;
     
     // how many of this food item do we have on hand? 
-    unsigned on_hand;    
+    unsigned on_hand; 
+    //Default constructor
+    FoodItem();
+    //Initialize with value
+    FoodItem(std::string,std::string,std::string,unsigned price);
+    int getPrice(); // Return the price
+    bool sold(); //Food is sucessfully sold if its still have stock
+    void reStock(int); //Restock to an integer value
+    void printInfo();
+    ~FoodItem();
 };
 
 /**
  * the node that holds the data about a food item stored in memory
  **/
-class Node
-{
+class Node {
 public:
     Node();
-    Node(int data, Node* next);
-    Node(Node& other);
+    Node(int data, std::shared_ptr<Node> next = nullptr);
+    Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr);
+    Node(const Node& other);
     ~Node();
-    // pointer to the data held for the node 
-    // FoodItem* dataFood;
-	int data;
-    // pointer to the next node in the list 
-    Node* next;
+
+    std::shared_ptr<FoodItem> dataFood;
+    int data;
+    std::shared_ptr<Node> next;  // Now using shared_ptr for next
 };
+
 
 #endif // NODE_H

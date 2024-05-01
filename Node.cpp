@@ -1,19 +1,51 @@
 #include "Node.h"
 #include <iostream>
 
-Node::Node() {next=nullptr;}
+using std::string;
+using std::cout;
+Node::Node() : next(nullptr) {}
 
-Node::Node(int data, Node* next) : data(data), next(next) {
-    
+FoodItem::FoodItem(){
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+    id="FXXXX";
+    name="Name";
+    description="DESC";
 }
 
-Node::Node(Node& other) : data(other.data), next(other.next) {
-    // dataFood = new FoodItem(*other.dataFood);//Copy the food item
+FoodItem::FoodItem(string ID,string name,string desc,unsigned int P) {
+    id=ID;
+    name=name;
+    description=desc;
+    price=P;
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
+bool FoodItem::sold(){
+    bool soldable=true;
+    if (on_hand) on_hand--;
+    else soldable=false;
+    return soldable;
+}
+
+void FoodItem::reStock(int val){
+    on_hand=val;
+}
+
+FoodItem::~FoodItem(){}
+
+Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {}
+
+
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : next(next) {
+    if (foodData != nullptr) {
+    dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
+  }
+}
+
+void FoodItem::printInfo(){
+    if (id!=""){
+        cout << "ID: "<<id<<"|"<<name<<"|"<<description<<"|"<<price <<"\n";
+    }
+}
 Node::~Node(){
-    next = nullptr;
-	delete next;
-    // std::cout<<"Destructed\n";
-    // delete dataFood;
 }

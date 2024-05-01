@@ -1,30 +1,36 @@
-#ifndef LINKEDLIST_H
-#define LINKEDLIST_H
-
 #include "Node.h"
-#include <vector>
 #include <iostream>
+#include <vector>
+#include <memory>
 #include <limits>
 
-class LinkedList{
-	private:
-		Node * head;
-	public:
-        int mySize;
-		LinkedList();//Empty constructor
-		LinkedList(std::vector<int>, int); //With a given array
-		//Adding 
-		void addFront(int);//To the front
-		void addEnd(int);// To the end
-		void addAtPosition(int, int); //At a given position
-		//Removing
-		void deleteFront();//Remove first node
-		void deleteEnd();//Remove last node
-		void deletePosition(int); //Remove node as a position
-		//Display and find
-		int search(int); //Search a node base on its value
-		int getItem(int); //Get a node base on position
-		void printItems(); //Print out all node from head
-    	~LinkedList();
+using std::vector;
+using std::shared_ptr;
+using std::make_shared;
+using std::cout;
+using std::endl;
+
+class LinkedList {
+public:
+    LinkedList();
+    LinkedList(vector<int>, int);
+    ~LinkedList();
+
+    void addFront(int data);
+    void addFront( shared_ptr<FoodItem>& foodData);
+    void addEnd(int data);
+    void addEnd( shared_ptr<FoodItem>& foodData);
+    void addAtPosition(int pos, int data);
+    void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
+    void deleteFront();
+    void deleteEnd();
+    void deletePosition(int pos);
+    void printItems();
+    int search(int item);
+    int getItem(int p);
+
+private:
+    shared_ptr<Node> head;
+    int mySize;
 };
-#endif
+

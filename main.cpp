@@ -68,27 +68,30 @@ int change_making(const std::vector<int>& coins, std::vector<int>& counts, int n
     //         }
     //     }
     // }
-
+    
     return 0;
 }
 
-vector<string> takeInput(int * nNodes){
+vector<string> takeInput(int nNodes=0){
     // Get input from console
     // Split them by spaces and store to a vector
     string in;
     vector<string> pp;
-    std::cout << "";
+    cout << "";
     getline (cin, in);
     //Check whether a string has been meet
     bool metOrder = false;
     int len = in.length(); //length of input
+    if (in[-1]=='\n'){
+        cout << "Has newline char\n";
+    }
     string temp = ""; //tempoary string
     for (int i = 0; i < len; i++){
         char current = in.at(i);
         if (current != ' '){
             temp += current;
             if ( !isdigit(current) && !metOrder){
-                *nNodes = pp.size() - 1;
+                nNodes = pp.size() - 1;
                 metOrder = true;
             }
         }
@@ -100,7 +103,9 @@ vector<string> takeInput(int * nNodes){
             pp.push_back(temp);
         }
     }
-    (*nNodes)++;
+    nNodes++;
+    //Store nNodes value as final element of the input array
+    pp.push_back(to_string(nNodes));
     return pp;
 }
 template<typename T>
@@ -120,36 +125,36 @@ int main(int argc, char ** argv){
         int n=0;
         string numInp="";
         if (argc==3) cout << "File names:\t" << argv[1]<<", "<< argv[2]<<endl;
-        while (n < 1){
-            cout << "Enter number of queries:\t";
-            getline(cin,numInp);
-            n=stoi(numInp);
-        }
+        cout << "Enter number of queries:\t";
+        getline(cin,numInp);
+        n=stoi(numInp);
         for (int i=0; i < n;i++){    //Get input
-            int * nNodes=new int(0);
+            int nNodes=0;
             vector<string> ins = takeInput( nNodes);
+            nNodes=stoi(ins.back());
+            
             
             //Take in the list of nodes value   
             vector<int> arr; //vector that holds the node values
-            for (int i = 0; i < *nNodes; i++){
+            cout << "Total number of nodes:\t"<< nNodes<<"\n";
+            for (int i = 0; i < nNodes; i++){
                 arr.push_back(stoi(ins[i].c_str()));
             }
             //Make a linked list object using above values
-            LinkedList ll(arr,*nNodes);
+            LinkedList ll(arr,nNodes);
             //Operations to be performed
-            string order = ins[*nNodes];
-            if (order == "AF") ll.addFront(stoi(ins[*nNodes + 1].c_str()));
-            else if (order == "AE") ll.addEnd(stoi(ins[*nNodes + 1].c_str()));
-            else if (order == "AP") ll.addAtPosition(stoi(ins[*nNodes + 1].c_str()), stoi(ins[*nNodes + 2].c_str()));
+            string order = ins[nNodes];
+            if (order == "AF") ll.addFront(stoi(ins[nNodes + 1].c_str()));
+            else if (order == "AE") ll.addEnd(stoi(ins[nNodes + 1].c_str()));
+            // else if (order == "AP") ll.addAtPosition(stoi(ins[nNodes + 1].c_str()), stoi(ins[nNodes + 2].c_str()));
             else if (order == "DF") ll.deleteFront();
             else if (order == "DE") ll.deleteEnd();
-            else if (order == "DP") ll.deletePosition(stoi(ins[*nNodes + 1].c_str()));
-            else if (order == "S") ll.search(stoi(ins[*nNodes + 1].c_str()));
-            else if (order == "GI") ll.getItem(stoi(ins[*nNodes + 1].c_str()));
+            else if (order == "DP") ll.deletePosition(stoi(ins[nNodes + 1].c_str()));
+            else if (order == "S") ll.search(stoi(ins[nNodes + 1].c_str()));
+            else if (order == "GI") ll.getItem(stoi(ins[nNodes + 1].c_str()));
             else cout << "Invalid command\n";
             //Print out result
             ll.printItems();
-            // delete nNodes; // Free memory
         }
     }else{
         //Incorrect number of file inputs
@@ -157,7 +162,7 @@ int main(int argc, char ** argv){
         cout << "Usage: ./main coin.dat food.dat\n";
     }
     //Initialize the coins denom
-    vector<int> coinsExample={5,10,20};
+    vector<int> coinsExample={1,4, 7,9};
     for (int i=0;i<7;i++){
         coinsExample.push_back(coinsExample[i]*10);
     }

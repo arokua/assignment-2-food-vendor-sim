@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -g -std=c++14
 
-TARGET = fft
+TARGET = ftt
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
@@ -17,7 +17,11 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(^) -o $(TARGET)
 
+val:
+	valgrind --tool=memcheck --log-file=valrep.txt --leak-check=full \
+	--track-origins=yes -v ./$(TARGET) $(word 1, $(TEST_FILES)) $(word 2, $(TEST_FILES))
 # Phony target to run all tests
+.PHONY: test
 test:
 	@echo "Running test with files: $(TEST_FILES)"
 	@if [ $(words $(TEST_FILES)) -eq 3 ]; then \

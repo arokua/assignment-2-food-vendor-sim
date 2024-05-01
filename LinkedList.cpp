@@ -1,212 +1,150 @@
-#include "Node.h"
 #include "LinkedList.h"
 
+LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
-using namespace std;
-//size of the linked list
-LinkedList::LinkedList(){
-    //Constructor with empty head
-    head = NULL;
-    mySize = 0;
-}
-LinkedList::LinkedList(vector<int> a, int n){
-    //Create a list from a given array
-    for (int i = n - 1; i > -1; i--){
+LinkedList::LinkedList(vector<int> a,int nNodes)  {
+    for (int i = a.size() - 1; i >= 0; --i) {
         addFront(a[i]);
     }
 }
 
-//Adding 
-void LinkedList::addFront(int nI){
-    //Add a new node to the begining of list
-    mySize++; //Increment size as it is added
-    //head ref , use to advoid segfault
-    Node ** hf = &head;
-    //Create a new node object
-    Node * newbie = new Node(nI,NULL);
-    newbie->next=head;
-    // cout <<"Checking data:\n\t"<<newbie->data<<"\n";
-    //Change the pointer head is pointing to this new node
-    *hf = newbie;
+LinkedList::~LinkedList() {
+    // shared_ptr automatically deletes nodes when the last reference goes out of scope
 }
 
-void LinkedList::addEnd(int nI) {
-  // Add a new node to the end of list
-  mySize++;
-  // Head reference, use to avoid segfault
-  Node** hf = &head;
-  // Create a new node object with the data
-  Node* newbie = new Node(nI, NULL);
-  // Incase the list is currently empty
-  if (*hf == NULL) {
-    *hf = newbie;
-  } else {
-    // Else
-    // Get the last node in the current list
-    Node* temp = *hf;
-    while (temp->next != NULL) {
-      temp = temp->next;
-    }
-    // Newbie is now the last node of the list
-    temp->next = newbie;
-  }
-}
-
-void LinkedList::addAtPosition(int pos, int nI) {
-  // Add a new node to the given position
-  if (pos < 1) {
-    addFront(nI);
-    // Stop the function since adding is complete
-  }
-  else if (pos > mySize) {
-    addEnd(nI);
-    // Stop the function since adding is complete
-  }
-  else{
-    // Head reference, use to avoid segfault
-    Node** hf = &head;
-
-    // The node before pos
-    Node* now = *hf;
-    // Create a new node object with the data
-    Node* newbie = new Node(nI, NULL);
-    while (pos > 2) {
-        now = now->next;
-        pos--;
-    }
-    newbie->next = now->next;
-    now->next = newbie;
+void LinkedList::addFront(int data) {
+    head = make_shared<Node>(data, head);
     mySize++;
-   }
 }
 
+void LinkedList::addFront( shared_ptr<FoodItem>& foodData) {
+    head = make_shared<Node>(foodData, head);
+    mySize++;
+}
 
-//Removing
+void LinkedList::addEnd(int data) {
+    auto newNode = make_shared<Node>(data);
+    if (!head) {
+        head = newNode;
+    } else {
+        auto temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+    mySize++;
+}
+
+void LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
+    auto newNode = make_shared<Node>(foodData);
+    if (!head) {
+        head = newNode;
+    } else {
+        auto temp = head;
+        while (temp->next) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+    mySize++;
+}
+
+void LinkedList::addAtPosition(int pos, int data) {
+    if (pos <= 0) {
+        addFront(data);
+    } else if (pos >= mySize) {
+        addEnd(data);
+    } else {
+        auto temp = head;
+        for (int i = 1; i < pos; ++i) {
+            temp = temp->next;
+        }
+        auto newNode = make_shared<Node>(data, temp->next);
+        temp->next = newNode;
+        mySize++;
+    }
+}
+
+void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
+    if (pos <= 0) {
+        addFront(foodData);
+    } else if (pos >= mySize) {
+        addEnd(foodData);
+    } else {
+        auto temp = head;
+        for (int i = 1; i < pos; ++i) {
+            temp = temp->next;
+        }
+        auto newNode = make_shared<Node>(foodData, temp->next);
+        temp->next = newNode;
+        mySize++;
+    }
+}
 
 void LinkedList::deleteFront() {
-  // Delete the first node
-  // If the list is empty then exit
-  if (mySize == 0) {
-    return;
-  }
-  // Head reference, use to avoid segfault
-  Node** hf = &head;
-  Node* temp = *hf;
-  (*hf) = temp->next;
-  delete temp;
-  mySize--;
+    if (head) {
+        head = head->next;
+        mySize--;
+    }
 }
 
 void LinkedList::deleteEnd() {
-  // Delete the final node
-  // If the list is empty then exit
-  if (mySize == 0) {
-    return;
-  }
-  // Head reference, use to avoid segfault
-  Node** hf = &head;
-  // The node before the last node (or head if there's only one node)
-  Node* temp = *hf;
-  while (temp->next != NULL) {
-    if (temp->next->next != NULL) {
-      temp = temp->next;
-    } else {
-      break;
+    if (head) {
+        if (!head->next) {
+            head = nullptr;
+        } else {
+            auto temp = head;
+            while (temp->next->next) {
+                temp = temp->next;
+            }
+            temp->next = nullptr;
+        }
+        mySize--;
     }
-  }
-  mySize--;
-  // Handle cases where there's only one node (temp points to it)
-  if (temp->next == NULL) {
-    *hf = NULL;
-  } else {
-    // Delete the last node
-    delete temp->next;
-    temp->next = NULL;
-  }
 }
 
 void LinkedList::deletePosition(int pos) {
-  // Delete the node at the given position
-
-  // Invalid position given
-  if (pos < 1 || pos > mySize) {
-    cout << "outside range\n";
-    return;
-  }
-
-  if (pos == 1) {
-    deleteFront();
-    return;
-  }
-
-  // Reduce size by 1
-  mySize--;
-
-  // Head reference, use to avoid segfault
-  Node** hf = &head;
-  Node* temp = *hf;
-
-  // Special case: Delete the last node
-  if (pos == mySize) {
-    // Get the second-last node (temp points to it)
-    while (temp->next->next != NULL) {
-      temp = temp->next;
-    }
-    // Delete the last node
-    delete temp->next;
-    temp->next = NULL;
-  }
-
-  else{// Get the node that points to the node at pos
-    for (int i = 1; i < pos - 1; i++) {
-        temp = temp->next;
-    }
-
-    // Store the node to be deleted
-    Node* toDelete = temp->next;
-
-    // Link the previous node to the node after the one to be deleted
-    temp->next = toDelete->next;
-
-    // Free the memory of the deleted node
-    delete toDelete;
-  }
-}
-
-
-void LinkedList::printItems(){   
-    //Print data values of all current nodes in the list
-    if (head == NULL){
+    if (pos <= 0 || pos > mySize) {
+        cout << "Position out of range\n";
         return;
     }
-    //Head reference
-    Node ** hf = &head;
-    Node * now = (*hf);
 
-    vector<int> out;
-    int size = 1;
-    out.push_back(now->data);
-    while (now->next != NULL){
-        now = now->next;
-        out.push_back(now->data );
-        size++;
+    if (pos == 1) {
+        deleteFront();
+        return;
     }
-    for (int v = 0; v  < size; v++){
-        cout << out[v] << " ";
-    }cout <<endl;
+
+    auto temp = head;
+    for (int i = 1; i < pos - 1; ++i) {
+        temp = temp->next;
+    }
+    temp->next = temp->next->next;
+    mySize--;
 }
 
-int LinkedList::search(int item){
-    /*Print out the position of a node that contains a given 
-      value if exist, else print 0 */
-    int pos = 1;
-    Node * temp = *(&head);
-    while (temp != NULL){
-        if (temp->data == item){
-          cout << pos <<"\n";
-          return pos;
+void LinkedList::printItems() {
+    auto temp = head;
+    while (temp) {
+        if (temp->data) {
+            cout << temp->data << " ";
+        } else if (temp->dataFood) {
+            cout << temp->dataFood->name << " ";
         }
-        temp = temp->next; 
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+int LinkedList::search(int item) {
+    int pos = 1;
+    auto temp = head;
+    while (temp) {
+        if (temp->data == item) {
+            cout << pos << "\n";
+            return pos;
+        }
+        temp = temp->next;
         pos++;
     }
     cout << "0\n";
@@ -215,26 +153,16 @@ int LinkedList::search(int item){
 
 int LinkedList::getItem(int p) {
     if (p < 1) {
-        cout << numeric_limits<int>::max() << "\n";
-        return numeric_limits<int>::max();
+        cout << std::numeric_limits<int>::max() << "\n";
+        return std::numeric_limits<int>::max();
     }
-    
-    Node* temp = head;
-    for (int pos = 1; temp != nullptr && pos <= p; ++pos, temp = temp->next) {
+    auto temp = head;
+    for (int pos = 1; temp && pos <= p; ++pos, temp = temp->next) {
         if (pos == p) {
             cout << temp->data << "\n";
             return temp->data;
         }
     }
-    
-    cout << numeric_limits<int>::max() << "\n";
-    return numeric_limits<int>::max();
-}
-
-//List destructor
-LinkedList::~LinkedList(){
-    //Delete all remaining nodes
-    while (mySize > 0){
-      if (head != NULL) deleteFront(); //Extra check, incase there is a null node while deleting
-    }
+    cout << std::numeric_limits<int>::max() << "\n";
+    return std::numeric_limits<int>::max();
 }
