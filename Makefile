@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -g -std=c++14
 
-TARGET = fft
+TARGET = ftt
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
