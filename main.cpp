@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "Node.h"
 #include "LinkedList.h"
+#include "Helper.h"
 #include <map>
 
 using std::map;
@@ -13,107 +14,6 @@ using std::endl;
 using std::stoi;
 using std::to_string;
 
-int change_making(const std::vector<int>& coins, std::vector<int>& counts, int n) {
-    //Modified function based on wikipedia.org/Change_making_problem
-    //This function return the minimum number of coins used to make the amount n
-    //If no solution exists, it returns -1
-    //The additional part to the original algorithm is that the coins set is finite
-    // Thus, additional comparision is made to see if the original optimal deno is suitable
-    // Then, a tracking matrix is used to keep track of all possible solutions
-    int numCoins = coins.size();
-    
-    std::vector<int> m(n + 1, std::numeric_limits<int>::max());
-    // Use 2D vector of size (n+1) for tracking used coins 
-    std::vector<std::vector<int>> used_coins(n + 1);
-
-    // Initialize the zero amount case
-    m[0] = 0;
-
-    // Fill the DP table
-    for (int amount = 1; amount <= n; ++amount) {
-        for (int c = 0; c < numCoins; ++c) {
-            int coin = coins[c];
-            if (coin <= amount) {
-                if (m[amount - coin] + 1 < m[amount] && counts[c] > 0) {
-                    m[amount] = m[amount - coin] + 1;
-                    used_coins[amount] = used_coins[amount - coin];
-                    used_coins[amount].push_back(c);
-                }
-            }
-        }
-    }
-
-    // Check if a solution exists
-    if (m[n] == std::numeric_limits<int>::max() || m[n] == std::numeric_limits<int>::min()) {
-        std::cout << "No solution exists" << std::endl;
-        return -1;
-    }   
-
-    // Compute the count of each coin used
-    std::vector<int> coinUsage(numCoins, 0);
-    for (int idx : used_coins[n]) {
-        coinUsage[idx]++;
-    }
-
-    // Update counts directly within the loop for efficiency
-    std::cout << "Minimum coins used: " << m[n] << std::endl;
-    std::cout << "Coins used:" << std::endl;
-    for (int i = 0; i < numCoins; ++i) {
-        if (coinUsage[i] > 0) {
-            std::cout << coins[i] << " x " << coinUsage[i] << std::endl;
-            counts[i] -= coinUsage[i];
-        }
-    }
-
-    // // Print remaining counts conditionally to avoid unnecessary output
-    // if (std::any_of(counts.begin(), counts.end(), [](int count) { return count > 0; })) {
-    //     std::cout << "Remaining coin counts:" << std::endl;
-    //     for (int i = 0; i < numCoins; ++i) {
-    //         if (counts[i] > 0) {
-    //             std::cout << coins[i] << ": " << counts[i] << std::endl;
-    //         }
-    //     }
-    // }
-    
-    return 0;
-}
-
-vector<string> takeInput(int nNodes=0){
-    // Get input from console
-    // Split them by spaces and store to a vector
-    string in;
-    vector<string> pp;
-    cout << "";
-    getline (cin, in);
-    //Check whether a string has been meet
-    bool metOrder = false;
-    int len = in.length(); //length of input
-    if (in[-1]=='\n'){
-        cout << "Has newline char\n";
-    }
-    string temp = ""; //tempoary string
-    for (int i = 0; i < len; i++){
-        char current = in.at(i);
-        if (current != ' '){
-            temp += current;
-            if ( !isdigit(current) && !metOrder){
-                nNodes = pp.size() - 1;
-                metOrder = true;
-            }
-        }
-        else{
-            pp.push_back(temp);
-            temp ="";
-        }
-        if (i == len - 1){
-            pp.push_back(temp);
-        }
-    }
-    nNodes++;
-    //Store nNodes value as final element of the input array
-    pp.push_back(to_string(nNodes));
-    return pp;
-}
 template<typename T>
 void vectorPrint(vector<T>& v) {
   for (auto& element : v) {
@@ -169,6 +69,7 @@ int main(int argc, char ** argv){
     // }
         cout <<"The following is for demonstration purposes, to be removed.\n";
         cout << "No input is required.\n";
+        Helper helperObject; // Create an instance of Helper
         //Initialize the coins denom
         vector<int> coinsExample={1,4, 7,9};
         for (int i=0;i<7;i++){
@@ -181,7 +82,7 @@ int main(int argc, char ** argv){
         vector<int> changeTest={2,135,502,4750,5210};
         for (auto& n:changeTest){
             cout <<"For n = "<<n<<endl;
-            int changes=change_making(coinsExample,coinCounts,n);
+            int changes=helperObject.change_making(coinsExample,coinCounts,n);
             if (changes > 0){
                 cout <<"New count:\n\t";
                 vectorPrint(coinCounts);
@@ -207,36 +108,38 @@ int main(int argc, char ** argv){
             // Add to LinkedList and store in map for reference
             refMap[stoi(k.second[0].substr(k.second[0].length()-3,3))]=foodList.addEnd(newFoodItem);
         }
-        std::string userInput;
+        string userInput="";
         bool keepGoing = true;
         while (keepGoing) {
-            std::cout << "Enter a food item key , or 'X' to stop): ";
+            cout << "Enter a food item key , or 'X' to stop): ";
             std::getline(std::cin, userInput);
             keepGoing = ! ((userInput=="X") || (userInput=="x")) ;
             // Validate input
-            int key;
-            try {
-                key = std::stoi(userInput);
-                if (key <= 0) {
-                throw std::invalid_argument("Invalid key: Must be a positive integer.");
+            if (keepGoing){
+                int key = 0;
+                try {
+                    key = stoi(userInput);
+                    if (key <= 0) {
+                    throw std::invalid_argument("Invalid key: Must be a positive integer.");
+                    }
+                } catch (const std::invalid_argument& e) {
+                    std::cerr << "Error: " << e.what() << endl;
+                
+                } catch (const std::out_of_range& e) {
+                    std::cerr << "Error: Input value out of range." << std::endl;
                 }
-            } catch (const std::invalid_argument& e) {
-                if (userInput != "X" || userInput != "x") std::cerr << "Error: " << e.what() << std::endl;
-            
-            } catch (const std::out_of_range& e) {
-                std::cerr << "Error: Input value out of range." << std::endl;
-            }
 
-            // Check if key exists in refMap
-            if (refMap.count(key) == 0) {
-                std::cerr << "Error: Key " << key << " not found in reference map." << std::endl;
-                continue; // Skip to next iteration if key doesn't exist
-            }
+                // Check if key exists in refMap
+                if (refMap.count(key) == 0) {
+                    std::cerr << "Error: Key " << key << " not found in reference map." << endl;
+                    continue; // Skip to next iteration if key doesn't exist
+                }
 
-            // Access the corresponding FoodItem using the key
-            shared_ptr<Node> nodePtr = refMap[key];
-            if (nodePtr)  nodePtr->dataFood->printInfo();
-            else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
+                // Access the corresponding FoodItem using the key
+                shared_ptr<Node> nodePtr = refMap[key];
+                if (nodePtr)  nodePtr->dataFood->printInfo();
+                else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
+            }
         }
 
     }
