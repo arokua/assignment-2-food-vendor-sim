@@ -18,6 +18,7 @@ void LinkedList::addFront(int data) {
 }
 
 void LinkedList::addFront( shared_ptr<FoodItem>& foodData) {
+    //For food item type
     head = make_shared<Node>(foodData, head);
     mySize++;
 }
@@ -36,7 +37,8 @@ void LinkedList::addEnd(int data) {
     mySize++;
 }
 
-void LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
+shared_ptr<Node> LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
+    //For food item type, return the newly added node
     auto newNode = make_shared<Node>(foodData);
     if (!head) {
         head = newNode;
@@ -47,6 +49,7 @@ void LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
         }
         temp->next = newNode;
     }
+    return newNode;
     mySize++;
 }
 
@@ -67,6 +70,7 @@ void LinkedList::addAtPosition(int pos, int data) {
 }
 
 void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
+    //For food item type
     if (pos <= 0) {
         addFront(foodData);
     } else if (pos >= mySize) {
@@ -82,6 +86,7 @@ void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
     }
 }
 
+//Delete head node, check if null for safe operation
 void LinkedList::deleteFront() {
     if (head) {
         head = head->next;
@@ -123,6 +128,7 @@ void LinkedList::deletePosition(int pos) {
     mySize--;
 }
 
+//Ultility methods
 void LinkedList::printItems() {
     auto temp = head;
     while (temp) {
@@ -166,3 +172,5 @@ int LinkedList::getItem(int p) {
     cout << std::numeric_limits<int>::max() << "\n";
     return std::numeric_limits<int>::max();
 }
+
+// shared_ptr<Node> LinkedList::getItem(int p);

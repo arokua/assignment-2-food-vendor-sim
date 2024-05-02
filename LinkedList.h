@@ -1,3 +1,5 @@
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
 #include "Node.h"
 #include <iostream>
 #include <vector>
@@ -19,7 +21,7 @@ public:
     void addFront(int data);
     void addFront( shared_ptr<FoodItem>& foodData);
     void addEnd(int data);
-    void addEnd( shared_ptr<FoodItem>& foodData);
+    shared_ptr<Node> addEnd( shared_ptr<FoodItem>& foodData);
     void addAtPosition(int pos, int data);
     void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
     void deleteFront();
@@ -27,10 +29,13 @@ public:
     void deletePosition(int pos);
     void printItems();
     int search(int item);
+    //Get item, 1-based indexing
     int getItem(int p);
+    // shared_ptr<Node> getItem(int p);
 
 private:
     shared_ptr<Node> head;
     int mySize;
 };
 
+#endif //LINKEDLIST_H 
