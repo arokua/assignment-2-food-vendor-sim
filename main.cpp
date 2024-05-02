@@ -240,4 +240,9 @@ int main(int argc, char ** argv){
         }
 
     }
+    else{
+        //Incorrect number of file inputs
+        cout << "Expect 2 file inputs!\n";
+        cout << "Usage: ./main coin.dat food.dat\n";
+    }
 }
