@@ -1,9 +1,18 @@
+//Manul compile command because make isn't making a runnable file for some reason...
+//g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
+//./fttt
+
 #include <limits>
 #include <algorithm>
 #include "Node.h"
 #include "LinkedList.h"
 #include "Helper.h"
 #include <map>
+
+#define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
+Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
+Select your option (1-7) :\n\n\
+DEBUG: 99. LinkedList test/demo implementation "
 
 using std::map;
 using std::vector;
@@ -14,7 +23,9 @@ using std::endl;
 using std::stoi;
 using std::to_string;
 
+//Move this inside a method somewhere?
 template<typename T>
+
 void vectorPrint(vector<T>& v) {
   for (auto& element : v) {
     std::cout << element << " ";
@@ -22,13 +33,81 @@ void vectorPrint(vector<T>& v) {
   std::cout << "\n";
 }
 
+void LinkedListDemo(int argc);
+
 int main(int argc, char ** argv){
 
-    //TEST COMMIT
+    int menuChoice = 0;
+    bool mainMenuLoop = true;
+    string foodIdSelection = "";
+
+    while (mainMenuLoop == true) {
+        cout << MENU_DESC;
+        cin >> menuChoice;
+        cin.ignore();
+
+        if (menuChoice == 1) {
+            cout << "\nFood Menu\n";
+            cout << "\n---------";
+            cout << "\nID |Name                                                |Length";
+            cout << "\n------------------------------------------------------------------\n";
+            cout << "\n LINKED LIST ITEMS WILL GO HERE";
+        } 
+        else if (menuChoice == 2) {
+            cout << "\nPurchase Meal";
+            cout << "\n-------------";
+            cout << "\nPlease enter the ID of the food you wish to purchase: ";
+            cin >> foodIdSelection;
+            cout << "\nSelected: " << foodIdSelection << "\n\n";
+        } 
+        else if (menuChoice == 3) {
+            cout << "\nSaving data...";
+            cout << "\nSAVING TBD\n\n";
+        } 
+        else if (menuChoice == 4) {
+            string addFoodName = "";
+            string addFoodDesc = "";
+            float addFoodPrice = 0.00;
+
+            cout << "\nThe new meal item will have the item id of " << "<ID HERE>";
+            cout << "Enter the item name: ";
+            cin >> addFoodName;
+            cout << "Enter the item description: ";
+            cin >> addFoodDesc;
+            cout << "Enter the item price: ";
+            cin >> addFoodPrice;
+            cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
+        } 
+        else if (menuChoice == 5) {
+            cout << "Please enter the ID of the food to remove from the menu: ";
+            cin >> foodIdSelection;
+            cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+        } 
+        else if (menuChoice == 6) {
+            cout << "\n\nBalance Summary";
+            cout << "\n---------------";
+            cout << "\nDenom  | Quantity | Value";
+            cout << "\n---------------------------";
+            cout << "\nCOIN FILE DETAILS GET PRINTED HERE AS A TABLE\n\n";
+        } 
+        else if (menuChoice == 7) {
+            mainMenuLoop = false;
+        } 
+         else if (menuChoice == 99) {
+            LinkedListDemo(argc);
+        } 
+    }
+
+    return EXIT_SUCCESS;
     
+ 
+}
+
+void LinkedListDemo(int argc) {
+        
     // assume inputs are of correct format
     //Get number of queries
-    if (argc ==1 || argc ==3 || argc==4){
+    if (argc ==1 || argc ==3 || argc==4) {
         //argc is 4 when testing with text file input, 3 when take 2 files and run in terminal
     //     int n=0;
     //     string numInp="";
@@ -145,7 +224,7 @@ int main(int argc, char ** argv){
         }
 
     }
-    else{
+    else {
         //Incorrect number of file inputs
         cout << "Expect 2 file inputs!\n";
         cout << "Usage: ./main coin.dat food.dat\n";
