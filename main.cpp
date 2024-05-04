@@ -23,6 +23,8 @@ void vectorPrint(vector<T>& v) {
 }
 
 int main(int argc, char ** argv){
+
+    //TEST COMMIT
     
     // assume inputs are of correct format
     //Get number of queries
