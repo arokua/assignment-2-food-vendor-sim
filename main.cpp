@@ -8,11 +8,12 @@
 #include "LinkedList.h"
 #include "Helper.h"
 #include <map>
+#include <cmath>
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
 Select your option (1-7) :\n\n\
-DEBUG: 99. LinkedList test/demo implementation "
+DEBUG: 9. LinkedList test/demo implementation "
 
 using std::map;
 using std::vector;
@@ -41,61 +42,118 @@ int main(int argc, char ** argv){
     bool mainMenuLoop = true;
     string foodIdSelection = "";
 
-    while (mainMenuLoop == true) {
+    while (mainMenuLoop) {
         cout << MENU_DESC;
         cin >> menuChoice;
         cin.ignore();
 
-        if (menuChoice == 1) {
-            cout << "\nFood Menu\n";
-            cout << "\n---------";
-            cout << "\nID |Name                                                |Length";
-            cout << "\n------------------------------------------------------------------\n";
-            cout << "\n LINKED LIST ITEMS WILL GO HERE";
-        } 
-        else if (menuChoice == 2) {
-            cout << "\nPurchase Meal";
-            cout << "\n-------------";
-            cout << "\nPlease enter the ID of the food you wish to purchase: ";
-            cin >> foodIdSelection;
-            cout << "\nSelected: " << foodIdSelection << "\n\n";
-        } 
-        else if (menuChoice == 3) {
-            cout << "\nSaving data...";
-            cout << "\nSAVING TBD\n\n";
-        } 
-        else if (menuChoice == 4) {
-            string addFoodName = "";
-            string addFoodDesc = "";
-            float addFoodPrice = 0.00;
 
-            cout << "\nThe new meal item will have the item id of " << "<ID HERE>";
-            cout << "Enter the item name: ";
-            cin >> addFoodName;
-            cout << "Enter the item description: ";
-            cin >> addFoodDesc;
-            cout << "Enter the item price: ";
-            cin >> addFoodPrice;
-            cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
-        } 
-        else if (menuChoice == 5) {
-            cout << "Please enter the ID of the food to remove from the menu: ";
-            cin >> foodIdSelection;
-            cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
-        } 
-        else if (menuChoice == 6) {
-            cout << "\n\nBalance Summary";
-            cout << "\n---------------";
-            cout << "\nDenom  | Quantity | Value";
-            cout << "\n---------------------------";
-            cout << "\nCOIN FILE DETAILS GET PRINTED HERE AS A TABLE\n\n";
-        } 
-        else if (menuChoice == 7) {
-            mainMenuLoop = false;
-        } 
-         else if (menuChoice == 99) {
-            LinkedListDemo(argc);
-        } 
+            if (cin.fail()) {
+                cin.clear();
+                cin.ignore();
+                cout << "\nError in input. Please try again.\n";
+            }
+            
+            else if (menuChoice == 1) {
+                cout << "\nFood Menu\n";
+                cout << "\n---------";
+                cout << "\nID |Name                                                |Length";
+                cout << "\n------------------------------------------------------------------\n";
+                cout << "\n LINKED LIST ITEMS WILL GO HERE\n";
+            } 
+            else if (menuChoice == 2) {
+                bool payingForItem = false;
+
+                cout << "\nPurchase Meal";
+                cout << "\n-------------";
+                cout << "\nPlease enter the ID of the food you wish to purchase: ";
+                cin >> foodIdSelection;
+                //TODO: Make it so you can press enter to exit back to menu
+                cout << "\nYou have selected: " << foodIdSelection << ". This will cost you" << " [ITEM PRICE HERE] " << "\n\n";
+                cout << "Please hand over the money - type in the value of each note/coin in cents.";
+                cout << "\nPlease enter ctrl-D or enter on a new line to cancel this purchase.";
+                cout << "You still need to give us $ [ITEM PRICE HERE]";
+                
+                string inputChange = "";
+                payingForItem = true;
+
+                while (payingForItem) {
+                    getline(cin, inputChange);
+                    //cin >> inputChange;
+                    //cin.ignore();
+
+                    if (cin.fail()) {
+                        cin.clear();
+                        cin.ignore();
+                        cout << "Error: input was not numeric";
+                    }
+
+                    else if (cin.get() == '\n') {
+                        cout << "\nPurchase cancelled.";
+                        payingForItem = false;
+                    }
+                    
+                    else {
+                        cout << "\nPlaceholder: still do the menu payment functionality.\n";
+                        payingForItem = false;
+                    }
+                }
+
+            } 
+
+            else if (menuChoice == 3) {
+                cout << "\nSaving data...";
+                cout << "\nSAVING TBD\n\n";
+            } 
+            else if (menuChoice == 4) {
+                string addFoodName = "";
+                string addFoodDesc = "";
+                string addFoodPrice = "";
+                bool inputtingPrice = false;
+
+                cout << "\nThe new meal item will have the item id of " << "<ID HERE>";
+                cout << "Enter the item name: ";
+                cin >> addFoodName;
+                cout << "Enter the item description: ";
+                cin >> addFoodDesc;
+
+                inputtingPrice = true;
+
+                while (inputtingPrice) {
+                    cout << "Enter the item price: ";
+                    cin >> addFoodPrice;
+
+                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
+                        cout << "Error: money is not formatted correctly";
+                    }
+                    else {
+                        cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
+                        inputtingPrice = false;
+                    }
+                    
+                }
+            } 
+            else if (menuChoice == 5) {
+                cout << "Please enter the ID of the food to remove from the menu: ";
+                cin >> foodIdSelection;
+                cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+            } 
+            else if (menuChoice == 6) {
+                cout << "\n\nBalance Summary";
+                cout << "\n---------------";
+                cout << "\nDenom  | Quantity | Value";
+                cout << "\n---------------------------";
+                cout << "\nCOIN FILE DETAILS GET PRINTED HERE AS A TABLE\n\n";
+            } 
+            else if (menuChoice == 7) {
+                mainMenuLoop = false;
+            } 
+            else if (menuChoice == 9) {
+                LinkedListDemo(argc);
+            } 
+            else if (menuChoice < 1 || menuChoice > 9 ) {
+                cout << "\nError: number was outside of range.\n";
+            }
     }
 
     return EXIT_SUCCESS;
