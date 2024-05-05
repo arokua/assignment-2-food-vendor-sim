@@ -1,7 +1,7 @@
-//Manul compile command because make isn't making a runnable file for some reason...
-//g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
-//./fttt
-
+/*Manul compile command because make isn't making a runnable file for some reason...
+  g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
+ ./ftt
+*/
 #include <limits>
 #include <algorithm>
 #include "Node.h"
