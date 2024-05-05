@@ -2,6 +2,7 @@
   g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
  ./ftt
 */
+
 #include <limits>
 #include <algorithm>
 #include "Node.h"
@@ -24,7 +25,7 @@ using std::endl;
 using std::stoi;
 using std::to_string;
 
-//Move this inside a method somewhere?
+
 
 void LinkedListDemo(int argc);
 
