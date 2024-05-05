@@ -24,14 +24,6 @@ using std::stoi;
 using std::to_string;
 
 //Move this inside a method somewhere?
-template<typename T>
-
-void vectorPrint(vector<T>& v) {
-  for (auto& element : v) {
-    std::cout << element << " ";
-  }
-  std::cout << "\n";
-}
 
 void LinkedListDemo(int argc);
 
@@ -157,8 +149,8 @@ void LinkedListDemo(int argc) {
             coinsExample.push_back(coinsExample[i]*10);
         }
         vector<int> coinCounts(coinsExample.size(),DEFAULT_COIN_COUNT);
-        cout <<"current coins denominator:\t";vectorPrint(coinsExample);
-        cout <<"current amounts:\t";vectorPrint(coinCounts);
+        cout <<"current coins denominator:\t";helperObject.vectorPrint(coinsExample);
+        cout <<"current amounts:\t";helperObject.vectorPrint(coinCounts);
 
         vector<int> changeTest={2,135,502,4750,5210};
         for (auto& n:changeTest){
@@ -166,7 +158,7 @@ void LinkedListDemo(int argc) {
             int changes=helperObject.change_making(coinsExample,coinCounts,n);
             if (changes > 0){
                 cout <<"New count:\n\t";
-                vectorPrint(coinCounts);
+                helperObject.vectorPrint(coinCounts);
             }
         }
         cout << "Dummy food item map:\n";
@@ -182,7 +174,7 @@ void LinkedListDemo(int argc) {
         //Put in try catch to handle missed invalid input that cause access problems
         for (auto& k:foods){
             cout <<k.first <<" ";
-            vectorPrint(k.second);
+            helperObject.vectorPrint<string>(k.second);
             // Creating a shared_ptr FoodItem
                 auto newFoodItem = make_shared<FoodItem>(k.second[0], k.second[1], k.second[2], stod(k.second[3])*100);
 
