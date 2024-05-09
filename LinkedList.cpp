@@ -138,7 +138,7 @@ void LinkedList::printItems() {
     auto temp = head;
     while (temp) {
         if (temp->dataFood) {
-            cout << temp->dataFood->name << " ";
+            (*temp->dataFood).printInfo();
         }
         temp = temp->next;
     }
