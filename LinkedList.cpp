@@ -40,6 +40,7 @@ void LinkedList::addEnd(int data) {
 shared_ptr<Node> LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
     //For food item type, return the newly added node
     auto newNode = make_shared<Node>(foodData);
+    // cout << newNode<<"\n"; for debug
     if (!head) {
         head = newNode;
     } else {
@@ -49,8 +50,12 @@ shared_ptr<Node> LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
         }
         temp->next = newNode;
     }
-    return newNode;
+    // for debug
+    // cout << "Added food:\n\t";
+    // (*foodData).printInfo();
     mySize++;
+    return newNode;
+    
 }
 
 void LinkedList::addAtPosition(int pos, int data) {
@@ -132,9 +137,7 @@ void LinkedList::deletePosition(int pos) {
 void LinkedList::printItems() {
     auto temp = head;
     while (temp) {
-        if (temp->data) {
-            cout << temp->data << " ";
-        } else if (temp->dataFood) {
+        if (temp->dataFood) {
             cout << temp->dataFood->name << " ";
         }
         temp = temp->next;
