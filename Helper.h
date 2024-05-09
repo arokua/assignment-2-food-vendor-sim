@@ -4,6 +4,7 @@
 #include <iostream>
 #include <limits>
 #include <algorithm>
+#include <string>
 
 using std::vector;
 using std::numeric_limits;
@@ -34,6 +35,7 @@ public:
             cout << item << endl;
         }
     }
+    static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
 
 };
 
