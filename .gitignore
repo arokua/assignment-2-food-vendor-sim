@@ -4,3 +4,5 @@ Node.o
 main.o
 Helper.o
 Helper.o
+*.exe
+.env.local
