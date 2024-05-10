@@ -23,6 +23,10 @@
 //The number of denominations of currency available in the system 
 #define NUM_DENOMS 8
 
+#define FOODITEM_DELIM "|"  // delimiter 
+
+#define DEFAULT_DATA_CATEGORY 4
+
 
 /**
  * data structure to represent a food item within the system
