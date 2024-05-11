@@ -10,6 +10,9 @@
 #include "Helper.h"
 #include <map>
 #include <cmath>
+#include <fstream>
+#include <string.h>
+
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -24,16 +27,36 @@ using std::cout;
 using std::endl;
 using std::stoi;
 using std::to_string;
+using std::fstream;
+using std::ostream;
 
 
 
 void LinkedListDemo(int argc);
+bool verifyFoodFile(int argc, char ** argv);
+bool verifyCoinsFile(int argc, char ** argv);
 
 int main(int argc, char ** argv){
 
     int menuChoice = 0;
-    bool mainMenuLoop = true;
+    bool mainMenuLoop = false;
+    bool verifyFiles = true;
     string foodIdSelection = "";
+
+    if (argc != 3) {
+        cout << "Incorrect number of arguments supplied.";
+        mainMenuLoop = false;
+        verifyFiles = false;
+    }
+
+    if (verifyFiles) {
+        if (verifyFoodFile(argc, argv) == true) {
+            cout << "about to check coins";
+            if (verifyCoinsFile(argc, argv) == true) {
+                mainMenuLoop = true;
+            }
+        }
+    }
 
     while (mainMenuLoop) {
         cout << MENU_DESC;
@@ -152,6 +175,93 @@ int main(int argc, char ** argv){
     return EXIT_SUCCESS;
     
  
+}
+
+bool verifyFoodFile(int argc, char ** argv) {
+        bool success = false;
+
+        string foodFile = argv[1];
+        string currentLine = "";
+        vector<string> lineSplit;
+        vector<string> price;
+
+        fstream file;
+        file.open(foodFile);
+        if (file.is_open()) {
+            while (getline(file, currentLine)) {
+                cout << currentLine << "\n";
+                Helper::splitString(currentLine, lineSplit, "|");
+
+                if (lineSplit.size() == 4) {
+                    Helper::splitString(lineSplit[3], price, ".");
+                }
+                
+                //If there aren't exactly 4 pieces of data per line
+                if (lineSplit.size() != 4) {
+                    success = false;
+                    file.close();
+                }
+                //If the first letter of the food code isn't F
+                else if (lineSplit[0][0] != 'F') {
+                    success = false;
+                    file.close();
+               } 
+                //If the price is not a decimal number
+                else if (!lineSplit[3].find(".")) {
+                    success = false;
+                    file.close();
+                }
+                //If there is no cents place
+                else if (price.size() != 2) {
+                        cout << "\nIs not a full decimal number!";
+                        success = false;
+                        file.close();
+                }
+                else {
+                    success = true;
+            }
+        }
+        file.close();
+
+    }
+    cout << "\n\n" << success;
+    return success;
+}
+
+bool verifyCoinsFile(int argc, char** argv) {
+    cout << "\n\nChecking coins";
+    bool success = false;
+    string coinFile = argv[2];
+    string currentLine = "";
+    vector <string> coinsSplit;
+
+    fstream file;
+
+    cout << coinFile;
+
+    file.open(coinFile);
+    if (file.is_open()) {
+        while (getline(file, currentLine)) {
+            cout << currentLine << "\n";
+            Helper::splitString(currentLine, coinsSplit, ",");
+
+            if (coinsSplit.size() != 2) {
+                success = false;
+                file.close();
+            }
+            //STIILL GOTTA DO THIS PROPER
+            else if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[0]) ) {
+                success = false;
+                file.close();
+            }
+            else {
+                success = true;
+            }
+            
+        }
+        file.close();
+    }
+    return success;
 }
 
 void LinkedListDemo(int argc) {
