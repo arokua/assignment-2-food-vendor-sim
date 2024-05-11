@@ -18,20 +18,29 @@ public:
     LinkedList(vector<int>, int);
     ~LinkedList();
 
-    void addFront(int data);
-    void addFront( shared_ptr<FoodItem>& foodData);
-    void addEnd(int data);
-    shared_ptr<Node> addEnd( shared_ptr<FoodItem>& foodData);
-    void addAtPosition(int pos, int data);
-    void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
+    // initializing the linked list with the FoodItem Vector
+    LinkedList(vector<FoodItem>& foodItemvector);
+
+    // void addFront(int data);
+    void addFront(shared_ptr<Node>& insertingNode);
+
+    // void addEnd(int data);
+    void addEnd(shared_ptr<Node>& insertingNode);
+
+    // void addAtPosition(int pos, int data);
+    void addAtPosition(int pos, shared_ptr<Node>& insertingNode);
+
     void deleteFront();
     void deleteEnd();
     void deletePosition(int pos);
+    
     void printItems();
     int search(int item);
     //Get item, 1-based indexing
     int getItem(int p);
     // shared_ptr<Node> getItem(int p);
+    FoodItem searchFoodItemByName(std::string name);
+    FoodItem searchFoodItemByID(std::string ID);
 
 private:
     shared_ptr<Node> head;

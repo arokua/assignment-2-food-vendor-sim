@@ -74,13 +74,12 @@ public:
 class Node {
 public:
     Node();
-    Node(int data, std::shared_ptr<Node> next = nullptr);
     Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr);
     Node(const Node& other);
     ~Node();
 
     std::shared_ptr<FoodItem> dataFood;
-    int data;
+    
     std::shared_ptr<Node> next;  // Now using shared_ptr for next
 };
 

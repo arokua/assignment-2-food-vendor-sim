@@ -4,7 +4,6 @@
 using std::string;
 using std::cout;
 using std::endl;
-Node::Node() : next(nullptr) {}
 
 FoodItem::FoodItem(){
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
@@ -14,11 +13,11 @@ FoodItem::FoodItem(){
 }
 
 FoodItem::FoodItem(string ID,string Name,string desc,unsigned int P) {
-    id=ID;
-    name=Name;
-    description=desc;
-    price=P;
-    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+    this->id=ID;
+    this->name=Name;
+    this->description=desc;
+    this->price=P;
+    this->on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
 bool FoodItem::sold(){
@@ -34,13 +33,16 @@ void FoodItem::reStock(int val){
 
 FoodItem::~FoodItem(){}
 
-Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {}
 
+Node::Node() : next(nullptr) {}
 
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : next(next) {
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) {
     if (foodData != nullptr) {
-    dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
-  }
+        dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
+        // dataFood (Node's pointer) is pointing to foodData (FoodItem's pointer) 
+        // which points to FoodItem object 
+        next = std::make_shared<Node>(next);
+    }
 }
 
 void FoodItem::printInfo(){
