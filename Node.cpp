@@ -3,6 +3,7 @@
 
 using std::string;
 using std::cout;
+using std::endl;
 Node::Node() : next(nullptr) {}
 
 FoodItem::FoodItem(){
@@ -12,9 +13,9 @@ FoodItem::FoodItem(){
     description="DESC";
 }
 
-FoodItem::FoodItem(string ID,string name,string desc,unsigned int P) {
+FoodItem::FoodItem(string ID,string Name,string desc,unsigned int P) {
     id=ID;
-    name=name;
+    name=Name;
     description=desc;
     price=P;
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
@@ -44,8 +45,32 @@ Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : ne
 
 void FoodItem::printInfo(){
     if (id!=""){
-        cout << "ID: "<<id<<"|"<<name<<"|"<<description<<"|"<<price <<"\n";
+        cout << getID() << "|" << getName() << "|" << getDesc() 
+             << "|" << getPrice() << "|" << getOnHand() << endl;
     }
 }
+
+
+
+
+
+
+
+std::string FoodItem::getName(){
+    return name;
+}
+std::string FoodItem::getID(){
+    return id;
+}
+std::string FoodItem::getDesc(){
+    return description;
+}
+unsigned int FoodItem::getPrice(){
+    return price;
+}
+unsigned int FoodItem::getOnHand(){
+    return on_hand;
+}
+
 Node::~Node(){
 }

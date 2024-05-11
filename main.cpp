@@ -35,25 +35,8 @@ void LinkedListDemo(int argc);
 
 
 std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName);
-// std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
+std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 
-
-unsigned int convertStringtoInt(const std::string& str) {
-    std::vector<std::string> splitString;
-    unsigned int finalInt;
-    std::string temp;
-    // std::istringstream iss(str);
-
-    Helper::splitString(str, splitString, ".");
-
-    if (splitString.size() == 1) {
-        finalInt = std::stoi(splitString[0]) * 100;
-    } else {
-        finalInt = std::stoi(splitString[0]) * 100 + std::stoi(splitString[1]);
-    }
-    return finalInt;
-    
-}
 
 
 int main(int argc, char ** argv){
@@ -120,7 +103,8 @@ int main(int argc, char ** argv){
     // }
 
     readFoodDataFile(argv[1]);
-    // readCoinDataFile(argv[2]);
+    cout << endl;
+    readCoinDataFile(argv[2]);
 
     return EXIT_SUCCESS;
     
@@ -130,46 +114,43 @@ int main(int argc, char ** argv){
 
 // missing file validation
 // check for data shuffle
+// Assuming each data input are unique
 
 std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName){
     std::string line;
     std::fstream openfile(fileName);
     std::vector<std::shared_ptr<FoodItem>> objectVector;
 
-    if (openfile.is_open()) {
-        while(std::getline(openfile, line)) {
+    try {
+        if (openfile.is_open()) {
+            while(std::getline(openfile, line)) {
             // reading each line in the file
             std::vector<std::string> dataVector;
-            
-            // std::string field;
-            // std::istringstream iss(line);
 
             // splitting data with "|" delimiter
             Helper::splitString(line, dataVector, FOODITEM_DELIM);
 
-
-            if (dataVector.size() == DEFAULT_DATA_CATEGORY) {
-                // when the data is sufficient to create new object
-                try {
-
-                    std::shared_ptr<FoodItem> newObject = std::make_shared<FoodItem>(dataVector[0], dataVector[1], dataVector[2], convertStringtoInt(dataVector[3]));
+            try {
+                if (dataVector.size() == FOODITEM_ARGC) {
+                    // when the data is sufficient to create new object
+                    std::shared_ptr<FoodItem> newObject = std::make_shared<FoodItem>(dataVector[0], dataVector[1], dataVector[2], std::stod(dataVector[3]) * 100);
                     objectVector.push_back(newObject);
-
-                    // std::cout << "vector size: " << vector1.size() << std::endl;
                     dataVector.clear();
-
-                } catch (const std::invalid_argument& e) {
-                    std::cout << "Error: " << e.what() << std::endl;
-                }   
-            } else {
-                std::cout << "Invalid data arguments!" << std::endl;
+                } else {
+                    throw std::invalid_argument("Invalid number of data arguments!");
+                }
+            } catch (const std::invalid_argument& e) {
+                std::cout << "Error: " << e.what() << std::endl;
             }
-
-            
         }
         openfile.close();
-    } else {
-        std::cout << "Unable to open file" << std::endl;
+
+        } else { // if can't locate/open data file
+            throw std::ifstream::failure("Failed to open file");
+        }
+        
+    } catch (const std::ifstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     }
     
     // printing out FoodItem
@@ -182,56 +163,87 @@ std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileN
 }
 
 
+// Assuming each data input are unique
+std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName){
+    std::string line;
+    std::fstream openfile(fileName);
+    std::vector<std::shared_ptr<Coin>> coinVector;
 
-// std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName){
-//     std::string line;
-//     std::fstream openfile(fileName);
-//     std::vector<std::shared_ptr<Coin>> coinVector;
+    try {
+        if (openfile.is_open()) {
+            while(std::getline(openfile, line)) {
+            // reading each line in the file
+            std::vector<std::string> dataVector;
 
-//     if (openfile.is_open()) {
-//         while(std::getline(openfile, line)) {
-//             // reading each line in the file
-//             std::vector<std::string> dataVector;
-            
-//             std::string field;
-//             std::istringstream iss(line);
+            // splitting data with "|" delimiter
+            Helper::splitString(line, dataVector, COIN_DELIM);
 
-//             // splitting data with "," delimiter
-//             Helper::splitString(line, dataVector, FOODITEM_DELIM);
+            if (dataVector.size() == COIN_ARGC) {
+                // when the data is sufficient to create new object
+                std::shared_ptr<Coin> newObject;
 
-//             if (dataVector.size() == DEFAULT_DATA_CATEGORY) {
-//                 // when the data is sufficient to create new object
-//                 try {
+                if (std::stoi(dataVector[0]) == 5) {
+                    newObject = std::make_shared<Coin>(Denomination::FIVE_CENTS, std::stoi(dataVector[1]));
 
-//                     std::shared_ptr<Coin> newObject = std::make_shared<Coin>(dataVector[0], dataVector[1]);
-//                     coinVector.push_back(newObject);
+                } else if (std::stoi(dataVector[0]) == 10) {
+                    newObject = std::make_shared<Coin>(Denomination::TEN_CENTS, std::stoi(dataVector[1]));
 
-//                     // std::cout << "vector size: " << vector1.size() << std::endl;
-//                     dataVector.clear();
+                } else if (std::stoi(dataVector[0]) == 20) {
+                    newObject = std::make_shared<Coin>(Denomination::TWENTY_CENTS, std::stoi(dataVector[1]));
 
-//                 } catch (const std::invalid_argument& e) {
-//                     std::cout << "Error: " << e.what() << std::endl;
-//                 }   
-//             }
-            
-            
-            
-//         }
-//         openfile.close();
-//     } else {
-//         std::cout << "Unable to open file" << std::endl;
-//     }
+                } else if (std::stoi(dataVector[0]) == 50) {
+                    newObject = std::make_shared<Coin>(Denomination::FIFTY_CENTS, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 100) {
+                    newObject = std::make_shared<Coin>(Denomination::ONE_DOLLAR, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 200) {
+                    newObject = std::make_shared<Coin>(Denomination::TWO_DOLLARS, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 500) {
+                    newObject = std::make_shared<Coin>(Denomination::FIVE_DOLLARS, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 1000) {
+                    newObject = std::make_shared<Coin>(Denomination::TEN_DOLLARS, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 2000) {
+                    newObject = std::make_shared<Coin>(Denomination::TWENTY_DOLLARS, std::stoi(dataVector[1]));
+
+                } else if (std::stoi(dataVector[0]) == 5000) {
+                    newObject = std::make_shared<Coin>(Denomination::FIFTY_DOLLARS, std::stoi(dataVector[1]));
+                } 
+                else {
+                    throw std::invalid_argument("Invalid data arguments!");
+                }
+                coinVector.push_back(newObject);
+
+                dataVector.clear();
+            } else {
+                throw std::invalid_argument("Invalid number of data arguments!");
+            }
+        }
+        openfile.close();
+
+        } else { // if can't locate/open data file
+            throw std::ifstream::failure("Failed to open file");
+        }
+        
+    } catch (const std::ifstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
     
-    // printing out Coin
-    // for (size_t i = 0; i < objectVector.size(); i++) {
-    //     objectVector[i]->printInfo();
-    // }
 
+    // printing out Coin
+    for (size_t i = 0; i < coinVector.size(); i++) {
+        coinVector[i]->printInfo();
+    }
 
 
     // return a vector containing shared_ptr pointing to each Object
-//     return coinVector;
-// }
+    return coinVector;
+}
 
 
 

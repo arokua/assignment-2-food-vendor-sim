@@ -25,7 +25,7 @@
 
 #define FOODITEM_DELIM "|"  // delimiter 
 
-#define DEFAULT_DATA_CATEGORY 4
+#define FOODITEM_ARGC 4
 
 
 /**
@@ -48,11 +48,20 @@ public:
     
     // how many of this food item do we have on hand? 
     unsigned on_hand; 
+    
     //Default constructor
     FoodItem();
     //Initialize with value
-    FoodItem(std::string,std::string,std::string,unsigned price);
-    int getPrice(); // Return the price
+    FoodItem(std::string id, std::string name, std::string desc, unsigned price);
+
+    // Getter & Setter
+    std::string getID();
+    std::string getName();
+    std::string getDesc();
+    unsigned int getPrice();
+    unsigned int getOnHand();
+
+    // Functions
     bool sold(); //Food is sucessfully sold if its still have stock
     void reStock(int); //Restock to an integer value
     void printInfo();
