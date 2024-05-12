@@ -115,3 +115,22 @@ void Helper::splitString(string s, vector<string>& tokens, string delimiter)
         tokens.push_back(s.substr(prev));
     }
 }
+
+bool Helper::isNumber(string number) {
+    bool checkingNumber = true;
+    bool isNumber = true;
+
+    while (checkingNumber) {
+        for (long unsigned int i = 0;i < number.size();i++) {
+            if (isdigit(number[i])) {
+                isNumber = true;   
+            }
+            else {
+                isNumber = false;
+                checkingNumber = false;
+            }
+        }
+        checkingNumber = false;
+    }
+    return isNumber;
+}

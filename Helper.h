@@ -35,7 +35,12 @@ public:
             cout << item << endl;
         }
     }
+    
+    //Splits a string into a vector
     static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
+
+    //Checks if a string is completely numeric
+    static bool isNumber(std::string number);
 
 };
 

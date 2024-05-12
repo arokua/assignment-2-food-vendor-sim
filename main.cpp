@@ -206,6 +206,10 @@ bool verifyFoodFile(int argc, char ** argv) {
                     success = false;
                     file.close();
                } 
+               else if (lineSplit[0].size() != 5) {
+                    success = false;
+                    file.close();
+               }
                 //If the price is not a decimal number
                 else if (!lineSplit[3].find(".")) {
                     success = false;
@@ -242,15 +246,14 @@ bool verifyCoinsFile(int argc, char** argv) {
     file.open(coinFile);
     if (file.is_open()) {
         while (getline(file, currentLine)) {
-            cout << currentLine << "\n";
             Helper::splitString(currentLine, coinsSplit, ",");
+            cout << "\n" << currentLine << "\nSize: " << coinsSplit.size() << "\n" << coinsSplit[0] << " " << coinsSplit[1];
 
             if (coinsSplit.size() != 2) {
                 success = false;
                 file.close();
             }
-            //STIILL GOTTA DO THIS PROPER
-            else if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[0]) ) {
+            else if (!Helper::isNumber(coinsSplit[0]) || !Helper::isNumber(coinsSplit[1])) {
                 success = false;
                 file.close();
             }
