@@ -28,6 +28,7 @@ public:
     void deleteEnd();
     void deletePosition(int pos);
     void printItems();
+    void printItemsBrief();
     int search(int item);
     //Get item, 1-based indexing
     int getItem(int p);

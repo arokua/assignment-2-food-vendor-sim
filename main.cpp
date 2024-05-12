@@ -78,7 +78,8 @@ int main(int argc, char ** argv){
                 cout << "\n---------";
                 cout << "\nID |Name                                                |Length";
                 cout << "\n------------------------------------------------------------------\n";
-                foods.printItems();
+                foods.printItemsBrief();
+                cout << "\n";
                 
             } 
             else if (menuChoice == 2) {
@@ -94,7 +95,7 @@ int main(int argc, char ** argv){
                 cout << "\nYou have selected: " << foodIdSelection << ". This will cost you " << foodPrice << "\n\n";
                 cout << "Please hand over the money - type in the value of each note/coin in cents.";
                 cout << "\nPlease enter ctrl-D or enter on a new line to cancel this purchase.";
-                cout << "You still need to give us: "<<foodPrice<<"\n";
+                cout << "You still need to give us: " << foodPrice << "\n";
                 
                 string inputChange = "";
                 payingForItem = true;
@@ -153,7 +154,15 @@ int main(int argc, char ** argv){
                         cout << "Error: money is not formatted correctly";
                     }
                     else {
-                        cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
+                       cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
+
+                       //How do I just add a new item to the linked list simply?
+                        //How do I get the values of a food item at a certain position in the LL? Why does getItem just return 0?
+
+                       //foods.getItem(2);
+                       //FoodItem data = foods.getItem(2);
+                       //make_shared<FoodItem>("asdf", addFoodName, addFoodDesc, addFoodPrice);
+                    //foods.addEnd(make_shared<FoodItem>("asdf", addFoodName, addFoodDesc, addFoodPrice));
                         inputtingPrice = false;
                     }
                     
@@ -198,12 +207,14 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
     fstream file;
     file.open(foodFile);
     int foodCounter=0;
-    map<string,vector<string>> nameAndFoodData; // Ordered-map, so then 
+
+    // Ordered-map, so then 
     //If the whole file is valid, the foods will be add to
     // linked list in an order ordered by name
+    map<string,vector<string>> nameAndFoodData; 
+
     if (file.is_open()) {
         while (getline(file, currentLine)) {
-            cout << currentLine << "\n";
             Helper::splitString(currentLine, lineSplit, "|");
 
                 if (lineSplit.size() == 4) {
@@ -240,9 +251,9 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
         if (success){
         //Only initialize food linked list if the whole process is success
             for (auto &key:nameAndFoodData){
-                auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3])*100);
-                refMap[key.second[0]]=foodList.addEnd(newFoodItem); 
+                auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3]));
                 // Add the food item to list by sorted name due to ordered map key property
+                refMap[key.second[0]]=foodList.addEnd(newFoodItem); 
             }
         }
     file.close();
@@ -253,7 +264,6 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
 }
 
 bool verifyCoinsFile(int argc, char** argv) {
-    cout << "\n\nChecking coins";
     bool success = false;
     string coinFile = argv[2];
     string currentLine = "";
@@ -267,7 +277,6 @@ bool verifyCoinsFile(int argc, char** argv) {
     if (file.is_open()) {
         while (getline(file, currentLine)) {
             Helper::splitString(currentLine, coinsSplit, ",");
-            cout << "\n" << currentLine << "\nSize: " << coinsSplit.size() << "\n" << coinsSplit[0] << " " << coinsSplit[1];
 
             if (coinsSplit.size() != 2) {
                 success = false;
@@ -314,7 +323,7 @@ void LinkedListDemo(int argc) {
             //Make a linked list object using above values
             LinkedList ll(arr,nNodes);
             //Operations to be performed
-            string order = ins[nNodes];
+            string order = ins[1];
             if (order == "AF") ll.addFront(stoi(ins[nNodes + 1].c_str()));
             else if (order == "AE") ll.addEnd(stoi(ins[nNodes + 1].c_str()));
             else if (order == "AP") ll.addAtPosition(stoi(ins[nNodes + 1].c_str()), stoi(ins[nNodes + 2].c_str()));

@@ -145,6 +145,17 @@ void LinkedList::printItems() {
     cout << endl;
 }
 
+void LinkedList::printItemsBrief() {
+    auto temp = head;
+    while (temp) {
+        if (temp->dataFood) {
+            (*temp->dataFood).printInfoBrief();
+        }
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
 int LinkedList::search(int item) {
     int pos = 1;
     auto temp = head;

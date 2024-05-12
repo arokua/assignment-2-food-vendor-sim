@@ -3,17 +3,20 @@
 
 using std::string;
 using std::cout;
-Node::Node() : next(nullptr) {}
+
+Node::Node() : next(nullptr) {
+
+}
 
 FoodItem::FoodItem(){
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
     id="FXXXX";
     name="Name";
     description="DESC";
-    price=0;
+    price=0.00;
 }
 
-FoodItem::FoodItem(string ID,string name,string desc,unsigned int P) :id(ID),name(name),description(desc),price(P) {
+FoodItem::FoodItem(string ID,string name,string desc,double P) :id(ID),name(name),description(desc),price(P) {
     std::cout<<"Gotten food name:\t"+name<<std::endl;
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
@@ -29,9 +32,13 @@ void FoodItem::reStock(int val){
     on_hand=val;
 }
 
-FoodItem::~FoodItem(){}
+FoodItem::~FoodItem(){
 
-Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {}
+}
+
+Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {
+
+}
 
 
 Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : next(next) {
@@ -45,5 +52,21 @@ void FoodItem::printInfo(){
         cout <<id<<"|"<<this->name<<"|"<<description<<"|"<<price <<"\n";
     }
 }
+
+void FoodItem::printInfoBrief() {
+        if (id!=""){
+            cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
+    }
+}
+
+string FoodItem::getId() {
+    return id;
+}
+
+double FoodItem::getPrice() {
+    return price;
+}
+
+
 Node::~Node(){
 }

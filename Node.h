@@ -40,18 +40,20 @@ public:
     std::string description;
     
     //the price of this food item (base value is 1 cent)
-    unsigned int price;
+    double price;
     
     // how many of this food item do we have on hand? 
-    unsigned on_hand; 
+    unsigned on_hand;
     //Default constructor
     FoodItem();
     //Initialize with value
-    FoodItem(std::string,std::string,std::string,unsigned price);
-    int getPrice(); // Return the price
+    FoodItem(std::string,std::string,std::string,double price);
+    double getPrice(); // Return the price
+    std::string getId();
     bool sold(); //Food is sucessfully sold if its still have stock
     void reStock(int); //Restock to an integer value
     void printInfo();
+    void printInfoBrief();
     ~FoodItem();
 };
 
