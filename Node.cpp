@@ -27,21 +27,32 @@ bool FoodItem::sold(){
     return soldable;
 }
 
-void FoodItem::reStock(int val){
-    on_hand=val;
+void FoodItem::reStock(){
+    // when restocking, the value always return to DEFAULT_FOOD_STOCK_LEVEL
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
 FoodItem::~FoodItem(){}
 
 
-Node::Node() : next(nullptr) {}
+Node::Node(): 
+    dataFood(nullptr),
+    next(nullptr)
+    {}
 
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) {
+Node::Node(const Node& other){
+    this->dataFood = other.dataFood;
+    this->next = other.next;
+}
+
+
+// creating a Node based on specified pointer to a FoodItem
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node> nextNode) {
     if (foodData != nullptr) {
-        dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
+        this->dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
         // dataFood (Node's pointer) is pointing to foodData (FoodItem's pointer) 
         // which points to FoodItem object 
-        next = std::make_shared<Node>(next);
+        this->next = nextNode;
     }
 }
 

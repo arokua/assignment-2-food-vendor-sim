@@ -63,7 +63,7 @@ public:
 
     // Functions
     bool sold(); //Food is sucessfully sold if its still have stock
-    void reStock(int); //Restock to an integer value
+    void reStock(); 
     void printInfo();
     ~FoodItem();
 };

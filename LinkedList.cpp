@@ -3,8 +3,11 @@
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
 // new Linked List via FoodItem vector
-LinkedList::LinkedList(vector<FoodItem>& foodItemvector)  {
+LinkedList::LinkedList(vector<std::shared_ptr<FoodItem>>& foodItemvector){
+    // a vector containing shared_ptr points to the object
     for (int i = foodItemvector.size() - 1; i >= 0; --i) {
+        // for each pointer in the vector, create a new Node pointer
+        // foodItemvector[i] == shared_ptr<FoodItem>
         std::shared_ptr<Node> newNode = std::make_shared<Node>(foodItemvector[i]);
         addFront(newNode);
     }
@@ -151,33 +154,45 @@ void LinkedList::printItems() {
 
 FoodItem LinkedList::searchFoodItemByName(std::string name) {
     auto temp = head;
+    FoodItem searchedFoodItem; // creating new object then copy the original object
+    bool found = false;
     try {
-        while (temp) {
+        while (temp && !found) {
             if (temp->dataFood->getName() == name) {
-                return (*temp->dataFood);
+                searchedFoodItem = (*temp->dataFood);
+                found = true;
             }
             temp = temp->next;
         }
-        throw std::runtime_error("Food Item can't be found.");
+        if (!found) {
+            throw std::runtime_error("Food Item can't be found.");
+        }
     } catch (const std::runtime_error& e) {
         cout << "Error: "<< e.what() << endl;
     } 
+    return searchedFoodItem;
 }
 
 
 FoodItem LinkedList::searchFoodItemByID(std::string ID) {
     auto temp = head;
+    FoodItem searchedFoodItem; // creating new object then copy the original object
+    bool found = false;
     try {
-        while (temp) {
+        while (temp && !found) {
             if (temp->dataFood->getID() == ID) {
-                return (*temp->dataFood);
+                searchedFoodItem = (*temp->dataFood);
+                found = true;
             }
             temp = temp->next;
         }
-        throw std::runtime_error("Food Item can't be found.");
+        if (!found) {
+            throw std::runtime_error("Food Item can't be found.");
+        }
     } catch (const std::runtime_error& e) {
         cout << "Error: "<< e.what() << endl;
     } 
+    return searchedFoodItem;
 }
 
 

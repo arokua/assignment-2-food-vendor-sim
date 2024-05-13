@@ -19,7 +19,7 @@ public:
     ~LinkedList();
 
     // initializing the linked list with the FoodItem Vector
-    LinkedList(vector<FoodItem>& foodItemvector);
+    LinkedList(vector<std::shared_ptr<FoodItem>>& foodItemvector);
 
     // void addFront(int data);
     void addFront(shared_ptr<Node>& insertingNode);
