@@ -9,6 +9,9 @@ A modified change making algorithm using dynamic programming to store the best p
 To run, type ```make``` in the terminal, should tests file be valid, then make test to run.
 
 Update 26 April 2024: No validation has been done, and thus no tests is created yet.
+Update May 3rd 2024: After running  ```make```, run ```make val``` in unix system with supported valgrind will generate a valgrind report with track-origin and full memcheck enabled
+                      LinkedList is now integrated to handle food items
+                      String sorting to be implement to handle ordered insertion via food names.
 
 To test linked list implentation, please enter input in the following syntax:
 ```n1 n2 n3 n4 ... n Q arg1 arg2``` where n1 to n are positive integers, Q is the query to insert, delete, get item or search.

@@ -4,16 +4,15 @@
 */
 #include <limits>
 #include <algorithm>
+#include <map>
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <fstream>
+
 #include "Node.h"
 #include "LinkedList.h"
 #include "Helper.h"
-#include <map>
-#include <fstream>
-#include <string>
-// #include <sstream>
-#include <iostream>
-
-
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -28,10 +27,14 @@ using std::cout;
 using std::endl;
 using std::stoi;
 using std::to_string;
+using std::fstream;
+using std::ostream;
 
 //Move this inside a method somewhere?
 
 void LinkedListDemo(int argc);
+bool verifyFoodFile(int argc, char ** argv);
+bool verifyCoinsFile(int argc, char ** argv);
 
 
 std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName);
@@ -46,6 +49,30 @@ int main(int argc, char ** argv){
     // string foodIdSelection = "";
 
     // while (mainMenuLoop == true) {
+    //     cout << MENU_DESC;
+    //     cin >> menuChoice;
+    //     cin.ignore();
+    // int menuChoice = 0;
+    // bool mainMenuLoop = false;
+    // bool verifyFiles = true;
+    // string foodIdSelection = "";
+
+    // if (argc != 3) {
+    //     cout << "Incorrect number of arguments supplied.";
+    //     mainMenuLoop = false;
+    //     verifyFiles = false;
+    // }
+
+    // if (verifyFiles) {
+    //     if (verifyFoodFile(argc, argv) == true) {
+    //         cout << "about to check coins";
+    //         if (verifyCoinsFile(argc, argv) == true) {
+    //             mainMenuLoop = true;
+    //         }
+    //     }
+    // }
+
+    // while (mainMenuLoop) {
     //     cout << MENU_DESC;
     //     cin >> menuChoice;
     //     cin.ignore();
@@ -248,6 +275,92 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
 
 
 
+bool verifyFoodFile(int argc, char ** argv) {
+        bool success = false;
+
+        string foodFile = argv[1];
+        string currentLine = "";
+        vector<string> lineSplit;
+        vector<string> price;
+
+        fstream file;
+        file.open(foodFile);
+        if (file.is_open()) {
+            while (getline(file, currentLine)) {
+                cout << currentLine << "\n";
+                Helper::splitString(currentLine, lineSplit, "|");
+
+                if (lineSplit.size() == 4) {
+                    Helper::splitString(lineSplit[3], price, ".");
+                }
+                
+                //If there aren't exactly 4 pieces of data per line
+                if (lineSplit.size() != 4) {
+                    success = false;
+                    file.close();
+                }
+                //If the first letter of the food code isn't F
+                else if (lineSplit[0][0] != 'F') {
+                    success = false;
+                    file.close();
+               } 
+                //If the price is not a decimal number
+                else if (!lineSplit[3].find(".")) {
+                    success = false;
+                    file.close();
+                }
+                //If there is no cents place
+                else if (price.size() != 2) {
+                        cout << "\nIs not a full decimal number!";
+                        success = false;
+                        file.close();
+                }
+                else {
+                    success = true;
+            }
+        }
+        file.close();
+
+    }
+    cout << "\n\n" << success;
+    return success;
+}
+
+bool verifyCoinsFile(int argc, char** argv) {
+    cout << "\n\nChecking coins";
+    bool success = false;
+    string coinFile = argv[2];
+    string currentLine = "";
+    vector <string> coinsSplit;
+
+    fstream file;
+
+    cout << coinFile;
+
+    file.open(coinFile);
+    if (file.is_open()) {
+        while (getline(file, currentLine)) {
+            cout << currentLine << "\n";
+            Helper::splitString(currentLine, coinsSplit, ",");
+
+            if (coinsSplit.size() != 2) {
+                success = false;
+                file.close();
+            }
+            //STIILL GOTTA DO THIS PROPER
+            else if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[0]) ) {
+                success = false;
+                file.close();
+            }
+            else {
+                success = true;
+            }
+            
+        }
+        file.close();
+    }
+    return success;
+}
 
 void LinkedListDemo(int argc) {
         
