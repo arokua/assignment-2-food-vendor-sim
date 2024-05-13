@@ -3,9 +3,9 @@
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
 // new Linked List via FoodItem vector
-LinkedList::LinkedList(vector<std::shared_ptr<FoodItem>>& foodItemvector){
+LinkedList::LinkedList(std::vector<std::shared_ptr<FoodItem>>& foodItemvector){
     // a vector containing shared_ptr points to the object
-    for (int i = foodItemvector.size() - 1; i >= 0; --i) {
+    for (long unsigned int i = 0; i < foodItemvector.size(); i++) {
         // for each pointer in the vector, create a new Node pointer
         // foodItemvector[i] == shared_ptr<FoodItem>
         std::shared_ptr<Node> newNode = std::make_shared<Node>(foodItemvector[i]);
@@ -18,11 +18,13 @@ LinkedList::~LinkedList() {
 }
 
 
+// Functions 
 void LinkedList::addFront(shared_ptr<Node>& insertingNode) {
     if (!head) { // head == nullptr
         head = insertingNode;
-    } else {
+    } else { 
         insertingNode->next = head->next;
+        head->next = nullptr;
         head = insertingNode;
     }
     mySize++;

@@ -1,8 +1,8 @@
 #include "Helper.h"
 
-Helper::Helper(){
+Helper::Helper(){}
 
-}
+
 int Helper::change_making(vector<int>& coins, vector<int>& counts, int n) {
     
     int numCoins = coins.size();

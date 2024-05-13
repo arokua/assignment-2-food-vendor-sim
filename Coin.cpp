@@ -1,4 +1,5 @@
 #include "Coin.h"
+#include "LinkedList.h"
 #include <iostream>
 
 Coin::Coin(Denomination denom, unsigned count) {
@@ -21,5 +22,124 @@ unsigned Coin::getCount() {
 void Coin::setCount(unsigned count) {
     this->count = count;
 }
+
+void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance) {
+    // search and create a pointer to the object
+    std::shared_ptr<FoodItem> chosenFoodItem = std::make_shared<FoodItem>(list.searchFoodItemByID(foodItemID));
+    bool done = false;
+
+    try {
+        if (chosenFoodItem->getOnHand() <= 0) {
+            throw std::logic_error("Sorry, this item is currently out of stock!");
+        }
+        unsigned int inputValue = 0; // used to hold current input by the user
+        std::vector<unsigned> currentPayment; // used to hold the history of input by the user
+                                              // could change to Coin object if needed
+
+
+        std::cout << "You have selected \"" << chosenFoodItem->getName() << " - " 
+                  << chosenFoodItem->getDesc() << "\"." << "This will cost you $"
+                  << chosenFoodItem->getPrice() / 100.0 << "." << std::endl;
+        std::cout << "Please hand over the money - type in the value of each note/coin in cents.\n"
+                  << "Please enter ctrl-D or enter on a new line to cancel this purchase." << endl;
+        
+        while (!done) {
+            std::string line; // only used for checking empty line
+            
+            double currentPrice = (chosenFoodItem->getPrice() / 100.0) - (inputValue / 100.0);
+            std::cout << "You still need to give us $" << currentPrice << ": ";
+            std::cin >> inputValue >> line;
+            
+            // check for ctrl + D or empty line
+            if (std::cin.eof() || line.empty()) { 
+                std::cout << "Cancelling purchase." << std::endl;
+                done = true;
+                currentPayment.clear();
+            } 
+            
+            // check for invalid input
+            else if (std::cin.fail()) { 
+                std::cin.clear(); // clear the error state
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore the rest of the line
+                std::cout << "Invalid input. Please enter a value similar to the following example:"
+                          << " 850 (8 dollars and 50 cents)" << std::endl;
+            } 
+            
+            // correct input format
+            else {
+                // incorrect coin denomination
+                if (!isMoneyValidforPurchase(inputValue)) {
+                    throw std::runtime_error("Invalid denomination encountered");
+                }
+
+                // Insufficient amount of money -> skip
+                if ((inputValue / 100.0) < currentPrice) {
+                    currentPayment.push_back(inputValue);
+                }
+
+                else if ((inputValue / 100.0) >= currentPrice) {
+                    // change making algo comes in here
+                    // the change will be (inputValue (ie 500) / 100.0)) - currentPrice (ie 1.50)
+                    // = 3.50 == 2$ 1$ 50cents
+                }
+            }
+        }
+        
+        
+
+
+        
+    } catch (const std::logic_error& e) {
+        cout << e.what() << endl;
+    } catch (const std::runtime_error& e) {
+        cout << "Error: " << e.what() << endl;
+    } 
+    
+}
+
+
+bool isMoneyValidforPurchase(unsigned int input){
+    bool valid = false;
+    if (input == 5 || input == 10 || input == 20 || input == 50 || input == 100 || input == 200 || input == 500 || input == 1000 || input == 2000 || input == 5000){
+        valid = true;
+    }
+    return valid;
+}
+
+
+void displayBalance(vector<Coin>& currentBalance) {
+
+}
+
+
+// a very linear way to convert (can be changed later)
+// should take (Coin)->getDenom(); as parameter
+int convertDenomtoInt(Denomination denom) {
+    int convertedVal = 0;
+
+    if (denom == Denomination::FIVE_CENTS){
+        convertedVal = 5;
+    } else if (denom == Denomination::TEN_CENTS){
+        convertedVal = 10;
+    } else if (denom == Denomination::TWENTY_CENTS){
+        convertedVal = 20;
+    } else if (denom == Denomination::FIFTY_CENTS){
+        convertedVal = 50;
+    } else if (denom == Denomination::ONE_DOLLAR){
+        convertedVal = 100;
+    } else if (denom == Denomination::TWO_DOLLARS){
+        convertedVal = 200;
+    } else if (denom == Denomination::FIVE_DOLLARS){
+        convertedVal = 500;
+    } else if (denom == Denomination::TEN_DOLLARS){
+        convertedVal = 1000;
+    } else if (denom == Denomination::TWENTY_DOLLARS){
+        convertedVal = 2000;
+    } else if (denom == Denomination::FIFTY_DOLLARS){
+        convertedVal = 5000;
+    } 
+    return convertedVal;
+}
+
 
 Coin::~Coin(){};

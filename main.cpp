@@ -129,18 +129,106 @@ int main(int argc, char ** argv){
     //     } 
     // }
 
-    readFoodDataFile(argv[1]);
-    cout << endl;
-    readCoinDataFile(argv[2]);
+    // std::vector<std::shared_ptr<FoodItem>> objectVector = readFoodDataFile(argv[1]);
+
+    // // cout << objectVector.size() << endl; // 7
+
+    // LinkedList* newLinkedList = new LinkedList(objectVector);
+    // cout << endl;
+
+    // newLinkedList->printItems();
+    // cout << "after printing" << endl;
+    
+    // newLinkedList->deleteEnd();
+    // cout << "after deleting" << endl;
+    // newLinkedList->printItems();
+    // cout << endl;
+    // for (long unsigned int i = 0; i < objectVector.size(); i++) {
+    //     objectVector[i]->printInfo();
+    // }
+
+    std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
+
+    if (coinVector[0]->getDenom() == Denomination::FIFTY_DOLLARS) {
+        cout << "Fifty dollars" << endl;
+    } else {
+        cout << "Wrong" << endl;
+    }
 
     return EXIT_SUCCESS;
     
  
 }
 
+// bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<Node>>& refMap) {
+//     bool success = false;
+ 
+//     string foodFile = argv[1];
+//     string currentLine = "";
+//     vector<string> lineSplit;
+//     vector<string> price;
+ 
+//     fstream file;
+//     file.open(foodFile);
+//     int foodCounter=0;
+//     map<string,vector<string>> nameAndFoodData; // Ordered-map, so then
+//     //If the whole file is valid, the foods will be add to
+//     // linked list in an order ordered by name
+//     if (file.is_open()) {
+//         while (getline(file, currentLine)) {
+//             cout << currentLine << "\n";
+//             Helper::splitString(currentLine, lineSplit, "|");
+ 
+//             if (lineSplit.size() == 4) {
+//                 //magic number!!!
+//                 Helper::splitString(lineSplit[3], price, ".");
+//             }
+           
+//             //If there aren't exactly 4 pieces of data per line
+//             if (lineSplit.size() != 4) {
+//                 success = false;
+//                 file.close();
+//             }
+//             //If the first letter of the food code isn't F
+//             else if (lineSplit[0][0] != 'F') {
+//                 success = false;
+//                 file.close();
+//             }
+//             //If the price is not a decimal number
+//             else if (!lineSplit[3].find(".")) {
+//                 success = false;
+//                 file.close();
+//             }
+//             //If there is no cents place
+//             else if (price.size() != 2) {
+//                     cout << "\nIs not a full decimal number!";
+//                     success = false;
+//                     file.close();
+//             }
+//             else {
+//                 success = true;
+//                 foodCounter++;
+//                 nameAndFoodData[lineSplit[1]]=lineSplit;//Store data mapping to map
+//             }
+//         }
+//         if (success){
+//         //Only initialize food linked list if the whole process is success
+//             for (auto &key:nameAndFoodData){
+//                 auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3])*100);
+//                 refMap[key.second[0]]=foodList.addEnd(newFoodItem);
+//                 // Add the food item to list by sorted name due to ordered map key property
+//             }
+//         }
+//     file.close();
+   
+//     }
+//     cout << "\n\n" << success;
+//     return success;
+// }
 
-// missing file validation
-// check for data shuffle
+
+
+
 // Assuming each data input are unique
 
 std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName){
@@ -178,9 +266,9 @@ std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileN
     }
     
     // printing out FoodItem
-    for (size_t i = 0; i < objectVector.size(); i++) {
-        objectVector[i]->printInfo();
-    }
+    // for (size_t i = 0; i < objectVector.size(); i++) {
+    //     objectVector[i]->printInfo();
+    // }
 
     // return a vector containing shared_ptr pointing to each Object
     return objectVector;
@@ -259,9 +347,9 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
     }
     
     // printing out Coin
-    for (size_t i = 0; i < coinVector.size(); i++) {
-        coinVector[i]->printInfo();
-    }
+    // for (size_t i = 0; i < coinVector.size(); i++) {
+    //     coinVector[i]->printInfo();
+    // }
 
     // return a vector containing shared_ptr pointing to each Object
     return coinVector;

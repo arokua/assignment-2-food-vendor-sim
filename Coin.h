@@ -36,7 +36,9 @@ public:
 
     // returns the string representation of the coin
     void printInfo();
-    
+    void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance);
+    void displayBalance(vector<Coin>& currentBalance);
+    int convertDenomtoInt(Denomination denom);
 };
 
 #endif // COIN_H

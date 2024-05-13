@@ -32,8 +32,6 @@ void FoodItem::reStock(){
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
-FoodItem::~FoodItem(){}
-
 
 Node::Node(): 
     dataFood(nullptr),
@@ -66,9 +64,6 @@ void FoodItem::printInfo(){
 
 
 
-
-
-
 std::string FoodItem::getName(){
     return name;
 }
@@ -85,5 +80,5 @@ unsigned int FoodItem::getOnHand(){
     return on_hand;
 }
 
-Node::~Node(){
-}
+Node::~Node(){}
+FoodItem::~FoodItem(){}
