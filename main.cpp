@@ -133,39 +133,78 @@ int main(int argc, char ** argv){
                 menuChoice=7;
             } 
             else if (menuChoice == 4) {
+                string addFoodId = "";
                 string addFoodName = "";
                 string addFoodDesc = "";
                 string addFoodPrice = "";
+                bool freeSlotAvailable = true;
                 bool inputtingPrice = false;
 
-                cout << "\nThe new meal item will have the item id of " << "<ID HERE>";
-                cout << "Enter the item name: ";
-                cin >> addFoodName;
-                cout << "Enter the item description: ";
-                cin >> addFoodDesc;
+                cout << "\n\n\nFoods size: " << "\n" << to_string(foods.getSize()) << "\n\n";
+                
+                /*
+                    Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
+                    (I hate this so fucking much)
 
-                inputtingPrice = true;
+                    Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
+                    Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
+                    If next is 2 digits long, append to ID that is missing 2 digits, etc
+                    Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
+                */
+                if (foods.getSize() + 1 <= 9) {
+                    addFoodId = "F000";
+                }
+                else if (foods.getSize() + 1 > 9 && foods.getSize() + 1 < 100) {
+                    addFoodId = "F00";
+                }
+                else if (foods.getSize() + 1 > 99 && foods.getSize() + 1 < 1000) {
+                    addFoodId = "F0";
+                }
+                else if (foods.getSize() + 1 > 999 && foods.getSize() + 1 < 10000) {
+                    addFoodId = "F";
+                }
+                else {
+                    cout << "Maximum number of food items reached!\n";
+                    freeSlotAvailable = false;
+                }
 
-                while (inputtingPrice) {
-                    cout << "Enter the item price: ";
-                    cin >> addFoodPrice;
+                if (freeSlotAvailable) {
+                    addFoodId.append(to_string(foods.getSize() + 1));
+                    cout << "\n\n" << addFoodId;
 
-                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
-                        cout << "Error: money is not formatted correctly";
+                    cout << "\nThe new meal item will have the item id of " << addFoodId;
+                    cout << "\nEnter the item name: ";
+                    cin >> addFoodName;
+                    cout << "\nEnter the item description: ";
+                    cin >> addFoodDesc;
+
+                    inputtingPrice = true;
+
+                    while (inputtingPrice) {
+                        cout << "\nEnter the item price: ";
+                        cin >> addFoodPrice;
+
+                        if (addFoodPrice.find('.') > addFoodPrice.length()) {
+                            cout << "Error: money is not formatted correctly";
+                        }
+                        else {
+                        //cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
+
+                            //foodIdEndingNumber = foods.getItem(foods.getSize()).getId();
+                        // foodIdEndingNumber = foods.getSize() + 1;
+
+
+                            shared_ptr<FoodItem> newFood = make_shared<FoodItem>();
+                            newFood->id = addFoodId;
+                            newFood->name = addFoodName;
+                            newFood->description = addFoodDesc;
+                            cout << "\n\n " << stod(addFoodPrice);
+                            newFood->price = stod(addFoodPrice);
+                            foods.addEnd(newFood);
+                            inputtingPrice = false;
+                        }
+                        
                     }
-                    else {
-                       cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
-
-                       //How do I just add a new item to the linked list simply?
-                        //How do I get the values of a food item at a certain position in the LL? Why does getItem just return 0?
-
-                       //foods.getItem(2);
-                       //FoodItem data = foods.getItem(2);
-                       //make_shared<FoodItem>("asdf", addFoodName, addFoodDesc, addFoodPrice);
-                    //foods.addEnd(make_shared<FoodItem>("asdf", addFoodName, addFoodDesc, addFoodPrice));
-                        inputtingPrice = false;
-                    }
-                    
                 }
             } 
             else if (menuChoice == 5) {

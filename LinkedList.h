@@ -34,6 +34,9 @@ public:
     int getItem(int p);
     // shared_ptr<Node> getItem(int p);
 
+    //Get size of the linked list
+    int getSize();
+
 private:
     shared_ptr<Node> head;
     int mySize;

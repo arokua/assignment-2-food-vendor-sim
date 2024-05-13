@@ -187,4 +187,9 @@ int LinkedList::getItem(int p) {
     return std::numeric_limits<int>::max();
 }
 
+
+int LinkedList::getSize() {
+    return mySize;
+}
+
 // shared_ptr<Node> LinkedList::getItem(int p);

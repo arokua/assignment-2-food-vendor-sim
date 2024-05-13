@@ -49,13 +49,13 @@ Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : ne
 
 void FoodItem::printInfo(){
     if (id!=""){
-        cout <<id<<"|"<<this->name<<"|"<<description<<"|"<<price <<"\n";
+        cout << id << "|" << this->name << "|" << description<<"|" << price << "\n";
     }
 }
 
 void FoodItem::printInfoBrief() {
         if (id!=""){
-            cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
+            cout << id<< "|" << this->name << "                                           |" << price << "\n";
     }
 }
 
