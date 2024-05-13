@@ -104,11 +104,17 @@ vector<string> Helper::takeInput(int nNodes=0){
 void Helper::splitString(string s, vector<string>& tokens, string delimiter)
 {
     tokens.clear();
+
+    // pos = current delimiter position
+    // prev = previous delimiter position
     std::string::size_type pos = 0, prev = 0;
+
     while ((pos = s.find(delimiter, prev)) != std::string::npos) {
         if (pos != prev) {
+            // take specific substring and add to the vector
             tokens.push_back(s.substr(prev, pos - prev));
         }
+        
         prev = pos + delimiter.length();
     }
     if (prev < s.length()) {

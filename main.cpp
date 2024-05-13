@@ -2,22 +2,22 @@
   g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
  ./ftt
 */
-
 #include <limits>
 #include <algorithm>
+#include <map>
+#include <string>
+#include <iostream>
+#include <cmath>
+#include <fstream>
+
 #include "Node.h"
 #include "LinkedList.h"
 #include "Helper.h"
-#include <map>
-#include <cmath>
-#include <fstream>
-#include <string.h>
-
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
 Select your option (1-7) :\n\n\
-DEBUG: 9. LinkedList test/demo implementation "
+DEBUG: 99. LinkedList test/demo implementation "
 
 using std::map;
 using std::vector;
@@ -30,29 +30,37 @@ using std::to_string;
 using std::fstream;
 using std::ostream;
 
-
+//Move this inside a method somewhere?
 
 void LinkedListDemo(int argc);
-bool verifyFoodFile(char ** argv,LinkedList& foodList, map<string,shared_ptr<Node>>& refMap);
+bool verifyFoodFile(int argc, char ** argv);
 bool verifyCoinsFile(int argc, char ** argv);
+
+std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName);
+std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 
 int main(int argc, char ** argv){
 
-    int menuChoice = 0;
-    bool mainMenuLoop = false;
-    bool verifyFiles = true;
-    string foodIdSelection = "";
+     int menuChoice = 0;
+     bool mainMenuLoop = true;
+
+    while (mainMenuLoop == true) {
+         cout << MENU_DESC;
+         cin >> menuChoice;
+         cin.ignore();
+     int menuChoice = 0;
+     bool mainMenuLoop = false;
+     bool verifyFiles = true;
+     string foodIdSelection = "";
 
     if (argc != 3) {
-        cout << "Incorrect number of arguments supplied.\n";
+        cout << "Incorrect number of arguments supplied.";
         mainMenuLoop = false;
         verifyFiles = false;
     }
-    //Correct number of argument, initialize an empty food linked list
-    LinkedList foods;
-    map<string,shared_ptr<Node>> refMap;
+
     if (verifyFiles) {
-        if (verifyFoodFile(argv,foods,refMap) == true) {
+        if (verifyFoodFile(argc, argv) == true) {
             cout << "about to check coins";
             if (verifyCoinsFile(argc, argv) == true) {
                 mainMenuLoop = true;
@@ -65,12 +73,10 @@ int main(int argc, char ** argv){
         cin >> menuChoice;
         cin.ignore();
 
-
             if (cin.fail()) {
                 cin.clear();
                 cin.ignore();
                 cout << "\nError in input. Please try again.\n";
-                menuChoice=0;
             }
             
             else if (menuChoice == 1) {
@@ -78,9 +84,7 @@ int main(int argc, char ** argv){
                 cout << "\n---------";
                 cout << "\nID |Name                                                |Length";
                 cout << "\n------------------------------------------------------------------\n";
-                foods.printItemsBrief();
-                cout << "\n";
-                
+                cout << "\n LINKED LIST ITEMS WILL GO HERE\n";
             } 
             else if (menuChoice == 2) {
                 bool payingForItem = false;
@@ -89,13 +93,11 @@ int main(int argc, char ** argv){
                 cout << "\n-------------";
                 cout << "\nPlease enter the ID of the food you wish to purchase: ";
                 cin >> foodIdSelection;
-                //Assume food id selected is valid
-                unsigned int foodPrice=refMap[foodIdSelection]->dataFood->price;
                 //TODO: Make it so you can press enter to exit back to menu
-                cout << "\nYou have selected: " << foodIdSelection << ". This will cost you " << foodPrice << "\n\n";
+                cout << "\nYou have selected: " << foodIdSelection << ". This will cost you" << " [ITEM PRICE HERE] " << "\n\n";
                 cout << "Please hand over the money - type in the value of each note/coin in cents.";
                 cout << "\nPlease enter ctrl-D or enter on a new line to cancel this purchase.";
-                cout << "You still need to give us: " << foodPrice << "\n";
+                cout << "You still need to give us $ [ITEM PRICE HERE]";
                 
                 string inputChange = "";
                 payingForItem = true;
@@ -106,7 +108,6 @@ int main(int argc, char ** argv){
                     //cin.ignore();
 
                     if (cin.fail()) {
-                        // if (cin.isEof()) payingForItem=false;
                         cin.clear();
                         cin.ignore();
                         cout << "Error: input was not numeric";
@@ -118,8 +119,7 @@ int main(int argc, char ** argv){
                     }
                     
                     else {
-                        //Anh note: when you 
-                        cout << "\nPlaceholder: still need to do the menu payment functionality.\n";
+                        cout << "\nPlaceholder: still do the menu payment functionality.\n";
                         payingForItem = false;
                     }
                 }
@@ -129,8 +129,6 @@ int main(int argc, char ** argv){
             else if (menuChoice == 3) {
                 cout << "\nSaving data...";
                 cout << "\nSAVING TBD\n\n";
-                //Once save completed, exit so
-                menuChoice=7;
             } 
             else if (menuChoice == 4) {
                 string addFoodId = "";
@@ -190,8 +188,6 @@ int main(int argc, char ** argv){
                         else {
                         //cout << "\n\nFood name: " << addFoodName << "\nFood desc: " << addFoodDesc << "Food price: " << addFoodPrice;
 
-                            //foodIdEndingNumber = foods.getItem(foods.getSize()).getId();
-                        // foodIdEndingNumber = foods.getSize() + 1;
 
 
                             shared_ptr<FoodItem> newFood = make_shared<FoodItem>();
@@ -235,26 +231,20 @@ int main(int argc, char ** argv){
  
 }
 
-bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<Node>>& refMap) {
-    bool success = false;
+bool verifyFoodFile(int argc, char ** argv) {
+        bool success = false;
 
-    string foodFile = argv[1];
-    string currentLine = "";
-    vector<string> lineSplit;
-    vector<string> price;
+        string foodFile = argv[1];
+        string currentLine = "";
+        vector<string> lineSplit;
+        vector<string> price;
 
-    fstream file;
-    file.open(foodFile);
-    int foodCounter=0;
-
-    // Ordered-map, so then 
-    //If the whole file is valid, the foods will be add to
-    // linked list in an order ordered by name
-    map<string,vector<string>> nameAndFoodData; 
-
-    if (file.is_open()) {
-        while (getline(file, currentLine)) {
-            Helper::splitString(currentLine, lineSplit, "|");
+        fstream file;
+        file.open(foodFile);
+        if (file.is_open()) {
+            while (getline(file, currentLine)) {
+                cout << currentLine << "\n";
+                Helper::splitString(currentLine, lineSplit, "|");
 
                 if (lineSplit.size() == 4) {
                     Helper::splitString(lineSplit[3], price, ".");
@@ -283,28 +273,18 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
                 }
                 else {
                     success = true;
-                    foodCounter++;
-                    nameAndFoodData[lineSplit[1]]=lineSplit;//Store data mapping to map
             }
         }
-        if (success){
-        //Only initialize food linked list if the whole process is success
-            for (auto &key:nameAndFoodData){
-                auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3]));
-                // Add the food item to list by sorted name due to ordered map key property
-                refMap[key.second[0]]=foodList.addEnd(newFoodItem); 
-            }
-        }
-    file.close();
-    
+        file.close();
+
     }
     cout << "\n\n" << success;
     return success;
 }
 
 bool verifyCoinsFile(int argc, char** argv) {
+    cout << "\n\nChecking coins";
     bool success = false;
-    string coinFile = argv[2];
     string currentLine = "";
     vector <string> coinsSplit;
 
@@ -315,13 +295,15 @@ bool verifyCoinsFile(int argc, char** argv) {
     file.open(coinFile);
     if (file.is_open()) {
         while (getline(file, currentLine)) {
+            cout << currentLine << "\n";
             Helper::splitString(currentLine, coinsSplit, ",");
 
             if (coinsSplit.size() != 2) {
                 success = false;
                 file.close();
             }
-            else if (!Helper::isNumber(coinsSplit[0]) || !Helper::isNumber(coinsSplit[1])) {
+            //STIILL GOTTA DO THIS PROPER
+            else if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[0]) ) {
                 success = false;
                 file.close();
             }
@@ -330,56 +312,60 @@ bool verifyCoinsFile(int argc, char** argv) {
             }
             
         }
-        file.close();
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     }
     return success;
 }
 
-void LinkedListDemo(int argc) {
+// void LinkedListDemo(int argc) {
         
     // assume inputs are of correct format
     //Get number of queries
     if (argc ==1 || argc ==3 || argc==4) {
-        Helper helperObject; // Create an instance of Helper
         //argc is 4 when testing with text file input, 3 when take 2 files and run in terminal
-        int n=0;
-        string numInp="";
-        cout << "Enter number of queries:\t";
-        getline(cin,numInp);
-        n=stoi(numInp);
-        for (int i=0; i < n;i++){    //Get input
-            int nNodes=0;
-            vector<string> ins = helperObject.takeInput( nNodes);
-            nNodes=stoi(ins.back());
+    //     int n=0;
+    //     string numInp="";
+    //     if (argc==3) cout << "File names:\t" << argv[1]<<", "<< argv[2]<<endl;
+    //     cout << "Enter number of queries:\t";
+    //     getline(cin,numInp);
+    //     n=stoi(numInp);
+    //     for (int i=0; i < n;i++){    //Get input
+    //         int nNodes=0;
+    //         vector<string> ins = takeInput( nNodes);
+    //         nNodes=stoi(ins.back());
             
             
-            //Take in the list of nodes value   
-            vector<int> arr; //vector that holds the node values
-            cout << "Total number of nodes:\t"<< nNodes<<"\n";
-            for (int i = 0; i < nNodes; i++){
-                arr.push_back(stoi(ins[i].c_str()));
-            }
-            //Make a linked list object using above values
-            LinkedList ll(arr,nNodes);
-            //Operations to be performed
-            string order = ins[1];
-            if (order == "AF") ll.addFront(stoi(ins[nNodes + 1].c_str()));
-            else if (order == "AE") ll.addEnd(stoi(ins[nNodes + 1].c_str()));
-            else if (order == "AP") ll.addAtPosition(stoi(ins[nNodes + 1].c_str()), stoi(ins[nNodes + 2].c_str()));
-            else if (order == "DF") ll.deleteFront();
-            else if (order == "DE") ll.deleteEnd();
-            else if (order == "DP") ll.deletePosition(stoi(ins[nNodes + 1].c_str()));
-            else if (order == "S") ll.search(stoi(ins[nNodes + 1].c_str()));
-            else if (order == "GI") ll.getItem(stoi(ins[nNodes + 1].c_str()));
-            else cout << "Invalid command\n";
-            //Print out result
-            ll.printItems();
-        }
-
-        // Done linked list non-food demo
+    //         //Take in the list of nodes value   
+    //         vector<int> arr; //vector that holds the node values
+    //         cout << "Total number of nodes:\t"<< nNodes<<"\n";
+    //         for (int i = 0; i < nNodes; i++){
+    //             arr.push_back(stoi(ins[i].c_str()));
+    //         }
+    //         //Make a linked list object using above values
+    //         LinkedList ll(arr,nNodes);
+    //         //Operations to be performed
+    //         string order = ins[nNodes];
+    //         if (order == "AF") ll.addFront(stoi(ins[nNodes + 1].c_str()));
+    //         else if (order == "AE") ll.addEnd(stoi(ins[nNodes + 1].c_str()));
+    //         // else if (order == "AP") ll.addAtPosition(stoi(ins[nNodes + 1].c_str()), stoi(ins[nNodes + 2].c_str()));
+    //         else if (order == "DF") ll.deleteFront();
+    //         else if (order == "DE") ll.deleteEnd();
+    //         else if (order == "DP") ll.deletePosition(stoi(ins[nNodes + 1].c_str()));
+    //         else if (order == "S") ll.search(stoi(ins[nNodes + 1].c_str()));
+    //         else if (order == "GI") ll.getItem(stoi(ins[nNodes + 1].c_str()));
+    //         else cout << "Invalid command\n";
+    //         //Print out result
+    //         ll.printItems();
+    //     }
+    // }else{
+    //     //Incorrect number of file inputs
+    //     cout << "Expect 2 file inputs!\n";
+    //     cout << "Usage: ./main coin.dat food.dat\n";
+    // }
         cout <<"The following is for demonstration purposes, to be removed.\n";
         cout << "No input is required.\n";
-        
+        Helper helperObject; // Create an instance of Helper
         //Initialize the coins denom
         vector<int> coinsExample={1,4, 7,9};
         for (int i=0;i<7;i++){
@@ -389,61 +375,61 @@ void LinkedListDemo(int argc) {
         cout <<"current coins denominator:\t";helperObject.vectorPrint(coinsExample);
         cout <<"current amounts:\t";helperObject.vectorPrint(coinCounts);
 
-        vector<int> changeTest={2,135,502,4750,5210};
-        for (auto& n:changeTest){
-            cout <<"For n = "<<n<<endl;
-            int changes=helperObject.change_making(coinsExample,coinCounts,n);
-            if (changes > 0){
-                cout <<"New count:\n\t";
-                helperObject.vectorPrint(coinCounts);
-            }
-        }
-        cout << "Dummy food item map:\n";
-        //Inplace of reading input from file:
-        map<string, vector<string>> foods;
-        foods["F0001"]={"F0001","Name1","Desc1","8.50"};
-        foods["F0003"]={"F0003","Name3","Desc3","28.50"};
-        foods["F0002"]={"F0002","Name2","Desc2","18.50"};
-        // Map to keep references to the food items
-        map<int, shared_ptr<Node>> refMap;
-        LinkedList foodList;
-        //Only do this once is sure the input is valid!
-        //Put in try catch to handle missed invalid input that cause access problems
-        for (auto& k:foods){
-            cout <<k.first <<" ";
-            helperObject.vectorPrint<string>(k.second);
-            // Creating a shared_ptr FoodItem
-                auto newFoodItem = make_shared<FoodItem>(k.second[0], k.second[1], k.second[2], stod(k.second[3])*100);
+//         vector<int> changeTest={2,135,502,4750,5210};
+//         for (auto& n:changeTest){
+//             cout <<"For n = "<<n<<endl;
+//             int changes=helperObject.change_making(coinsExample,coinCounts,n);
+//             if (changes > 0){
+//                 cout <<"New count:\n\t";
+//                 helperObject.vectorPrint(coinCounts);
+//             }
+//         }
+//         cout << "Dummy food item map:\n";
+//         //Inplace of reading input from file:
+//         map<string, vector<string>> foods;
+//         foods["F0001"]={"F0001","Name1","Desc1","8.50"};
+//         foods["F0003"]={"F0003","Name3","Desc3","28.50"};
+//         foods["F0002"]={"F0002","Name2","Desc2","18.50"};
+//         // Map to keep references to the food items
+//         map<int, shared_ptr<Node>> refMap;
+//         LinkedList foodList;
+//         //Only do this once is sure the input is valid!
+//         //Put in try catch to handle missed invalid input that cause access problems
+//         for (auto& k:foods){
+//             cout <<k.first <<" ";
+//             helperObject.vectorPrint<string>(k.second);
+//             // Creating a shared_ptr FoodItem
+//                 auto newFoodItem = make_shared<FoodItem>(k.second[0], k.second[1], k.second[2], stod(k.second[3])*100);
 
-            // Add to LinkedList and store in map for reference
-            refMap[stoi(k.second[0].substr(k.second[0].length()-3,3))]=foodList.addEnd(newFoodItem);
-        }
-        string userInput="";
-        bool keepGoing = true;
-        while (keepGoing) {
-            cout << "Enter a food item key , or 'X' to stop): ";
-            std::getline(std::cin, userInput);
-            keepGoing = ! ((userInput=="X") || (userInput=="x")) ;
-            // Validate input
-            if (keepGoing){
-                int key = 0;
-                try {
-                    key = stoi(userInput);
-                    if (key <= 0) {
-                    throw std::invalid_argument("Invalid key: Must be a positive integer.");
-                    }
-                } catch (const std::invalid_argument& e) {
-                    std::cerr << "Error: " << e.what() << endl;
+//             // Add to LinkedList and store in map for reference
+//             refMap[stoi(k.second[0].substr(k.second[0].length()-3,3))]=foodList.addEnd(newFoodItem);
+//         }
+//         string userInput="";
+//         bool keepGoing = true;
+//         while (keepGoing) {
+//             cout << "Enter a food item key , or 'X' to stop): ";
+//             std::getline(std::cin, userInput);
+//             keepGoing = ! ((userInput=="X") || (userInput=="x")) ;
+//             // Validate input
+//             if (keepGoing){
+//                 int key = 0;
+//                 try {
+//                     key = stoi(userInput);
+//                     if (key <= 0) {
+//                     throw std::invalid_argument("Invalid key: Must be a positive integer.");
+//                     }
+//                 } catch (const std::invalid_argument& e) {
+//                     std::cerr << "Error: " << e.what() << endl;
                 
-                } catch (const std::out_of_range& e) {
-                    std::cerr << "Error: Input value out of range." << std::endl;
-                }
+//                 } catch (const std::out_of_range& e) {
+//                     std::cerr << "Error: Input value out of range." << std::endl;
+//                 }
 
-                // Check if key exists in refMap
-                if (refMap.count(key) == 0) {
-                    std::cerr << "Error: Key " << key << " not found in reference map." << endl;
-                    continue; // Skip to next iteration if key doesn't exist
-                }
+//                 // Check if key exists in refMap
+//                 if (refMap.count(key) == 0) {
+//                     std::cerr << "Error: Key " << key << " not found in reference map." << endl;
+//                     continue; // Skip to next iteration if key doesn't exist
+//                 }
 
                 // Access the corresponding FoodItem using the key
                 shared_ptr<Node> nodePtr = refMap[key];
@@ -451,10 +437,11 @@ void LinkedListDemo(int argc) {
                 else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
             }
         }
-    }else{
+
+    }
+    else {
         //Incorrect number of file inputs
         cout << "Expect 2 file inputs!\n";
         cout << "Usage: ./main coin.dat food.dat\n";
     }
-        
 }

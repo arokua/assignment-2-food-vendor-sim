@@ -2,9 +2,14 @@
 
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
-LinkedList::LinkedList(vector<int> a,int nNodes)  {
-    for (int i = a.size() - 1; i >= 0; --i) {
-        addFront(a[i]);
+// new Linked List via FoodItem vector
+LinkedList::LinkedList(vector<std::shared_ptr<FoodItem>>& foodItemvector){
+    // a vector containing shared_ptr points to the object
+    for (int i = foodItemvector.size() - 1; i >= 0; --i) {
+        // for each pointer in the vector, create a new Node pointer
+        // foodItemvector[i] == shared_ptr<FoodItem>
+        std::shared_ptr<Node> newNode = std::make_shared<Node>(foodItemvector[i]);
+        addFront(newNode);
     }
 }
 
@@ -12,125 +17,127 @@ LinkedList::~LinkedList() {
     // shared_ptr automatically deletes nodes when the last reference goes out of scope
 }
 
-void LinkedList::addFront(int data) {
-    head = make_shared<Node>(data, head);
-    mySize++;
-}
 
-void LinkedList::addFront( shared_ptr<FoodItem>& foodData) {
-    //For food item type
-    head = make_shared<Node>(foodData, head);
-    mySize++;
-}
-
-void LinkedList::addEnd(int data) {
-    auto newNode = make_shared<Node>(data);
-    if (!head) {
-        head = newNode;
+void LinkedList::addFront(shared_ptr<Node>& insertingNode) {
+    if (!head) { // head == nullptr
+        head = insertingNode;
     } else {
-        auto temp = head;
-        while (temp->next) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+        insertingNode->next = head->next;
+        head = insertingNode;
     }
     mySize++;
 }
 
-shared_ptr<Node> LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
-    //For food item type, return the newly added node
-    auto newNode = make_shared<Node>(foodData);
-    // cout << newNode<<"\n"; for debug
-    if (!head) {
-        head = newNode;
-    } else {
-        auto temp = head;
-        while (temp->next) {
-            temp = temp->next;
+
+void LinkedList::addEnd(shared_ptr<Node>& insertingNode) {
+    try {
+        if (insertingNode->next) {
+            throw std::logic_error("This Node can't be at the end cause this Node is pointing to another Node!");
         }
-        temp->next = newNode;
+        if (!head) {
+            head = insertingNode;
+        } else {
+            auto temp = head;
+            while (temp->next) {
+                temp = temp->next;
+            }
+            temp->next = insertingNode;
+            insertingNode->next = nullptr;
+        }
+    } catch (const std::logic_error& e) {
+        cout << "Error: "<< e.what() << endl;
     }
-    // for debug
-    // cout << "Added food:\n\t";
-    // (*foodData).printInfo();
     mySize++;
-    return newNode;
-    
 }
 
-void LinkedList::addAtPosition(int pos, int data) {
-    if (pos <= 0) {
-        addFront(data);
-    } else if (pos >= mySize) {
-        addEnd(data);
-    } else {
-        auto temp = head;
-        for (int i = 1; i < pos; ++i) {
-            temp = temp->next;
+
+void LinkedList::addAtPosition(int pos, shared_ptr<Node>& insertingNode) {
+    try {
+        if (pos < 0 || pos > mySize + 1) { // if the position is outside the range of the linkedlist
+            throw std::out_of_range("Invalid position");
         }
-        auto newNode = make_shared<Node>(data, temp->next);
-        temp->next = newNode;
-        mySize++;
+        if (pos == 0) { // at the head
+            addFront(insertingNode);
+        } else if (pos == mySize + 1) { // at the end
+            addEnd(insertingNode);
+        } else {
+            auto temp = head;
+            for (int i = 1; i < pos; ++i) { // traverse (pos)th times to reach the desired position
+                temp = temp->next;
+            }
+            temp->next = insertingNode;
+            mySize++;
+        }
+    } catch (const std::out_of_range& e) {
+        cout << "Error: "<< e.what() << endl;
     }
 }
 
-void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
-    //For food item type
-    if (pos <= 0) {
-        addFront(foodData);
-    } else if (pos >= mySize) {
-        addEnd(foodData);
-    } else {
-        auto temp = head;
-        for (int i = 1; i < pos; ++i) {
-            temp = temp->next;
-        }
-        auto newNode = make_shared<Node>(foodData, temp->next);
-        temp->next = newNode;
-        mySize++;
-    }
-}
 
 //Delete head node, check if null for safe operation
 void LinkedList::deleteFront() {
-    if (head) {
-        head = head->next;
-        mySize--;
+    try {
+        if (!head) {
+            // not really sure about the error name
+            throw std::runtime_error("There's nothing to be deleted!");
+        } else {
+            head = head->next;
+            mySize--;
+        }
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
     }
 }
 
 void LinkedList::deleteEnd() {
-    if (head) {
-        if (!head->next) {
-            head = nullptr;
+    try {
+        if (!head) {
+            // not really sure about the error name
+            throw std::runtime_error("There's nothing to be deleted!");
         } else {
-            auto temp = head;
-            while (temp->next->next) {
-                temp = temp->next;
+            if (!head->next) { // the only node in the list
+                head = nullptr;
+            } else {
+                auto temp = head;
+                while (temp->next->next) {
+                    temp = temp->next;
+                }
+                temp->next = nullptr;
+                temp.reset();
             }
-            temp->next = nullptr;
+            mySize--;
         }
-        mySize--;
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
     }
 }
 
 void LinkedList::deletePosition(int pos) {
-    if (pos <= 0 || pos > mySize) {
-        cout << "Position out of range\n";
-        return;
-    }
+    try {
+        if (pos <= 0 || pos > mySize) {
+            throw std::out_of_range("Invalid position");
+        }
+        if (!head) {
+            // not really sure about the error name
+            throw std::runtime_error("There's nothing to be deleted!");
+        } 
+        if (pos == 1) {
+            deleteFront();
+        } else {
+            auto temp = head;
+            for (int i = 1; i < pos - 1; ++i) {
+                temp = temp->next;
+            }
+            temp->next = temp->next->next;
+            temp.reset();
+            mySize--;
+        }
 
-    if (pos == 1) {
-        deleteFront();
-        return;
+    } catch (const std::out_of_range& e) {
+        cout << "Error: "<< e.what() << endl;
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
     }
-
-    auto temp = head;
-    for (int i = 1; i < pos - 1; ++i) {
-        temp = temp->next;
-    }
-    temp->next = temp->next->next;
-    mySize--;
 }
 
 //Ultility methods
@@ -145,6 +152,7 @@ void LinkedList::printItems() {
     cout << endl;
 }
 
+<<<<<<< HEAD
 void LinkedList::printItemsBrief() {
     auto temp = head;
     while (temp) {
@@ -158,38 +166,72 @@ void LinkedList::printItemsBrief() {
 
 int LinkedList::search(int item) {
     int pos = 1;
+=======
+FoodItem LinkedList::searchFoodItemByName(std::string name) {
+>>>>>>> d9755384e1557bafc554d40eaf59c72b62619ba3
     auto temp = head;
-    while (temp) {
-        if (temp->data == item) {
-            cout << pos << "\n";
-            return pos;
+    FoodItem searchedFoodItem; // creating new object then copy the original object
+    bool found = false;
+    try {
+        while (temp && !found) {
+            if (temp->dataFood->getName() == name) {
+                searchedFoodItem = (*temp->dataFood);
+                found = true;
+            }
+            temp = temp->next;
         }
-        temp = temp->next;
-        pos++;
-    }
-    cout << "0\n";
-    return 0;
-}
-
-int LinkedList::getItem(int p) {
-    if (p < 1) {
-        cout << std::numeric_limits<int>::max() << "\n";
-        return std::numeric_limits<int>::max();
-    }
-    auto temp = head;
-    for (int pos = 1; temp && pos <= p; ++pos, temp = temp->next) {
-        if (pos == p) {
-            cout << temp->data << "\n";
-            return temp->data;
+        if (!found) {
+            throw std::runtime_error("Food Item can't be found.");
         }
-    }
-    cout << std::numeric_limits<int>::max() << "\n";
-    return std::numeric_limits<int>::max();
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
+    } 
+    return searchedFoodItem;
 }
 
 
+FoodItem LinkedList::searchFoodItemByID(std::string ID) {
+    auto temp = head;
+    FoodItem searchedFoodItem; // creating new object then copy the original object
+    bool found = false;
+    try {
+        while (temp && !found) {
+            if (temp->dataFood->getID() == ID) {
+                searchedFoodItem = (*temp->dataFood);
+                found = true;
+            }
+            temp = temp->next;
+        }
+        if (!found) {
+            throw std::runtime_error("Food Item can't be found.");
+        }
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
+    } 
+    return searchedFoodItem;
+}
+
+
+<<<<<<< HEAD
 int LinkedList::getSize() {
     return mySize;
 }
+=======
+// int LinkedList::getItem(int p) {
+//     if (p < 1) {
+//         cout << std::numeric_limits<int>::max() << "\n";
+//         return std::numeric_limits<int>::max();
+//     }
+//     auto temp = head;
+//     for (int pos = 1; temp && pos <= p; ++pos, temp = temp->next) {
+//         if (pos == p) {
+//             cout << temp->dataFood << "\n";
+//             return temp->dataFood;
+//         }
+//     }
+//     cout << std::numeric_limits<int>::max() << "\n";
+//     return std::numeric_limits<int>::max();
+// }
+>>>>>>> d9755384e1557bafc554d40eaf59c72b62619ba3
 
 // shared_ptr<Node> LinkedList::getItem(int p);
