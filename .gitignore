@@ -8,4 +8,8 @@ Helper.o
 *.exe
 .env.local
 Helper.o
+<<<<<<< HEAD
 .nfs00000000941d805b00000253
+=======
+ftt
+>>>>>>> f834ac4f64463c5d79c478b8d7c8e49e262091eb
