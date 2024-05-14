@@ -1,6 +1,8 @@
 #ifndef COIN_H
 #define COIN_H
 
+#include "LinkedList.h"
+
 // Coin.h defines the coin structure for managing currency in the system. 
 #define COIN_DELIM ","  // delimiter
 
@@ -39,6 +41,7 @@ public:
     void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance);
     void displayBalance(vector<Coin>& currentBalance);
     int convertDenomtoInt(Denomination denom);
+    bool isMoneyValidforPurchase(unsigned int input);
 };
 
 #endif // COIN_H
