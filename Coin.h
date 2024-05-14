@@ -11,8 +11,16 @@
 // enumeration representing the various types of currency available in the system. 
 enum Denomination
 {
-    FIVE_CENTS, TEN_CENTS, TWENTY_CENTS, FIFTY_CENTS, ONE_DOLLAR, 
-    TWO_DOLLARS, FIVE_DOLLARS, TEN_DOLLARS, TWENTY_DOLLARS, FIFTY_DOLLARS
+    FIVE_CENTS = 5, 
+    TEN_CENTS = 10, 
+    TWENTY_CENTS = 20, 
+    FIFTY_CENTS = 50, 
+    ONE_DOLLAR = 100, 
+    TWO_DOLLARS = 200, 
+    FIVE_DOLLARS = 500, 
+    TEN_DOLLARS = 1000, 
+    TWENTY_DOLLARS = 2000, 
+    FIFTY_DOLLARS = 5000
 };
 
 
@@ -39,8 +47,8 @@ public:
     // returns the string representation of the coin
     void printInfo();
     bool isMoneyValidforPurchase(unsigned int input);
-    void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance);
-    void displayBalance(vector<Coin>& currentBalance);
+    void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> currentBalance);
+    void displayBalance(std::vector<Coin>& currentBalance);
     int convertDenomtoInt(Denomination denom);
     
 };
