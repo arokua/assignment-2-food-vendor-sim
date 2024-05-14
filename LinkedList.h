@@ -32,6 +32,7 @@ public:
     int search(int item);
     //Get item, 1-based indexing
     int getItem(int p);
+    int getSize(); // Return size of the linked list
     // shared_ptr<Node> getItem(int p);
 
 private:
