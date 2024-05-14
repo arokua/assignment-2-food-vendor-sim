@@ -1,6 +1,7 @@
 #include "Coin.h"
-#include "LinkedList.h"
 #include <iostream>
+
+#include "LinkedList.h"
 
 Coin::Coin(Denomination denom, unsigned count) {
     this->denom = denom;
@@ -23,7 +24,23 @@ void Coin::setCount(unsigned count) {
     this->count = count;
 }
 
-void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance) {
+
+
+bool isMoneyValidforPurchase(unsigned int input){
+    return input == Denomination::FIVE_CENTS || 
+           input == Denomination::TEN_CENTS || 
+           input == Denomination::TWENTY_CENTS || 
+           input == Denomination::FIFTY_CENTS || 
+           input == Denomination::ONE_DOLLAR || 
+           input == Denomination::TWO_DOLLARS || 
+           input == Denomination::FIVE_DOLLARS || 
+           input == Denomination::TEN_DOLLARS || 
+           input == Denomination::TWENTY_DOLLARS || 
+           input == Denomination::FIFTY_DOLLARS;
+}
+
+
+void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> currentBalance) {
     // search and create a pointer to the object
     std::shared_ptr<FoodItem> chosenFoodItem = std::make_shared<FoodItem>(list.searchFoodItemByID(foodItemID));
     bool done = false;
@@ -98,16 +115,10 @@ void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> current
 }
 
 
-bool isMoneyValidforPurchase(unsigned int input){
-    bool valid = false;
-    if (input == 5 || input == 10 || input == 20 || input == 50 || input == 100 || input == 200 || input == 500 || input == 1000 || input == 2000 || input == 5000){
-        valid = true;
-    }
-    return valid;
-}
 
 
-void displayBalance(vector<Coin>& currentBalance) {
+
+void displayBalance(std::vector<Coin>& currentBalance) {
 
 }
 

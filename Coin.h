@@ -38,10 +38,11 @@ public:
 
     // returns the string representation of the coin
     void printInfo();
+    bool isMoneyValidforPurchase(unsigned int input);
     void purchaseMeal(std::string foodItemID, LinkedList& list, vector<Coin> currentBalance);
     void displayBalance(vector<Coin>& currentBalance);
     int convertDenomtoInt(Denomination denom);
-    bool isMoneyValidforPurchase(unsigned int input);
+    
 };
 
 #endif // COIN_H
