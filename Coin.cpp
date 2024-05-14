@@ -1,7 +1,7 @@
 #include "Coin.h"
-#include <iostream>
-
 #include "LinkedList.h"
+
+#include <iostream>
 
 Coin::Coin(Denomination denom, unsigned count) {
     this->denom = denom;
