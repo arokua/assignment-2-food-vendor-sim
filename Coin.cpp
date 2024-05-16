@@ -1,5 +1,6 @@
 #include "Coin.h"
 #include "LinkedList.h"
+#include "Helper.h"
 
 #include <iostream>
 
@@ -7,6 +8,9 @@ Coin::Coin(Denomination denom, unsigned count) {
     this->denom = denom;
     this->count = count;
 }
+
+Coin::Coin() :
+    denom(Denomination::FIVE_CENTS), count(0) {}
 
 void Coin::printInfo(){
     std::cout << denom << "," << count << std::endl;
@@ -26,7 +30,11 @@ void Coin::setCount(unsigned count) {
 
 
 
-bool isMoneyValidforPurchase(unsigned int input){
+bool Coin::isMoneyValidforPurchase(unsigned int input){
+    /***
+    * @brief Function to check if the input is a valid denomination for purchase
+    * Since user are not allowed to input a combination of note/coins ie 300 (200 + 100)
+    ***/
     return input == Denomination::FIVE_CENTS || 
            input == Denomination::TEN_CENTS || 
            input == Denomination::TWENTY_CENTS || 
@@ -40,19 +48,26 @@ bool isMoneyValidforPurchase(unsigned int input){
 }
 
 
-void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> currentBalance) {
+void Coin::purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<std::shared_ptr<Coin>> cashRegister, unsigned int currentPayment) {
+    /***
+    * @brief Purchasing meal function that finds the FoodItem based on ID and will return change
+    * to users after several procedure steps
+    * @param foodItemID The ID of the food
+    * @param list Linkedlist containing the Food Items
+    * @param currentBalance The shop's current coin/node vector
+    * @param currentPayment records user's current FoodItem/Payment (not yet finalised) 
+    ***/
+
     // search and create a pointer to the object
     std::shared_ptr<FoodItem> chosenFoodItem = std::make_shared<FoodItem>(list.searchFoodItemByID(foodItemID));
     bool done = false;
 
     try {
-        if (chosenFoodItem->getOnHand() <= 0) {
-            throw std::logic_error("Sorry, this item is currently out of stock!");
+        // checking for stock
+        if (chosenFoodItem->getOnHand() <= 0) { 
+            throw std::invalid_argument("Sorry, this item is currently out of stock!");
         }
-        unsigned int inputValue = 0; // used to hold current input by the user
-        std::vector<unsigned> currentPayment; // used to hold the history of input by the user
-                                              // could change to Coin object if needed
-
+        unsigned int inputValue = 0; // used to hold current int input by the user
 
         std::cout << "You have selected \"" << chosenFoodItem->getName() << " - " 
                   << chosenFoodItem->getDesc() << "\"." << "This will cost you $"
@@ -60,27 +75,34 @@ void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> cu
         std::cout << "Please hand over the money - type in the value of each note/coin in cents.\n"
                   << "Please enter ctrl-D or enter on a new line to cancel this purchase." << endl;
         
+        double currentBalance = (chosenFoodItem->getPrice() - inputValue) / 100.0;
         while (!done) {
             std::string line; // only used for checking empty line
             
-            double currentPrice = (chosenFoodItem->getPrice() / 100.0) - (inputValue / 100.0);
-            std::cout << "You still need to give us $" << currentPrice << ": ";
-            std::cin >> inputValue >> line;
+
+            std::cout << "You still need to give us $" << currentBalance << ": ";
+            getline(std::cin, line);
+            inputValue = std::stoi(line);
             
-            // check for ctrl + D or empty line
+            // check for ctrl+D or empty line -> exiting the function
             if (std::cin.eof() || line.empty()) { 
                 std::cout << "Cancelling purchase." << std::endl;
                 done = true;
-                currentPayment.clear();
+                // currentPayment.clear();
             } 
-            
-            // check for invalid input
-            else if (std::cin.fail()) { 
-                std::cin.clear(); // clear the error state
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore the rest of the line
-                std::cout << "Invalid input. Please enter a value similar to the following example:"
-                          << " 850 (8 dollars and 50 cents)" << std::endl;
-            } 
+
+            // CURRENT ERROR
+            // when inputting double, it's taking 2 lines instead of 1
+            // when convert purchaseMeal and isMoneyValid... to static function
+            // memory leak or std::"bad_alloc" error appears
+            // 
+
+
+
+            // check if user's input is a float/double
+            if (line.find('.') != std::string::npos) {
+                throw std::invalid_argument("Please enter a value similar to the following example: 850 (8 dollars and 50 cents)");
+            }
             
             // correct input format
             else {
@@ -90,14 +112,25 @@ void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> cu
                 }
 
                 // Insufficient amount of money -> skip
-                if ((inputValue / 100.0) < currentPrice) {
-                    currentPayment.push_back(inputValue);
+                if ((inputValue / 100.0) < currentBalance) {
+                    currentBalance -= inputValue / 100.0;
+                    // currentPayment.push_back(inputValue);
                 }
 
-                else if ((inputValue / 100.0) >= currentPrice) {
+                else if ((inputValue / 100.0) >= currentBalance) {
                     // change making algo comes in here
                     // the change will be (inputValue (ie 500) / 100.0)) - currentPrice (ie 1.50)
                     // = 3.50 == 2$ 1$ 50cents
+                    std::vector<int> coins(cashRegister.size() + 1);
+                    for (long unsigned int i = 0; i < cashRegister.size(); ++i) {
+                        coins[i] = cashRegister[i]->getDenom();
+                    }
+                    std::vector<int> counts(cashRegister.size() + 1);
+                    for (long unsigned int i = 0; i < cashRegister.size(); ++i) {
+                        counts[i] = cashRegister[i]->getCount();
+                    }
+                    Helper::change_making(coins, counts, static_cast<int>(inputValue - (currentBalance * 100)));
+                    done = true;
                 }
             }
         }
@@ -106,11 +139,22 @@ void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> cu
 
 
         
-    } catch (const std::logic_error& e) {
-        cout << e.what() << endl;
-    } catch (const std::runtime_error& e) {
+    } 
+    catch (const std::runtime_error& e) { // invalid note/coin
         cout << "Error: " << e.what() << endl;
     } 
+    catch (const std::invalid_argument& e) { // handling non-int string conversion
+        std::cin.clear(); // clear the error state
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // ignore the rest of the line
+        if (std::string(e.what()).empty()) {
+            std::cout << "Invalid input. Please enter a valid number" << std::endl;
+        } else {
+            std::cout << e.what() << std::endl;
+        }
+    } 
+    catch (const std::out_of_range& e) { // handling out of int value range conversion
+        std::cout << "Input is out of range. Please enter a smaller number." << std::endl;
+    }
     
 }
 
@@ -118,38 +162,8 @@ void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> cu
 
 
 
-void displayBalance(std::vector<Coin>& currentBalance) {
+void Coin::displayBalance(std::vector<Coin>& currentBalance) {
 
-}
-
-
-// a very linear way to convert (can be changed later)
-// should take (Coin)->getDenom(); as parameter
-int convertDenomtoInt(Denomination denom) {
-    int convertedVal = 0;
-
-    if (denom == Denomination::FIVE_CENTS){
-        convertedVal = 5;
-    } else if (denom == Denomination::TEN_CENTS){
-        convertedVal = 10;
-    } else if (denom == Denomination::TWENTY_CENTS){
-        convertedVal = 20;
-    } else if (denom == Denomination::FIFTY_CENTS){
-        convertedVal = 50;
-    } else if (denom == Denomination::ONE_DOLLAR){
-        convertedVal = 100;
-    } else if (denom == Denomination::TWO_DOLLARS){
-        convertedVal = 200;
-    } else if (denom == Denomination::FIVE_DOLLARS){
-        convertedVal = 500;
-    } else if (denom == Denomination::TEN_DOLLARS){
-        convertedVal = 1000;
-    } else if (denom == Denomination::TWENTY_DOLLARS){
-        convertedVal = 2000;
-    } else if (denom == Denomination::FIFTY_DOLLARS){
-        convertedVal = 5000;
-    } 
-    return convertedVal;
 }
 
 

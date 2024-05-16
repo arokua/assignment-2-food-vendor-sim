@@ -1,6 +1,8 @@
 #ifndef COIN_H
 #define COIN_H
 
+#include <string>
+
 #include "LinkedList.h"
 
 // Coin.h defines the coin structure for managing currency in the system. 
@@ -37,6 +39,7 @@ public:
 
     // constructor + destructor
     Coin(Denomination denom, unsigned count);
+    Coin();
     ~Coin();
 
     // Getters & Setters
@@ -47,9 +50,8 @@ public:
     // returns the string representation of the coin
     void printInfo();
     bool isMoneyValidforPurchase(unsigned int input);
-    void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<Coin> currentBalance);
+    void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<std::shared_ptr<Coin>> cashRegister, unsigned int currentPayment);
     void displayBalance(std::vector<Coin>& currentBalance);
-    int convertDenomtoInt(Denomination denom);
     
 };
 
