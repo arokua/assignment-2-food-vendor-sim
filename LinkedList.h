@@ -1,10 +1,13 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
-#include "Node.h"
+
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <limits>
+#include <map>
+
+#include "Node.h"
 
 using std::vector;
 using std::shared_ptr;
@@ -19,7 +22,7 @@ public:
     ~LinkedList();
 
     // initializing the linked list with the FoodItem Vector
-    LinkedList(vector<std::shared_ptr<FoodItem>>& foodItemvector);
+    LinkedList(std::map<std::string, std::shared_ptr<FoodItem>>& foodsMap);
 
     // void addFront(int data);
     void addFront(shared_ptr<Node>& insertingNode);

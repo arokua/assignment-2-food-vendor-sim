@@ -13,6 +13,7 @@
 #include "Node.h"
 #include "LinkedList.h"
 #include "Helper.h"
+#include "Coin.h"
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -37,7 +38,7 @@ bool isFoodFileValid(std::fstream& fileStream);
 bool isCoinFileValid(std::fstream& fileStream);
 
 
-std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName);
+std::map<std::string ,std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName);
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 
 
@@ -149,11 +150,17 @@ int main(int argc, char ** argv){
 
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
 
-    if (coinVector[0]->getDenom() == Denomination::FIFTY_DOLLARS) {
-        cout << "Fifty dollars" << endl;
-    } else {
-        cout << "Wrong" << endl;
-    }
+    std::map<std::string, std::shared_ptr<FoodItem>> objectVector = readFoodDataFile(argv[1]);
+
+    LinkedList* list = new LinkedList(objectVector);
+    
+    cout << endl;
+
+    list->printItems();
+
+    Coin* coin = new Coin();
+
+    coin->purchaseMeal("F0001", *list, coinVector, 8);
 
     return EXIT_SUCCESS;
     
@@ -231,10 +238,10 @@ int main(int argc, char ** argv){
 
 // Assuming each data input are unique
 
-std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName){
+std::map<std::string ,std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileName){
     std::string line;
     std::fstream openfile(fileName);
-    std::vector<std::shared_ptr<FoodItem>> objectVector;
+    std::map<std::string ,std::shared_ptr<FoodItem>> foodsMap;
 
     try {
         if (!isFoodFileValid(openfile)) {
@@ -251,7 +258,8 @@ std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileN
 
                 // new Object for each FoodItem
                 std::shared_ptr<FoodItem> newObject = std::make_shared<FoodItem>(dataVector[0], dataVector[1], dataVector[2], std::stod(dataVector[3]) * 100);
-                objectVector.push_back(newObject);
+
+                foodsMap[dataVector[1]] = newObject;
                 dataVector.clear();
             }
             openfile.close();
@@ -266,12 +274,13 @@ std::vector<std::shared_ptr<FoodItem>> readFoodDataFile(const std::string& fileN
     }
     
     // printing out FoodItem
-    // for (size_t i = 0; i < objectVector.size(); i++) {
-    //     objectVector[i]->printInfo();
-    // }
+    for (auto& pair : foodsMap) {
+        cout << pair.first << endl;
+        pair.second->printInfo();
+    }
 
     // return a vector containing shared_ptr pointing to each Object
-    return objectVector;
+    return foodsMap;
 }
 
 
@@ -347,9 +356,9 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
     }
     
     // printing out Coin
-    // for (size_t i = 0; i < coinVector.size(); i++) {
-    //     coinVector[i]->printInfo();
-    // }
+    for (size_t i = 0; i < coinVector.size(); i++) {
+        coinVector[i]->printInfo();
+    }
 
     // return a vector containing shared_ptr pointing to each Object
     return coinVector;
