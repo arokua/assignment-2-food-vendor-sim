@@ -6,13 +6,14 @@ using std::cout;
 using std::endl;
 
 FoodItem::FoodItem(){
-    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
     id="FXXXX";
     name="Name";
     description="DESC";
+    price=0.0;
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
-FoodItem::FoodItem(string ID,string Name,string desc,unsigned int P) {
+FoodItem::FoodItem(string ID,string Name,string desc,double P) {
     this->id=ID;
     this->name=Name;
     this->description=desc;
@@ -73,7 +74,7 @@ std::string FoodItem::getID(){
 std::string FoodItem::getDesc(){
     return description;
 }
-unsigned int FoodItem::getPrice(){
+double FoodItem::getPrice(){
     return price;
 }
 unsigned int FoodItem::getOnHand(){

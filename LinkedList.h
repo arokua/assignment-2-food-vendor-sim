@@ -22,7 +22,7 @@ public:
     ~LinkedList();
 
     // initializing the linked list with the FoodItem Vector
-    LinkedList(std::map<std::string, std::shared_ptr<FoodItem>>& foodsMap);
+    LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap);
 
     // void addFront(int data);
     void addFront(shared_ptr<Node>& insertingNode);
@@ -42,8 +42,8 @@ public:
     //Get item, 1-based indexing
     int getItem(int p);
     // shared_ptr<Node> getItem(int p);
-    FoodItem searchFoodItemByName(std::string name);
-    FoodItem searchFoodItemByID(std::string ID);
+    std::shared_ptr<FoodItem> searchFoodItemByName(std::string name);
+    std::shared_ptr<FoodItem> searchFoodItemByID(std::string ID);
 
 private:
     shared_ptr<Node> head;

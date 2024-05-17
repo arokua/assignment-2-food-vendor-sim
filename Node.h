@@ -17,9 +17,6 @@
 //The possible default food stock level that all new stock should start at and that we should reset to on restock
 #define DEFAULT_FOOD_STOCK_LEVEL 20
 
-//The number of denominations of currency available in the system 
-#define NUM_DENOMS 10
-
 #define FOODITEM_DELIM "|"  // delimiter 
 
 #define FOODITEM_ARGC 4
@@ -41,7 +38,7 @@ public:
     std::string description;
     
     //the price of this food item (base value is 1 cent)
-    unsigned int price;
+    double price;
     
     // how many of this food item do we have on hand? 
     unsigned on_hand; 
@@ -49,13 +46,13 @@ public:
     //Default constructor
     FoodItem();
     //Initialize with value
-    FoodItem(std::string id, std::string name, std::string desc, unsigned price);
+    FoodItem(std::string id, std::string name, std::string desc, double price);
 
     // Getter & Setter
     std::string getID();
     std::string getName();
     std::string getDesc();
-    unsigned int getPrice();
+    double getPrice();
     unsigned int getOnHand();
 
     // Functions

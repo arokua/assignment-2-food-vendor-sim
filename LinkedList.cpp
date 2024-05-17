@@ -3,7 +3,7 @@
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
 // new Linked List via FoodItem vector
-LinkedList::LinkedList(std::map<std::string, std::shared_ptr<FoodItem>>& foodsMap){
+LinkedList::LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap){
     // a vector containing shared_ptr points to the object
     // for (long unsigned int i = 0; i < foodItemvector.size(); i++) {
     //     // for each pointer in the vector, create a new Node pointer
@@ -12,8 +12,7 @@ LinkedList::LinkedList(std::map<std::string, std::shared_ptr<FoodItem>>& foodsMa
         
     // }
     for (auto& pair : foodsMap) {
-        std::shared_ptr<Node> newNode = std::make_shared<Node>(pair.second);
-        addEnd(newNode);
+        addEnd(pair.second);
     }
     
 }
@@ -159,14 +158,14 @@ void LinkedList::printItems() {
     cout << endl;
 }
 
-FoodItem LinkedList::searchFoodItemByName(std::string name) {
-    auto temp = head;
-    FoodItem searchedFoodItem; // creating new object then copy the original object
+std::shared_ptr<FoodItem> LinkedList::searchFoodItemByName(std::string name) {
+    auto& temp = head;
+    std::shared_ptr<FoodItem> searchedFoodItem = nullptr; 
     bool found = false;
     try {
         while (temp && !found) {
             if (temp->dataFood->getName() == name) {
-                searchedFoodItem = (*temp->dataFood);
+                searchedFoodItem = temp->dataFood;
                 found = true;
             }
             temp = temp->next;
@@ -181,14 +180,14 @@ FoodItem LinkedList::searchFoodItemByName(std::string name) {
 }
 
 
-FoodItem LinkedList::searchFoodItemByID(std::string ID) {
-    auto temp = head;
-    FoodItem searchedFoodItem; // creating new object then copy the original object
+std::shared_ptr<FoodItem> LinkedList::searchFoodItemByID(std::string ID) {
+    auto& temp = head;
+    std::shared_ptr<FoodItem> searchedFoodItem = nullptr;
     bool found = false;
     try {
         while (temp && !found) {
             if (temp->dataFood->getID() == ID) {
-                searchedFoodItem = (*temp->dataFood);
+                searchedFoodItem = temp->dataFood; // assign to the empty ptr
                 found = true;
             }
             temp = temp->next;
@@ -201,22 +200,3 @@ FoodItem LinkedList::searchFoodItemByID(std::string ID) {
     } 
     return searchedFoodItem;
 }
-
-
-// int LinkedList::getItem(int p) {
-//     if (p < 1) {
-//         cout << std::numeric_limits<int>::max() << "\n";
-//         return std::numeric_limits<int>::max();
-//     }
-//     auto temp = head;
-//     for (int pos = 1; temp && pos <= p; ++pos, temp = temp->next) {
-//         if (pos == p) {
-//             cout << temp->dataFood << "\n";
-//             return temp->dataFood;
-//         }
-//     }
-//     cout << std::numeric_limits<int>::max() << "\n";
-//     return std::numeric_limits<int>::max();
-// }
-
-// shared_ptr<Node> LinkedList::getItem(int p);

@@ -9,6 +9,9 @@
 // Coin.h defines the coin structure for managing currency in the system. 
 #define COIN_DELIM ","  // delimiter
 
+//The number of denominations of currency available in the system 
+#define COINS_DENOMS 10
+
 #define COIN_ARGC 2 // Coin data arguments count
 
 // enumeration representing the various types of currency available in the system. 
@@ -40,7 +43,6 @@ public:
 
     // constructor + destructor
     Coin(Denomination denom, unsigned count);
-    Coin();
     ~Coin();
 
     // Getters & Setters
@@ -51,10 +53,10 @@ public:
     // returns the string representation of the coin
     void printInfo();
     static bool isMoneyValidforPurchase(unsigned int input);
-    static bool purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<std::shared_ptr<Coin>> cashRegister, std::vector<int> currentPayment = {});
-    void displayBalance(std::vector<Coin>& currentBalance);
+    static bool purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& cashRegister, std::vector<int> currentPayment = {});
+
     static void updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment = {}, std::vector<Coin> usedCoinVector = {});
     static int change_making(vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount);
 };
 
-#endif // COIN_H
+#endif //COIN_H

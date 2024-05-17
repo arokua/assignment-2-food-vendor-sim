@@ -2,3 +2,4 @@
 *.exe
 .env.local
 ftt
+Helper.o
