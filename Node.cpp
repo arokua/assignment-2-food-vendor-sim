@@ -54,6 +54,7 @@ void FoodItem::printInfo(){
     }
 }
 
+// bruh what is this
 void FoodItem::printInfoBrief() {
         if (id!=""){
             cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
