@@ -5,6 +5,7 @@
 
 #include "LinkedList.h"
 
+
 // Coin.h defines the coin structure for managing currency in the system. 
 #define COIN_DELIM ","  // delimiter
 
@@ -49,10 +50,11 @@ public:
 
     // returns the string representation of the coin
     void printInfo();
-    bool isMoneyValidforPurchase(unsigned int input);
-    void purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<std::shared_ptr<Coin>> cashRegister, unsigned int currentPayment);
+    static bool isMoneyValidforPurchase(unsigned int input);
+    static bool purchaseMeal(std::string foodItemID, LinkedList& list, std::vector<std::shared_ptr<Coin>> cashRegister, std::vector<int> currentPayment = {});
     void displayBalance(std::vector<Coin>& currentBalance);
-    
+    static void updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment = {}, std::vector<Coin> usedCoinVector = {});
+    static int change_making(vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount);
 };
 
 #endif // COIN_H

@@ -1,8 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
+
 #include <string> 
 #include <memory> 
-#include "Coin.h"
 
 
 //The length of the id string not counting the nul terminator
@@ -13,9 +13,6 @@
 
 //The maximum length of a food item description not counting the nul terminator.
 #define DESCLEN 255
-
-//The default coin level to reset the coins to on request
-#define DEFAULT_COIN_COUNT 20
 
 //The possible default food stock level that all new stock should start at and that we should reset to on restock
 #define DEFAULT_FOOD_STOCK_LEVEL 20
