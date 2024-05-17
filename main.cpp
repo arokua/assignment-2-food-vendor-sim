@@ -305,7 +305,6 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
 }
 
 
-// REMEMBER TO CHECK FOR WHITESPACE
 // since there's a fileReader function, this verification only needs to pass in the reference file
 bool isFoodFileValid(std::fstream& fileStream) {
         bool success = false;
