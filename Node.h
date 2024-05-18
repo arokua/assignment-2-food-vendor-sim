@@ -32,6 +32,9 @@ class FoodItem
 public:
     //the unique id for this food item
     std::string id;
+    //Pointers to now the next and previous data in the list
+    std::shared_ptr<FoodItem> nextFood;
+    std::shared_ptr<FoodItem> previousFood;
 
     //the name of this food item
     std::string name;

@@ -9,7 +9,7 @@ Node::Node() : next(nullptr) {
 
 }
 
-FoodItem::FoodItem(){
+FoodItem::FoodItem():nextFood(nullptr),previousFood(nullptr){
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
     id="FXXXX";
     name="Name";
@@ -18,7 +18,6 @@ FoodItem::FoodItem(){
 }
 
 FoodItem::FoodItem(string ID,string name,string desc,double P) :id(ID),name(name),description(desc),price(P) {
-    std::cout<<"Gotten food name:\t"+name<<std::endl;
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
@@ -42,11 +41,7 @@ Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {
 }
 
 
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : next(next) {
-    if (foodData != nullptr) {
-    dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
-  }
-}
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : dataFood(foodData),next(next) {}
 
 void FoodItem::printInfo(){
     if (id!=""){

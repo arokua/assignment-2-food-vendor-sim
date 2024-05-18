@@ -1,4 +1,5 @@
 #include "LinkedList.h"
+#include "Helper.h"
 
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
@@ -13,13 +14,18 @@ LinkedList::~LinkedList() {
 }
 
 void LinkedList::addFront(int data) {
-    head = make_shared<Node>(data, head);
+    //Int data, for demo
+    auto newNode = make_shared<Node>(data);
+    newNode->next = head;
+    head = newNode;
     mySize++;
 }
 
 void LinkedList::addFront( shared_ptr<FoodItem>& foodData) {
-    //For food item type
-    head = make_shared<Node>(foodData, head);
+    //Food data for vendor
+    auto newNode = make_shared<Node>(foodData);
+    newNode->next = head;
+    head = newNode;
     mySize++;
 }
 
@@ -72,6 +78,32 @@ void LinkedList::addAtPosition(int pos, int data) {
         temp->next = newNode;
         mySize++;
     }
+}
+
+shared_ptr<Node> LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap) {
+    // Create a new node for the food data
+    auto newNode = make_shared<Node>(newFoodData,nullptr);
+    Helper helperObject;
+    string previousId="";
+    int position = 0;
+    for (const auto&k: refMap) {
+        if (!helperObject.strSmaller(newFoodData->name, k.second->dataFood->name)) {
+            cout <<"Break here: "<<k.first<<"\n";
+            break;
+        }
+        else previousId=k.first;
+        position++;
+    }
+
+    // Insert the new node at the correct position
+    cout << position <<"\n";
+    addAtPosition(position, newNode->dataFood);
+
+    // Update the reference map
+    refMap[newFoodData->name] = newNode;
+    newNode->dataFood->previousFood=refMap[previousId]->dataFood;
+
+    return newNode;
 }
 
 void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
@@ -145,7 +177,7 @@ void LinkedList::printItems() {
     cout << endl;
 }
 
-int LinkedList::search(int item) {
+int LinkedList::search(int item,shared_ptr<FoodItem>& foodData) {
     int pos = 1;
     auto temp = head;
     while (temp) {

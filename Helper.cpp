@@ -31,7 +31,7 @@ int Helper::change_making(vector<int>& coins, vector<int>& counts, int n) {
     // Check if a solution exists
     if (m[n] == numeric_limits<int>::max() || m[n] == numeric_limits<int>::min()) {
         cout << "Not possible to do transaction" << endl;
-        return -1;
+        return 0;
     }   
 
     // Compute the count of each coin used
@@ -61,7 +61,7 @@ int Helper::change_making(vector<int>& coins, vector<int>& counts, int n) {
         }
     }
     
-    return 0;
+    return 1;
 }
 
 vector<string> Helper::takeInput(int nNodes=0){
@@ -139,4 +139,21 @@ bool Helper::isNumber(string number) {
         checkingNumber = false;
     }
     return isNumber;
+}
+
+bool Helper::strSmaller(string AA, string B){
+    size_t lenA = AA.length();
+    size_t lenB = B.length();
+    size_t minLength = std::min(lenA, lenB);
+
+    for (size_t i = 0; i < minLength; ++i) {
+        if (AA[i] < B[i]) {
+            return true;
+        } else if (AA[i] > B[i]) {
+            return false;
+        }
+    }
+
+    // If all characters are equal, the shorter string is lexicographically smaller
+    return lenA < lenB;
 }

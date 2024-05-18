@@ -35,6 +35,8 @@ public:
             cout << item << endl;
         }
     }
+    bool strSmaller(string AA, string B);//Compare if string A is lexographically smaller than string B, not
+    //counting the length
     
     //Splits a string into a vector
     static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
