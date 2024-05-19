@@ -21,47 +21,43 @@ void LinkedList::addFront(int data) {
     mySize++;
 }
 
-void LinkedList::addFront( shared_ptr<FoodItem>& foodData) {
+void LinkedList::addFront(shared_ptr<FoodItem>& foodData) {
     //Food data for vendor
-    auto newNode = make_shared<Node>(foodData);
-    newNode->next = head;
+    auto newNode = make_shared<Node>(foodData, nullptr, nullptr);
+    if (head) {
+        head->prev = newNode;
+        newNode->next = head;
+    }
     head = newNode;
     mySize++;
 }
 
 void LinkedList::addEnd(int data) {
-    auto newNode = make_shared<Node>(data);
+    auto newNode = make_shared<Node>(data, nullptr);
     if (!head) {
         head = newNode;
+        tail = newNode;
     } else {
-        auto temp = head;
-        while (temp->next) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
     }
     mySize++;
 }
 
-shared_ptr<Node> LinkedList::addEnd( shared_ptr<FoodItem>& foodData) {
+shared_ptr<Node> LinkedList::addEnd(shared_ptr<FoodItem>& foodData) {
     //For food item type, return the newly added node
-    auto newNode = make_shared<Node>(foodData);
-    // cout << newNode<<"\n"; for debug
+    auto newNode = make_shared<Node>(foodData, nullptr, nullptr);
     if (!head) {
         head = newNode;
+        tail = newNode;
     } else {
-        auto temp = head;
-        while (temp->next) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
     }
-    // for debug
-    // cout << "Added food:\n\t";
-    // (*foodData).printInfo();
     mySize++;
     return newNode;
-    
 }
 
 void LinkedList::addAtPosition(int pos, int data) {
@@ -80,29 +76,34 @@ void LinkedList::addAtPosition(int pos, int data) {
     }
 }
 
-shared_ptr<Node> LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap) {
+ shared_ptr<Node> LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap) {
     // Create a new node for the food data
-    auto newNode = make_shared<Node>(newFoodData,nullptr);
-    Helper helperObject;
-    string previousId="";
-    int position = 0;
-    for (const auto&k: refMap) {
-        if (!helperObject.strSmaller(newFoodData->name, k.second->dataFood->name)) {
-            cout <<"Break here: "<<k.first<<"\n";
-            break;
-        }
-        else previousId=k.first;
-        position++;
+    auto newNode = make_shared<Node>(newFoodData);
+
+    if (!head || Helper::strSmaller(newFoodData->name, head->dataFood->name)) {
+        addFront(newFoodData);
+        refMap[newFoodData->name] = head;
+        return head;
     }
 
-    // Insert the new node at the correct position
-    cout << position <<"\n";
-    addAtPosition(position, newNode->dataFood);
+    auto prevNode = head;
+    while (prevNode->next && Helper::strSmaller(prevNode->next->dataFood->name, newFoodData->name)) {
+        prevNode = prevNode->next;
+    }
 
-    // Update the reference map
+    newNode->next = prevNode->next;
+    if (prevNode->next) {
+        prevNode->next->prev = newNode;
+    }
+    prevNode->next = newNode;
+    newNode->prev = prevNode;
+
+    if (!newNode->next) {
+        tail = newNode;
+    }
+
     refMap[newFoodData->name] = newNode;
-    newNode->dataFood->previousFood=refMap[previousId]->dataFood;
-
+    mySize++;
     return newNode;
 }
 
@@ -191,6 +192,40 @@ int LinkedList::search(int item,shared_ptr<FoodItem>& foodData) {
     cout << "0\n";
     return 0;
 }
+
+// void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap) {
+//     // Find the node corresponding to the foodID
+//     auto it = refMap.find(foodID);
+//     if (it == refMap.end()) {
+//         cout << "Food item with ID " << foodID << " not found." << endl;
+//         return;
+//     }
+
+//     shared_ptr<Node> nodeToDelete = it->second;
+
+//     // Update the next and previous pointers of adjacent nodes
+//     if (nodeToDelete->dataFood->previousFood) {
+//         nodeToDelete->dataFood->previousFood->nextFood = nodeToDelete->dataFood->nextFood;
+//     } else {
+//         // If the node being deleted is the head, update the head pointer
+//         head = nodeToDelete->dataFood->nextFood;
+//     }
+
+//     if (nodeToDelete->dataFood->nextFood) {
+//         nodeToDelete->dataFood->nextFood->previousFood = nodeToDelete->dataFood->previousFood;
+//     } else {
+//         // If the node being deleted is the tail, update the tail pointer
+//         tail = nodeToDelete->dataFood->previousFood;
+//     }
+
+//     // Remove the node from the refMap
+//     refMap.erase(it);
+
+//     // Decrement the size
+//     mySize--;
+
+//     cout << "Food item with ID " << foodID << " has been removed from the system." << endl;
+// }
 
 int LinkedList::getItem(int p) {
     if (p < 1) {

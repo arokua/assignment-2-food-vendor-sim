@@ -35,11 +35,11 @@ public:
             cout << item << endl;
         }
     }
-    bool strSmaller(string AA, string B);//Compare if string A is lexographically smaller than string B, not
+    static bool strSmaller(string &AA, string& B);//Compare if string A is lexographically smaller than string B, not
     //counting the length
     
     //Splits a string into a vector
-    static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
+    static void splitString(string s, vector<std::string>& tokens, string delimeter);
 
     //Checks if a string is completely numeric
     static bool isNumber(std::string number);

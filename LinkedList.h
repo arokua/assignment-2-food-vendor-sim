@@ -34,6 +34,7 @@ public:
     void deleteFront();
     void deleteEnd();
     void deletePosition(int pos);
+    void deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap); //Delete a node by food item id
     void printItems();
     int search(int item, shared_ptr<FoodItem>& foodData); //return index of item
     //Get item, 1-based indexing
@@ -45,6 +46,7 @@ public:
 
 private:
     shared_ptr<Node> head;
+    shared_ptr<Node> tail;
     int mySize;
 };
 

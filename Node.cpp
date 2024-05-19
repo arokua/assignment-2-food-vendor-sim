@@ -41,7 +41,8 @@ Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {
 }
 
 
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : dataFood(foodData),next(next) {}
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
+ dataFood(foodData),next(next),prev(prev) {}
 
 void FoodItem::printInfo(){
     if (id!=""){

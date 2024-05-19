@@ -31,8 +31,11 @@ using std::ostream;
 #define twentyCents 20
 #define totalDenomsTypes 10
 #define definedDenoms 3
+#define decimalMax 9 // value of maximum single digit in decimal base
 //Formating for balance output printing
 #define significant_figures 2
+#define numeroUno 1 //Number one, for no magic number
+#define maxFoodID "F9999" //Maximum avaliable food id
 
 //demo run for a linked list of simple node type(containg only integers)
 void LinkedListDemo(int argc); 
@@ -46,11 +49,38 @@ bool verifyFoodFile(char ** argv,LinkedList& foodList, map<string,shared_ptr<Nod
 //The map is used to keep track of which values go where as the data file may not neccessary be sorted
 bool verifyCoinsFile(int argc, char ** argv);
 
+// void IncrementID(string &current, int position) {
+//     // Base case: If position is less than or equal to 0, stop the recursion
+//     if (position <= numeroUno-numeroUno) {
+//         return;
+//     }
+
+//     // If the character at position is less than '9', increment it
+//     if (atoi(current[position]) < decimalMax) {
+//         current[position] += numeroUno;
+//     } else {
+//         // If the character at position is '9', set it to '0' and recurse to the previous character
+//         current[position] = numeroUno-numeroUno; //Save defining yet another variable
+//         IncrementID(current, position - numeroUno);
+//     }
+// }
+
+// void MakeFoodID(string &current) {
+//     // Check if the ID is "F9999"
+//     if (current == "F9999") {
+//         return; // Do nothing
+//     }
+
+//     // Start the increment process from the last character
+//     IncrementID(current, current.length() - numeroUno);
+// }
+
 int main(int argc, char ** argv){
 
     int menuChoice = 0;
     bool mainMenuLoop = false;
     bool verifyFiles = true;
+    
     string foodIdSelection = "";
 
     if (argc != 3) {
@@ -416,23 +446,23 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
         if (success){
         //Only initialize food linked list if the whole process is success
             //To aid in keep track of previous and next node of current node in linked list
-            std::shared_ptr<FoodItem> head = nullptr;
-            std::shared_ptr<FoodItem> tail = nullptr;
+            // std::shared_ptr<FoodItem> head = nullptr;
+            // std::shared_ptr<FoodItem> tail = nullptr;
             for (auto &key:nameAndFoodData){
                 auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3]));
                 // Add the food item to list by sorted name due to ordered map key property
-                if (!head) {
-                    //Beginning so head and tail is the same
-                    head = newFoodItem;
-                    tail = newFoodItem;
-                } else {
-                    //Incremental adding so just modify what tail is, also set previous pointer to 
-                    //previous node
-                    tail->nextFood = newFoodItem;
-                    newFoodItem->previousFood = tail;
-                    tail = newFoodItem;
-                }
-                //Finally add it to the linked list
+                // if (!head) {
+                //     //Beginning so head and tail is the same
+                //     head = newFoodItem;
+                //     tail = newFoodItem;
+                // } else {
+                //     //Incremental adding so just modify what tail is, also set previous pointer to 
+                //     //previous node
+                //     tail->nextFood = newFoodItem;
+                //     newFoodItem->previousFood = tail;
+                //     tail = newFoodItem;
+                // }
+                // //Finally add it to the linked list
                 refMap[key.second[0]]=foodList.addEnd(newFoodItem); 
             }
         }

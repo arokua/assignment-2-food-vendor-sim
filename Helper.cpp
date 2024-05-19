@@ -141,19 +141,15 @@ bool Helper::isNumber(string number) {
     return isNumber;
 }
 
-bool Helper::strSmaller(string AA, string B){
+bool Helper::strSmaller(string& AA, string& B) {
     size_t lenA = AA.length();
     size_t lenB = B.length();
     size_t minLength = std::min(lenA, lenB);
-
+    bool smaller=true;
     for (size_t i = 0; i < minLength; ++i) {
-        if (AA[i] < B[i]) {
-            return true;
-        } else if (AA[i] > B[i]) {
-            return false;
+        if (AA[i] >= B[i] && smaller) {
+            smaller=false;
         }
     }
-
-    // If all characters are equal, the shorter string is lexicographically smaller
-    return lenA < lenB;
+    return smaller;
 }
