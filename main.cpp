@@ -358,7 +358,7 @@ int main(int argc, char ** argv){
             else if (menuChoice == 5) {
                 cout << "Please enter the ID of the food to remove from the menu: ";
                 cin >> foodIdSelection;
-                cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+                foods.deleteFood(foodIdSelection,refMap);
             } 
             else if (menuChoice == 6) {
                 cout << "\n\nBalance Summary";

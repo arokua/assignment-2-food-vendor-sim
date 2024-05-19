@@ -35,8 +35,12 @@ public:
             cout << item << endl;
         }
     }
-    static bool strSmaller(string &AA, string& B);//Compare if string A is lexographically smaller than string B, not
-    //counting the length
+    //Compare if string A is lexographically smaller than string B
+    //By default, if length of string A is smaler than B then
+    // It is consider smaller, hence 
+    //Butch might be insert to the begginning of a linked list 
+    // Starting with Baklava despite the letter u comes after the letter a
+    static bool strSmaller(string &AA, string& B);
     
     //Splits a string into a vector
     static void splitString(string s, vector<std::string>& tokens, string delimeter);

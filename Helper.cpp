@@ -145,11 +145,12 @@ bool Helper::strSmaller(string& AA, string& B) {
     size_t lenA = AA.length();
     size_t lenB = B.length();
     size_t minLength = std::min(lenA, lenB);
-    bool smaller=true;
     for (size_t i = 0; i < minLength; ++i) {
-        if (AA[i] >= B[i] && smaller) {
-            smaller=false;
+        if (AA[i] < B[i]) {
+            return true; // AA is smaller
+        } else if (AA[i] > B[i]) {
+            return false; // AA is larger
         }
     }
-    return smaller;
+    return AA.length() < B.length();
 }

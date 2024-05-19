@@ -81,29 +81,32 @@ void LinkedList::addAtPosition(int pos, int data) {
     auto newNode = make_shared<Node>(newFoodData);
 
     if (!head || Helper::strSmaller(newFoodData->name, head->dataFood->name)) {
+        //If food is before head
         addFront(newFoodData);
         refMap[newFoodData->name] = head;
-        return head;
     }
+    else{
+        auto currNode = head;
+        while (currNode->next != nullptr && 
+        Helper::strSmaller(currNode->dataFood->name, newFoodData->name)) {
+            currNode = currNode->next;
+        }
 
-    auto prevNode = head;
-    while (prevNode->next && Helper::strSmaller(prevNode->next->dataFood->name, newFoodData->name)) {
-        prevNode = prevNode->next;
+        // Insert after currNode
+        newNode->next = currNode->next;
+        if (currNode->next) {
+            currNode->next->prev = newNode;
+        }
+        currNode->next = newNode;
+        newNode->prev = currNode;
+
+        if (!newNode->next) {
+            tail = newNode;
+        }
+
+        refMap[newFoodData->id] = newNode;
+        mySize++;
     }
-
-    newNode->next = prevNode->next;
-    if (prevNode->next) {
-        prevNode->next->prev = newNode;
-    }
-    prevNode->next = newNode;
-    newNode->prev = prevNode;
-
-    if (!newNode->next) {
-        tail = newNode;
-    }
-
-    refMap[newFoodData->name] = newNode;
-    mySize++;
     return newNode;
 }
 
@@ -193,39 +196,45 @@ int LinkedList::search(int item,shared_ptr<FoodItem>& foodData) {
     return 0;
 }
 
-// void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap) {
-//     // Find the node corresponding to the foodID
-//     auto it = refMap.find(foodID);
-//     if (it == refMap.end()) {
-//         cout << "Food item with ID " << foodID << " not found." << endl;
-//         return;
-//     }
+void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap) {
+    auto it = refMap.find(foodID);
+    if (it == refMap.end()) {
+        cout << "Food item with ID " << foodID << " not found." << endl;
+    }
 
-//     shared_ptr<Node> nodeToDelete = it->second;
+    else{
+        //Node do exists to be deleted
+        // Get the node to be deleted
+        shared_ptr<Node> nodeToDelete = it->second;
 
-//     // Update the next and previous pointers of adjacent nodes
-//     if (nodeToDelete->dataFood->previousFood) {
-//         nodeToDelete->dataFood->previousFood->nextFood = nodeToDelete->dataFood->nextFood;
-//     } else {
-//         // If the node being deleted is the head, update the head pointer
-//         head = nodeToDelete->dataFood->nextFood;
-//     }
+        // If the node is the head, update the head pointer
+        if (nodeToDelete == head) {
+            head = nodeToDelete->next;
+        }
 
-//     if (nodeToDelete->dataFood->nextFood) {
-//         nodeToDelete->dataFood->nextFood->previousFood = nodeToDelete->dataFood->previousFood;
-//     } else {
-//         // If the node being deleted is the tail, update the tail pointer
-//         tail = nodeToDelete->dataFood->previousFood;
-//     }
+        // If the node is the tail, update the tail pointer
+        if (nodeToDelete == tail) {
+            tail = nodeToDelete->prev;
+        }
 
-//     // Remove the node from the refMap
-//     refMap.erase(it);
+        // Update the previous node's next pointer, if it exists
+        if (nodeToDelete->prev) {
+            nodeToDelete->prev->next = nodeToDelete->next;
+        }
 
-//     // Decrement the size
-//     mySize--;
+        // Update the next node's previous pointer, if it exists
+        if (nodeToDelete->next) {
+            nodeToDelete->next->prev = nodeToDelete->prev;
+        }
 
-//     cout << "Food item with ID " << foodID << " has been removed from the system." << endl;
-// }
+        // Remove the node from the refMap
+        refMap.erase(it);
+
+        // Decrement the size of the linked list
+        mySize--;
+
+        cout << "Food item with ID " << foodID << " has been removed from the system." << endl;}
+}
 
 int LinkedList::getItem(int p) {
     if (p < 1) {
