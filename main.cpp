@@ -38,15 +38,31 @@ bool isCoinFileValid(std::fstream& fileStream);
 
 std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName);
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
+std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName);
+
+
+void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector) {
+    for (size_t i = 1; i < coinsVector.size(); ++i) {
+        auto key = coinsVector[i];
+        int j = i - 1;
+
+        // Move elements of vec[0..i-1], that are greater than key->denom, to one position ahead of their current position
+        while (j >= 0 && coinsVector[j]->denom > key->denom) {
+            coinsVector[j + 1] = coinsVector[j];
+            --j;
+        }
+        coinsVector[j + 1] = key;
+    }
+}
 
 
 
 int main(int argc, char ** argv){
 
-    int menuChoice = 0;
+    // int menuChoice = 0;
     bool mainMenuLoop = false;
     bool verifyFiles = true;
-    string foodIdSelection = "";
+    // string foodIdSelection = "";
 
     // will be disable when doing tests
     if (argc != 3) {
@@ -54,8 +70,25 @@ int main(int argc, char ** argv){
         mainMenuLoop = false;
         verifyFiles = false;
     }
+    if (verifyFiles){}
+    if (mainMenuLoop){}
 
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
+    std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
+
+    cout << "Before sorting\n" << endl;
+    insertionSortIncrementally(coinVector);
+    cout << "After sorting\n" << endl;
+
+    for (size_t i = 0; i < coinVector.size(); i++){
+        coinVector[i]->printInfo();
+    }
+    
+    cout << endl;
+
+    for (const auto& pair : coinMap) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
 
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
 
@@ -63,92 +96,92 @@ int main(int argc, char ** argv){
     
     cout << endl;
 
-    while(true) {
-        if (Coin::purchaseMeal(foodsLinkedList, coinVector)) {
-            cout << endl;
-            for (size_t i = 0; i < coinVector.size(); i++) {
-                coinVector[i]->printInfo();
-            }
-            return EXIT_SUCCESS;
-        } else {}
-    }
+    // while(true) {
+    //     if (Coin::purchaseMeal(foodsLinkedList, coinVector)) {
+    //         cout << endl;
+    //         for (size_t i = 0; i < coinVector.size(); i++) {
+    //             coinVector[i]->printInfo();
+    //         }
+    //         return EXIT_SUCCESS;
+    //     } else {}
+    // }
     
-    //Correct number of argument, initialize an empty food linked list
-    //Assumme the type of denominations are set
+    // //Correct number of argument, initialize an empty food linked list
+    // //Assumme the type of denominations are set
 
-    while (mainMenuLoop) {
-        cout << MENU_DESC;
-        cin >> menuChoice;
-        cin.ignore();
+    // while (mainMenuLoop) {
+    //     cout << MENU_DESC;
+    //     cin >> menuChoice;
+    //     cin.ignore();
 
 
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore();
-                cout << "\nError in input. Please try again.\n";
-                menuChoice=0;
-            }
+    //         if (cin.fail()) {
+    //             cin.clear();
+    //             cin.ignore();
+    //             cout << "\nError in input. Please try again.\n";
+    //             menuChoice=0;
+    //         }
             
-            else if (menuChoice == 1) {
-                cout << "\nFood Menu\n";
-                cout << "\n---------";
-                cout << "\nID |Name                                                |Length";
-                cout << "\n------------------------------------------------------------------\n";
-                foodsLinkedList.printItems();
-                cout << "\n";
+    //         else if (menuChoice == 1) {
+    //             cout << "\nFood Menu\n";
+    //             cout << "\n---------";
+    //             cout << "\nID |Name                                                |Length";
+    //             cout << "\n------------------------------------------------------------------\n";
+    //             foodsLinkedList.printItems();
+    //             cout << "\n";
                 
-            } 
-            else if (menuChoice == 2) {
-                bool payingForItem = false;
+    //         } 
+    //         else if (menuChoice == 2) {
+    //             bool payingForItem = false;
 
-                cout << "\nPurchase Meal";
-                cout << "\n-------------";
+    //             cout << "\nPurchase Meal";
+    //             cout << "\n-------------";
                 
-                Coin::purchaseMeal(foodsLinkedList, coinVector);
-                } 
+    //             Coin::purchaseMeal(foodsLinkedList, coinVector);
+    //             } 
 
-            else if (menuChoice == 3) {
-                cout << "\nSaving data...";
-                cout << "\nSAVING TBD\n\n";
-                //Once save completed, exit so
-                menuChoice=7;
-            } 
-            else if (menuChoice == 4) {
-                string addFoodId = "";
-                string addFoodName = "";
-                string addFoodDesc = "";
-                string addFoodPrice = "";
-                bool freeSlotAvailable = true;
-                bool inputtingPrice = false;
-            }
+    //         else if (menuChoice == 3) {
+    //             cout << "\nSaving data...";
+    //             cout << "\nSAVING TBD\n\n";
+    //             //Once save completed, exit so
+    //             menuChoice=7;
+    //         } 
+    //         else if (menuChoice == 4) {
+    //             string addFoodId = "";
+    //             string addFoodName = "";
+    //             string addFoodDesc = "";
+    //             string addFoodPrice = "";
+    //             bool freeSlotAvailable = true;
+    //             bool inputtingPrice = false;
+    //         }
 
-            else if (menuChoice == 5) {
-                cout << "Please enter the ID of the food to remove from the menu: ";
-                cin >> foodIdSelection;
-                cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
-            } 
-            else if (menuChoice == 6) {
-                cout << "\n\nBalance Summary";
-                cout << "\n---------------";
-                cout << "\nDenom  | Quantity | Value";
-                cout << "\n---------------------------\n";
-                double sum=0;
-                for (auto& k : myBalance){
-                    double thisTypeTotal = k.first * (k.second / 100.0);
-                    cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
-                    << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
-                    sum+=thisTypeTotal;
-                }
-                cout << "---------------------------\n";
-                cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
-            } 
-            else if (menuChoice == 7) {
-                mainMenuLoop = false;
-            } 
-            else if (menuChoice < 1 || menuChoice > 7 ) {
-                cout << "\nError: number was outside of range.\n";
-            }
-    }
+    //         else if (menuChoice == 5) {
+    //             cout << "Please enter the ID of the food to remove from the menu: ";
+    //             cin >> foodIdSelection;
+    //             cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+    //         } 
+    //         else if (menuChoice == 6) {
+    //             cout << "\n\nBalance Summary";
+    //             cout << "\n---------------";
+    //             cout << "\nDenom  | Quantity | Value";
+    //             cout << "\n---------------------------\n";
+    //             double sum=0;
+    //             for (auto& k : myBalance){
+    //                 double thisTypeTotal = k.first * (k.second / 100.0);
+    //                 cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
+    //                 << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
+    //                 sum+=thisTypeTotal;
+    //             }
+    //             cout << "---------------------------\n";
+    //             cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
+    //         } 
+    //         else if (menuChoice == 7) {
+    //             mainMenuLoop = false;
+    //         } 
+    //         else if (menuChoice < 1 || menuChoice > 7 ) {
+    //             cout << "\nError: number was outside of range.\n";
+    //         }
+    // }
 
     return EXIT_SUCCESS;
     
@@ -162,7 +195,6 @@ int main(int argc, char ** argv){
     
 
 
-// Assuming each data input are unique
 std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName){
     /***
      * @brief This function reads the data file, then create a pair which has food name as key and a shared_ptr to the FoodItem object as value
@@ -189,6 +221,11 @@ std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string&
                     std::vector<std::string> dataVector;
                     // splitting data with "|" delimiter
                     Helper::splitString(line, dataVector, FOODITEM_DELIM);
+
+                    // check if the data is unique or not
+                    if (foodNodeMap.find(dataVector[1]) != foodNodeMap.end()) {
+                        throw std::invalid_argument("Data has already existed!");
+                    }
 
                     // a shared_ptr for each FoodItem object
                     std::shared_ptr<FoodItem> newObject = std::make_shared<FoodItem>(dataVector[0], dataVector[1], dataVector[2], std::stod(dataVector[3]));
@@ -222,8 +259,13 @@ std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string&
 }
 
 
-// Assuming each data input are unique
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName){
+    /***
+     * @brief This function reads the data file, then create a shared_ptr which points to the Coin object
+     * @param fileName The file name
+     * @cond Only if isCoinFileValid returns True (this function check if the coin file follows a set format or not) 
+    ***/
+
     std::string line;
     std::fstream openfile(fileName);
     std::vector<std::shared_ptr<Coin>> coinVector;
@@ -244,39 +286,58 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
 
                     // Pointers to new Coin object
                     std::shared_ptr<Coin> newObject;
-                    if (std::stoi(dataVector[0]) == 5) {
-                        newObject = std::make_shared<Coin>(Denomination::FIVE_CENTS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 10) {
-                        newObject = std::make_shared<Coin>(Denomination::TEN_CENTS, std::stoi(dataVector[1]));
+                    if (std::stoi(dataVector[1]) >= 0) {
+                        bool duplication = false;
 
-                    } else if (std::stoi(dataVector[0]) == 20) {
-                        newObject = std::make_shared<Coin>(Denomination::TWENTY_CENTS, std::stoi(dataVector[1]));
+                        for (auto& coinptr : coinVector) { // if the Denom exists, increase the counts on the existed Denom
+                            if (coinptr->getDenom() == std::stoi(dataVector[0])) {
+                                duplication = true;
+                                coinptr->setCount(coinptr->getCount() + std::stoi(dataVector[1]));  
+                            }
+                        }
 
-                    } else if (std::stoi(dataVector[0]) == 50) {
-                        newObject = std::make_shared<Coin>(Denomination::FIFTY_CENTS, std::stoi(dataVector[1]));
+                        // if not, create new ptr to the new object
+                        if (!duplication) {
+                            if (std::stoi(dataVector[0]) == 5) {
+                                newObject = std::make_shared<Coin>(Denomination::FIVE_CENTS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 100) {
-                        newObject = std::make_shared<Coin>(Denomination::ONE_DOLLAR, std::stoi(dataVector[1]));
+                            } else if (std::stoi(dataVector[0]) == 10) {
+                                newObject = std::make_shared<Coin>(Denomination::TEN_CENTS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 200) {
-                        newObject = std::make_shared<Coin>(Denomination::TWO_DOLLARS, std::stoi(dataVector[1]));
+                            } else if (std::stoi(dataVector[0]) == 20) {
+                                newObject = std::make_shared<Coin>(Denomination::TWENTY_CENTS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 500) {
-                        newObject = std::make_shared<Coin>(Denomination::FIVE_DOLLARS, std::stoi(dataVector[1]));
+                            } else if (std::stoi(dataVector[0]) == 50) {
+                                newObject = std::make_shared<Coin>(Denomination::FIFTY_CENTS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 1000) {
-                        newObject = std::make_shared<Coin>(Denomination::TEN_DOLLARS, std::stoi(dataVector[1]));
+                            } else if (std::stoi(dataVector[0]) == 100) {
+                                newObject = std::make_shared<Coin>(Denomination::ONE_DOLLAR, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 2000) {
-                        newObject = std::make_shared<Coin>(Denomination::TWENTY_DOLLARS, std::stoi(dataVector[1]));
+                            } else if (std::stoi(dataVector[0]) == 200) {
+                                newObject = std::make_shared<Coin>(Denomination::TWO_DOLLARS, std::stoi(dataVector[1]));
 
-                    } else if (std::stoi(dataVector[0]) == 5000) {
-                        newObject = std::make_shared<Coin>(Denomination::FIFTY_DOLLARS, std::stoi(dataVector[1]));
-                    } 
-                    else {
-                        throw std::invalid_argument("Invalid data arguments!");
+                            } else if (std::stoi(dataVector[0]) == 500) {
+                                newObject = std::make_shared<Coin>(Denomination::FIVE_DOLLARS, std::stoi(dataVector[1]));
+
+                            } else if (std::stoi(dataVector[0]) == 1000) {
+                                newObject = std::make_shared<Coin>(Denomination::TEN_DOLLARS, std::stoi(dataVector[1]));
+
+                            } else if (std::stoi(dataVector[0]) == 2000) {
+                                newObject = std::make_shared<Coin>(Denomination::TWENTY_DOLLARS, std::stoi(dataVector[1]));
+
+                            } else if (std::stoi(dataVector[0]) == 5000) {
+                                newObject = std::make_shared<Coin>(Denomination::FIFTY_DOLLARS, std::stoi(dataVector[1]));
+                            } 
+                            else {
+                                throw std::invalid_argument("Invalid data arguments!"); // invalid Denom
+                            }
+                        }
+                        
+                    } else {
+                        throw std::invalid_argument("Invalid data arguments!"); // invalid counts 
                     }
+                    
                     coinVector.push_back(newObject);
                     dataVector.clear();
                 }
@@ -296,13 +357,104 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
     }
     
     // printing out Coin
-    // for (long unsigned int i = 0; i < coinVector.size(); i++) {
-    //     coinVector[i]->printInfo();
-    // }
+    for (size_t i = 0; i < coinVector.size(); i++) {
+        coinVector[i]->printInfo();
+    }
 
     // return a vector containing shared_ptr pointing to each Coin
     return coinVector;
 }
+
+
+// map version of the readCoinDataFile function
+std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName) {
+    std::string line;
+    std::fstream openfile(fileName);
+    std::map<Denomination, int> coinMap;
+
+    try {
+        if (!isCoinFileValid(openfile)) {
+            throw std::runtime_error("Invalid coin data file!");
+        }
+
+        std::fstream openfile(fileName); // re-open file data
+        if (openfile.is_open()) {
+            while(std::getline(openfile, line)) { // reading each line in the file
+                // skip empty line
+                if (!line.empty()) {
+                    std::vector<std::string> dataVector;
+                    // splitting data with "|" delimiter
+                    Helper::splitString(line, dataVector, COIN_DELIM);
+
+                    if (std::stoi(dataVector[1]) >= 0) {
+                        bool duplication = false;
+
+                        for (auto& coin : coinMap) { // if the Denom exists, increase the counts on the existed Denom
+                            if (coin.first == std::stoi(dataVector[0])) {
+                                duplication = true;
+                                coin.second += std::stoi(dataVector[1]);  
+                            }
+                        }
+
+                        // if not, create new pair in the map
+                        if (!duplication) {
+                            if (std::stoi(dataVector[0]) == 5) {
+                                coinMap.insert({Denomination::FIVE_CENTS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 10) {
+                                coinMap.insert({Denomination::TEN_CENTS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 20) {
+                                coinMap.insert({Denomination::TWENTY_CENTS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 50) {
+                                coinMap.insert({Denomination::FIFTY_CENTS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 100) {
+                                coinMap.insert({Denomination::ONE_DOLLAR, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 200) {
+                                coinMap.insert({Denomination::TWO_DOLLARS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 500) {
+                                coinMap.insert({Denomination::FIVE_DOLLARS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 1000) {
+                                coinMap.insert({Denomination::TEN_DOLLARS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 2000) {
+                                coinMap.insert({Denomination::TWENTY_DOLLARS, std::stoi(dataVector[1])});
+
+                            } else if (std::stoi(dataVector[0]) == 5000) {
+                                coinMap.insert({Denomination::FIFTY_DOLLARS, std::stoi(dataVector[1])});
+                            }
+                        }
+                            
+                    } else {
+                        throw std::invalid_argument("Invalid data arguments!"); // invalid counts 
+                    }
+                    dataVector.clear();
+                }
+            }
+                
+            openfile.close();
+        } else { // if can't locate/open data file
+            throw std::ifstream::failure("Failed to open file");
+        }
+        
+    } catch (const std::ifstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch (const std::runtime_error& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+
+    return coinMap;
+}
+
+
+
 
 
 // since there's a fileReader function, this verification only needs to pass in the reference file
@@ -327,7 +479,7 @@ bool isFoodFileValid(std::fstream& fileStream) {
                                 throw std::invalid_argument("The ID does not follow the correct format!");
                             } else {
                                 // If the rest of the ID char are not ints
-                                for (long unsigned int i = 1; i < lineSplit[0].size(); i++) {
+                                for (size_t i = 1; i < lineSplit[0].size(); i++) {
                                     if (!isdigit(lineSplit[0][i])) {
                                         throw std::invalid_argument("The ID does not follow the correct format!");
                                     }

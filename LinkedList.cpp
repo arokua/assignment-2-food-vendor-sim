@@ -4,13 +4,14 @@ LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
 // new Linked List via FoodItem vector
 LinkedList::LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap){
-    // a vector containing shared_ptr points to the object
-    // for (long unsigned int i = 0; i < foodItemvector.size(); i++) {
+    // Accessing value in each pair containing shared_ptr points to the object
+
+    // for (size_t = 0; i < foodItemvector.size(); i++) {
     //     // for each pointer in the vector, create a new Node pointer
     //     // foodItemvector[i] == shared_ptr<FoodItem>
-    //     std::shared_ptr<Node> newNode = std::make_shared<Node>(foodItemvector[i]);
-        
+    //     std::shared_ptr<Node> newNode = std::make_shared<Node>(foodItemvector[i]); 
     // }
+
     for (auto& pair : foodsMap) {
         addEnd(pair.second);
     }

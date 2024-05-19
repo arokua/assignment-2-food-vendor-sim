@@ -116,7 +116,7 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
 
                 // Insufficient amount of money -> skip
                 
-                if ((inputValue / 100.0) >= currentBalance) { // returning change 
+                if ((inputValue / 100.0) > currentBalance) { // returning change 
                     // return an updated cashRegister (with deducted coin amount)
                     Coin::change_making(cashRegister, static_cast<int>(inputValue - (currentBalance * 100)));
                 }
@@ -153,34 +153,20 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
 }
 
 
-void Coin::updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment, std::vector<Coin> usedCoinVector) {
+void Coin::updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment) {
     /***
     * @brief Function to update the original coin vector with the used coin vector
     * 
     * @param originalCoinVector The original coin vector
     * @param usedCoinVector Used coin/note vector (empty by default)
-    * @param userPayment Received coin/note vector (empty by default)
     ***/
 
     int currentCoinDenom; // hold the current Denom
-
-    // take out coins/notes to give change to customer
-    if (usedCoinVector.size() != 0) {
-        for (long unsigned int i = 0; i < usedCoinVector.size(); i++) {
-            currentCoinDenom = usedCoinVector[i].getDenom();
-            for (long unsigned int j = 0; j < originalCoinVector.size(); j++) {
-                if (originalCoinVector[j]->getDenom() == currentCoinDenom) {
-                    originalCoinVector[j]->setCount(originalCoinVector[j]->getCount() - usedCoinVector[i].getCount());
-                }
-            }
-        }
-    }
-
     // receive coins/notes from the user's payment
     if (userPayment.size() != 0) {
-        for (long unsigned int i = 0; i < userPayment.size(); i++) {
+        for (size_t i = 0; i < userPayment.size(); i++) {
             currentCoinDenom = userPayment[i];
-            for (long unsigned int j = 0; j < originalCoinVector.size(); j++) {
+            for (size_t j = 0; j < originalCoinVector.size(); j++) {
                 if (originalCoinVector[j]->getDenom() == currentCoinDenom) {
                     originalCoinVector[j]->setCount(originalCoinVector[j]->getCount() + 1);
                 }
@@ -265,7 +251,7 @@ int Coin::change_making(std::vector<std::shared_ptr<Coin>>& cashRegister, int pa
 
     // // Print remaining counts conditionally to avoid unnecessary output
     // std::cout << "Remaining Denomination: " << endl;
-    // for (long unsigned int i = 0; i < cashRegister.size(); i++) {
+    // for (size_t i = 0; i < cashRegister.size(); i++) {
     //     cashRegister[i]->printInfo();
     // }
     
