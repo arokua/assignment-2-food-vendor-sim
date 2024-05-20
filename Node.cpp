@@ -31,8 +31,8 @@ bool FoodItem::sold(){
     return soldable;
 }
 
-void FoodItem::reStock(){
-    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+void FoodItem::reStock(int val){
+    on_hand=val;
 }
 
 

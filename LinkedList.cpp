@@ -184,15 +184,6 @@ string LinkedList::getItemDetails(int listPosition) {
     return itemInfo;
 }
 
-int LinkedList::search(int item) {
-    int pos = 1;
-    auto temp = head;
-    while (temp) {
-        if (temp->data == item) {
-            cout << pos << "\n";
-            return pos;
-
-
 
 std::shared_ptr<FoodItem> LinkedList::searchFoodItemByID(std::string ID) {
     auto& temp = head;

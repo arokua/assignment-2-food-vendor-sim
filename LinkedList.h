@@ -23,15 +23,16 @@ using std::string;
 class LinkedList {
 public:
     LinkedList();
-    LinkedList(vector<int>, int);
+    
+    LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap);
     ~LinkedList();
 
-    void addFront(int data);
+    // void addFront(int data);
     void addFront( shared_ptr<FoodItem>& foodData);
-    void addEnd(int data);
+    // void addEnd(int data);
     shared_ptr<Node> addEnd( shared_ptr<FoodItem>& foodData);
-    void addAtPosition(int pos, int data);
     void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
+    void insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap);
     //Placeholder method for printing items in a formatted way in the display meal options menu choice.
     void printItemsBrief();
     void deleteFront();
@@ -41,7 +42,7 @@ public:
     string getItemDetails(int listPosition);
     void printItems();
     void saveCurrentItemsToFile();
-    int search(int item);
+    void deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap);
     //Get item, 1-based indexing
     int getItem(int p);
     int getSize(); // Return size of the linked list

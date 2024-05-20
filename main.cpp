@@ -7,8 +7,10 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-#include <string.h>
+#include <string>
 #include <iomanip>
+#include <map>
+#include <memory>
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -26,64 +28,34 @@ using std::to_string;
 using std::fstream;
 using std::ostream;
 using std::ofstream;
+using std::shared_ptr;
+using std::make_shared;
 
-//Define the first 3 basic coin type, which serves as a basic for all other coins and larger denominations
+// Define the first 3 basic coin types
 #define fiveCents 5
 #define tenCents 10
 #define twentyCents 20
 #define totalDenomsTypes 10
 #define definedDenoms 3
 #define decimalMax 9 // value of maximum single digit in decimal base
-//Formating for balance output printing
+// Formatting for balance output printing
 #define significant_figures 2
-#define numeroUno 1 //Number one, for no magic number
-#define maxFoodID "F9999" //Maximum avaliable food id
+#define numeroUno 1 // Number one, for no magic number
+#define maxFoodID "F9999" // Maximum available food ID
 
-//demo run for a linked list of simple node type(containg only integers)
-void LinkedListDemo(int argc); 
-//Verify data in food file is  correct, if correct then create a map to store the values in alphabetical orders
-//Then insert that into the food LinkedList by itterating over the map key-value pairs
-//That way it is insert sorted by name
-bool verifyFoodFile(char ** argv,LinkedList& foodList, map<string,shared_ptr<Node>>& refMap);
-//Verify coin file, should the file be valid, 1 map and 2 vectors would be populate
-//These variables are to be kept through the program runs, one with the value in cents of the denominations
-//The other is the amount of coins currently have
-//The map is used to keep track of which values go where as the data file may not neccessary be sorted
-bool verifyCoinsFile(int argc, char ** argv);
+// Demo run for a linked list of simple node type (containing only integers)
+void LinkedListDemo(int argc);
+// Verify data in food file is correct, if correct then create a map to store the values in alphabetical orders
+// Then insert that into the food LinkedList by iterating over the map key-value pairs
+bool verifyFoodFile(char** argv, LinkedList& foodList, map<string, shared_ptr<Node>>& refMap);
+// Verify coin file, should the file be valid, populate one map and two vectors
+bool verifyCoinsFile(int argc, char** argv);
 
-// void IncrementID(string &current, int position) {
-//     // Base case: If position is less than or equal to 0, stop the recursion
-//     if (position <= numeroUno-numeroUno) {
-//         return;
-//     }
-
-//     // If the character at position is less than '9', increment it
-//     if (atoi(current[position]) < decimalMax) {
-//         current[position] += numeroUno;
-//     } else {
-//         // If the character at position is '9', set it to '0' and recurse to the previous character
-//         current[position] = numeroUno-numeroUno; //Save defining yet another variable
-//         IncrementID(current, position - numeroUno);
-//     }
-// }
-
-// void MakeFoodID(string &current) {
-//     // Check if the ID is "F9999"
-//     if (current == "F9999") {
-//         return; // Do nothing
-//     }
-
-//     // Start the increment process from the last character
-//     IncrementID(current, current.length() - numeroUno);
-// }
-
-int main(int argc, char ** argv){
-    
-
+int main(int argc, char** argv) {
     int menuChoice = 0;
     bool mainMenuLoop = false;
     bool verifyFiles = true;
-    
+
     string foodIdSelection = "";
 
     if (argc != 3) {
@@ -91,37 +63,41 @@ int main(int argc, char ** argv){
         mainMenuLoop = false;
         verifyFiles = false;
     }
-    //Correct number of argument, initialize an empty food linked list
+
+    // Correct number of arguments, initialize an empty food linked list
     LinkedList foods;
-    map<string,shared_ptr<Node>> refMap;
-    //Assumme the type of denominations are set
-    //Create an empty map of coin denominations to their amount
-    vector<int> denominations={fiveCents,tenCents,twentyCents};
+    map<string, shared_ptr<Node>> refMap;
+
+    // Assume the type of denominations are set
+    // Create an empty map of coin denominations to their amount
+    vector<int> denominations = {fiveCents, tenCents, twentyCents};
     vector<int> coinCounts;
-    //Populate the denoms using the pattern
-    for (int i=0; i < totalDenomsTypes-definedDenoms;i++){
-        denominations.push_back(denominations[i]*10);
-    } //5       10      20      50      100     200     500     1000    2000    5000
-    //Current balance before loading file is 0
-    map<int,int> myBalance;
-    for (auto &i:denominations){
-        myBalance[i]=0;
+
+    // Populate the denominations using the pattern
+    for (int i = 0; i < totalDenomsTypes - definedDenoms; i++) {
+        denominations.push_back(denominations[i] * 10);
+    }
+
+    // Current balance before loading file is 0
+    map<int, int> myBalance;
+    for (auto& i : denominations) {
+        myBalance[i] = 0;
     }
 
     if (verifyFiles) {
-        //First, verify if food file is correct, if correct populate
-        //Then start verifying coin files
-        bool correctFoodFile=verifyFoodFile(argv,foods,refMap);
-        if (correctFoodFile == true) {
-            //Coin file verification process
+        // First, verify if food file is correct, if correct populate
+        // Then start verifying coin files
+        bool correctFoodFile = verifyFoodFile(argv, foods, refMap);
+        if (correctFoodFile) {
+            // Coin file verification process
             bool success = false;
             string coinFile = argv[2];
             string currentLine = "";
-            vector <string> coinsSplit;
+            vector<string> coinsSplit;
 
             fstream file;
 
-            cout << coinFile <<"\n";
+            cout << coinFile << "\n";
 
             file.open(coinFile);
             if (file.is_open()) {
@@ -132,84 +108,71 @@ int main(int argc, char ** argv){
                         cout << "Invalid coin line, invalid number of commas!\n";
                         success = false;
                         file.close();
-                    }
-                    else if (!Helper::isNumber(coinsSplit[0]) || !Helper::isNumber(coinsSplit[1])) {
+                    } else if (!Helper::isNumber(coinsSplit[0]) || !Helper::isNumber(coinsSplit[1])) {
                         cout << "Non-numerical arguments!\n";
-                        cout << coinsSplit[0] << " " << coinsSplit[1] << endl;  // Debugging
+                        cout << coinsSplit[0] << " " << coinsSplit[1] << endl; // Debugging
                         success = false;
                         file.close();
-                    }
-                    else {
-                        // Count the occurrences of the target value in the 
-                        // vector 
-                        //So now the line format is correct, then have to check if given 
-                        //Correct denomination
-                        int coinType=stoi(coinsSplit[0]);
-                        int amount=stoi(coinsSplit[1]);
-                        int cnt = count(denominations.begin(), denominations.end(), coinType); 
-                        if (cnt> 0){
-                            //If the denomination is correct, the corresponding map entry is updated
-                            myBalance[coinType]=amount;
+                    } else {
+                        // Count the occurrences of the target value in the vector
+                        // So now the line format is correct, then have to check if given correct denomination
+                        int coinType = stoi(coinsSplit[0]);
+                        int amount = stoi(coinsSplit[1]);
+                        int cnt = count(denominations.begin(), denominations.end(), coinType);
+                        if (cnt > 0) {
+                            // If the denomination is correct, the corresponding map entry is updated
+                            myBalance[coinType] = amount;
                             success = true;
-                        }
-                        else{
-                            success=false;//Error or invalid denominations
-                            cout <<"Invalid denomination given!"<<coinType<<"\n";
+                        } else {
+                            success = false; // Error or invalid denominations
+                            cout << "Invalid denomination given!" << coinType << "\n";
                             file.close();
                         }
                     }
-                    
                 }
                 file.close();
             }
-            if (success){
-                //Only populate the frequency/ coin count vector if the entire coinfile is valid
-                for (auto&k:myBalance){
+            if (success) {
+                // Only populate the frequency/coin count vector if the entire coinfile is valid
+                for (auto& k : myBalance) {
                     coinCounts.push_back(k.second);
                 }
             }
-            mainMenuLoop=success;
-            cout <<"Success"<<success<<"\n";
+            mainMenuLoop = success;
+            cout << "Success" << success << "\n";
         }
-        verifyFiles=false;
-        cout <<"Done verifying files!\n!";
-        
+        verifyFiles = false;
+        cout << "Done verifying files!\n";
     }
-    
-    Helper helperObject; //Create an instance of helper to call some of it functions
-    while (mainMenuLoop) {
 
+    Helper helperObject; // Create an instance of helper to call some of its functions
+    while (mainMenuLoop) {
         foods.getItemDetails(8);
 
         cout << MENU_DESC;
         cin >> menuChoice;
         cin.ignore();
 
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore();
+            cout << "\nError in input. Please try again.\n";
+            menuChoice = 0;
+        } else if (menuChoice == 1) {
+            cout << "\nFood Menu\n";
+            cout << "\n---------";
+            cout << "\nID |Name                                                |Length";
+            cout << "\n------------------------------------------------------------------\n";
+            foods.printItems(); // Print the food out
+            cout << "\n";
+        } else if (menuChoice == 2) {
+            bool payingForItem = false;
 
-            if (cin.fail()) {
-                cin.clear();
-                cin.ignore();
-                cout << "\nError in input. Please try again.\n";
-                menuChoice=0;
-            }
-            
-            else if (menuChoice == 1) {
-                cout << "\nFood Menu\n";
-                cout << "\n---------";
-                cout << "\nID |Name                                                |Length";
-                cout << "\n------------------------------------------------------------------\n";
-                foods.printItems(); //print the food out
-                cout << "\n";
-                
-            } 
-            else if (menuChoice == 2) {
-                bool payingForItem = false;
-
-                cout << "\nPurchase Meal";
-                cout << "\n-------------";
-                cout << "\nPlease enter the ID of the food you wish to purchase: ";
-                //Assume food id selected is valid
-            double foodPrice=0.0;
+            cout << "\nPurchase Meal";
+            cout << "\n-------------";
+            cout << "\nPlease enter the ID of the food you wish to purchase: ";
+            // Assume food id selected is valid
+            double foodPrice = 0.0;
             string foodIdSelection;
 
             while (!payingForItem) {
@@ -224,7 +187,7 @@ int main(int argc, char ** argv){
                 if (foodIdSelection.empty()) {
                     // Check for empty input, which is another way to exit the loop
                     std::cout << "Empty input detected. Exiting the program.\n";
-                    menuChoice=-1;
+                    menuChoice = -1;
                 }
 
                 // Check if the foodIdSelection is valid
@@ -233,191 +196,175 @@ int main(int argc, char ** argv){
                     // Food ID exists in the map, safe to use
                     foodPrice = it->second->dataFood->price;
                     std::cout << "The price of the selected food is: $" << foodPrice << std::endl;
-                    payingForItem = true;  // Set the flag true to exit the loop
+                    payingForItem = true; // Set the flag true to exit the loop
                 } else {
                     // Food ID does not exist in the map
                     std::cout << "Invalid food ID entered. Please try again.\n";
                 }
             }
-                string selectedName=refMap[foodIdSelection]->dataFood->name;
-                string selectedDesc=refMap[foodIdSelection]->dataFood->description;
-                payingForItem=false;
-                //TODO: Make it so you can press enter to exit back to menu
-                cout << "\nYou have selected: " <<selectedName +" - "+selectedDesc<< ". This will cost you " << foodPrice << "\n\n";
-                cout << "Please hand over the money - type in the value of each note/coin in cents.";
-                cout << "\nPlease enter ctrl-D or enter on a new line to cancel this purchase.";
-                cout << "You still need to give us: $ " << foodPrice << " ";
-                
-                int gotten=0;
-                int bigFoodPrice=foodPrice*100;
-                payingForItem=true;
-                // int bigFoodPrice=foodPrice*100;
-                while (payingForItem) {
-                    cin >> gotten;
-                    //cin.ignore();
+            string selectedName = refMap[foodIdSelection]->dataFood->name;
+            string selectedDesc = refMap[foodIdSelection]->dataFood->description;
+            payingForItem = false;
+            // TODO: Make it so you can press enter to exit back to menu
+            cout << "\nYou have selected: " << selectedName + " - " + selectedDesc << ". This will cost you " << foodPrice << "\n\n";
+            cout << "Please hand over the money - type in the value of each note/coin in cents.";
+            cout << "\nPlease enter ctrl-D or enter on a new line to cancel this purchase.";
+            cout << "You still need to give us: $ " << foodPrice << " ";
 
-                    if (cin.fail()) {
-                        // if (cin.isEof()) payingForItem=false;
-                        if (cin.eof()) payingForItem=false;
-                        else{
-                            cin.clear();
-                            cin.ignore();
-                            cout << "Error: input was not numeric";
-                        }
-                        cout <<"\n";
-                        
-                    }
+            int gotten = 0;
+            int bigFoodPrice = foodPrice * 100;
+            payingForItem = true;
+            // int bigFoodPrice=foodPrice*100;
+            while (payingForItem) {
+                cin >> gotten;
+                // cin.ignore();
 
-                    else if (cin.get() == '\n' || std::to_string(gotten).length()==1) {
-                        cout << "\nPurchase cancelled.";
-                        payingForItem = false;
-                    }
-                    
+                if (cin.fail()) {
+                    // if (cin.isEof()) payingForItem=false;
+                    if (cin.eof()) payingForItem = false;
                     else {
-                        cout <<"I gotten: "<<gotten<<std::endl;
-                        //Hung part?
-                        if (bigFoodPrice > gotten) {
-                            bigFoodPrice-=gotten;
-                            cout <<"Subtraction result:\t"<<bigFoodPrice<<"\n";
-                            foodPrice=bigFoodPrice/100;
-                            cout << "You still need to give us: $ " << foodPrice << ": ";
-                        }
-                        else {
-                               
-                        }
-                        //Remmember to update myBalance accordingly for display balance
+                        cin.clear();
+                        cin.ignore();
+                        cout << "Error: input was not numeric";
                     }
-                }
-
-            } 
-
-            //Save and exit
-            else if (menuChoice == 3) {
-                cout << "\nSaving data.";
-                string currentLine = "";
-                ofstream foodSaveFile("food_new.dat");
-  
-                /*
-                    Go through each linked list item
-                    Get all details of current item/node in the linked list, in a format suitable for saving as a string
-                    Append that to the new save file
-                */
-                if (foodSaveFile.is_open()) {
-                    for (int i = 0;i<foods.getSize();i++) {
-                        currentLine = foods.getItemDetails(i);
-                        //cout << currentLine;
-                        foodSaveFile << currentLine;
+                    cout << "\n";
+                } else if (cin.get() == '\n' || std::to_string(gotten).length() == 1) {
+                    cout << "\nPurchase cancelled.";
+                    payingForItem = false;
+                } else {
+                    cout << "I got: " << gotten << std::endl;
+                    // Hung part?
+                    if (bigFoodPrice > gotten) {
+                        bigFoodPrice -= gotten;
+                        cout << "Subtraction result:\t" << bigFoodPrice << "\n";
+                        foodPrice = bigFoodPrice / 100;
+                        cout << "You still need to give us: $ " << foodPrice << ": ";
+                    } else {
+                        // TODO: Process the completion of the purchase
                     }
+                    // Remember to update myBalance accordingly for display balance
                 }
-                foodSaveFile.close();
-
-                cout << "\nSave completed. Now exiting...\n\n";
-                //Once save completed, exit so
-                mainMenuLoop = false;
-            } 
-            else if (menuChoice == 4) {
-                string addFoodId = "";
-                string addFoodName = "";
-                string addFoodDesc = "";
-                string addFoodPrice = "";
-                bool freeSlotAvailable = true;
-                bool inputtingPrice = false;
-
-                cout << "\n\n\nFoods size: " << "\n" << to_string(foods.getSize()) << "\n\n";
-                
-                /*  (Chris)
-                    Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
-                    (I hate this so fucking much)
-
-                    Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
-                    Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
-                    If next is 2 digits long, append to ID that is missing 2 digits, etc
-                    Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
-                */
-                if (foods.getSize() + 1 <= 9) {
-                    addFoodId = "F000";
-                }
-                else if (foods.getSize() + 1 > 9 && foods.getSize() + 1 < 100) {
-                    addFoodId = "F00";
-                }
-                else if (foods.getSize() + 1 > 99 && foods.getSize() + 1 < 1000) {
-                    addFoodId = "F0";
-                }
-                else if (foods.getSize() + 1 > 999 && foods.getSize() + 1 < 10000) {
-                    addFoodId = "F";
-                }
-                else {
-                    cout << "Maximum number of food items reached!\n";
-                    freeSlotAvailable = false;
-                }
-
-                if (freeSlotAvailable) {
-                    //Still able to add food
-                    addFoodId.append(to_string(foods.getSize() + 1));
-                    cout << "\n\n" << addFoodId;
-
-                    cout << "\nThe new meal item will have the item id of " << addFoodId;
-                    cout << "\nEnter the item name: ";
-                    cin >> addFoodName;
-                    cout << "\nEnter the item description: ";
-                    cin >> addFoodDesc;
-
-                    inputtingPrice = true;
-
-                    while (inputtingPrice) {
-                        cout << "\nEnter the item price: ";
-                        getline(cin,addFoodPrice);
-
-                        if (addFoodPrice.find('.') > addFoodPrice.length()) {
-                            cout << "Error: money is not formatted correctly";
-                        }
-                        else {
-                            auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
-                            foods.insert(newFood, refMap);//Orderly insertion with use of refMap
-                            
-                            inputtingPrice = false;
-                        }
-                        
-                    }
-                }
-            } 
-            else if (menuChoice == 5) {
-                cout << "Please enter the ID of the food to remove from the menu: ";
-                cin >> foodIdSelection;
-                foods.deleteFood(foodIdSelection,refMap);
-            } 
-            else if (menuChoice == 6) {
-                cout << "\n\nBalance Summary";
-                cout << "\n---------------";
-                cout << "\nDenom  | Quantity | Value";
-                cout << "\n---------------------------\n";
-                double sum=0;
-                for (auto&k:myBalance){
-                    double thisTypeTotal = k.first * (k.second / 100.0);
-                    cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
-                    << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
-                    sum+=thisTypeTotal;
-                }
-                cout << "---------------------------\n";
-                cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
-            } 
-            else if (menuChoice == 7) {
-                mainMenuLoop = false;
-            } 
-            // else if (menuChoice == 9) {
-            //     LinkedListDemo(argc);
-            // } 
-            else if (menuChoice < 1 || menuChoice > 9 ) {
-                cout << "\nError: number was outside of range.\n";
             }
+        } else if (menuChoice == 3) {
+            cout << "\nSaving data.";
+            string currentLine = "";
+            ofstream foodSaveFile("food_new.dat");
+
+            /*
+                Go through each linked list item
+                Get all details of current item/node in the linked list, in a format suitable for saving as a string
+                Append that to the new save file
+            */
+            if (foodSaveFile.is_open()) {
+                for (int i = 0; i < foods.getSize(); i++) {
+                    currentLine = foods.getItemDetails(i);
+                    // cout << currentLine;
+                    foodSaveFile << currentLine;
+                }
+            }
+            foodSaveFile.close();
+
+            cout << "\nSave completed. Now exiting...\n\n";
+            // Once save completed, exit so
+            mainMenuLoop = false;
+        } else if (menuChoice == 4) {
+            string addFoodId = "";
+            string addFoodName = "";
+            string addFoodDesc = "";
+            string addFood="";
+            string addFoodPrice = "";
+            bool freeSlotAvailable = true;
+            bool inputtingPrice = false;
+
+            cout << "\n\n\nFoods size: " << "\n" << to_string(foods.getSize()) << "\n\n";
+                
+            /*  (Chris)
+                Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
+                (I hate this so fucking much)
+
+                Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
+                Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
+                If next is 2 digits long, append to ID that is missing 2 digits, etc
+                Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
+            */
+            if (foods.getSize() + 1 <= 9) {
+                addFoodId = "F000";
+            }
+            else if (foods.getSize() + 1 > 9 && foods.getSize() + 1 < 100) {
+                addFoodId = "F00";
+            }
+            else if (foods.getSize() + 1 > 99 && foods.getSize() + 1 < 1000) {
+                addFoodId = "F0";
+            }
+            else if (foods.getSize() + 1 > 999 && foods.getSize() + 1 < 10000) {
+                addFoodId = "F";
+            }
+            else {
+                cout << "Maximum number of food items reached!\n";
+                freeSlotAvailable = false;
+            }
+
+            if (freeSlotAvailable) {
+                // Still able to add food
+                addFoodId.append(to_string(foods.getSize() + 1));
+                cout << "\n\n" << addFoodId;
+
+                cout << "\nThe new meal item will have the item id of " << addFoodId;
+                cout << "\nEnter the item name: ";
+                cin >> addFoodName;
+                cout << "\nEnter the item description: ";
+                cin >> addFoodDesc;
+
+                inputtingPrice = true;
+
+                while (inputtingPrice) {
+                    cout << "\nEnter the item price: ";
+                    getline(cin, addFoodPrice);
+
+                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
+                        cout << "Error: money is not formatted correctly";
+                    }
+                    else {
+                        auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
+                        foods.insert(newFood, refMap); // Orderly insertion with use of refMap
+                        
+                        inputtingPrice = false;
+                    }
+                }
+            }
+        } 
+        else if (menuChoice == 5) {
+            cout << "Please enter the ID of the food to remove from the menu: ";
+            cin >> foodIdSelection;
+            foods.deleteFood(foodIdSelection, refMap);
+        } 
+        else if (menuChoice == 6) {
+            cout << "\n\nBalance Summary";
+            cout << "\n---------------";
+            cout << "\nDenom  | Quantity | Value";
+            cout << "\n---------------------------\n";
+            double sum = 0;
+            for (auto& k : myBalance) {
+                double thisTypeTotal = k.first * (k.second / 100.0);
+                cout << k.first << "|\t" << k.second << "|\t" << "$ " << std::fixed 
+                << std::setprecision(significant_figures + 1) << thisTypeTotal << "\n";
+                sum += thisTypeTotal;
+            }
+            cout << "---------------------------\n";
+            cout << "\t\t  $ " << std::fixed << std::setprecision(significant_figures) << sum << "\n";
+        } 
+        else if (menuChoice == 7) {
+            mainMenuLoop = false;
+        } 
+        else if (menuChoice < 1 || menuChoice > 9) {
+            cout << "\nError: number was outside of range.\n";
+        }
     }
 
     return EXIT_SUCCESS;
-    
- 
 }
 
-bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<Node>>& refMap) {
+bool verifyFoodFile(char** argv, LinkedList& foodList, map<string, shared_ptr<Node>>& refMap) {
     bool success = false;
 
     string foodFile = argv[1];
@@ -427,61 +374,56 @@ bool verifyFoodFile(char ** argv, LinkedList& foodList, map<string,shared_ptr<No
 
     fstream file;
     file.open(foodFile);
-    int foodCounter=0;
+    int foodCounter = 0;
 
     // Ordered-map, so then 
-    //If the whole file is valid, the foods will be add to
+    // If the whole file is valid, the foods will be add to
     // linked list in an order ordered by name
-    map<string,vector<string>> nameAndFoodData; 
+    map<string, vector<string>> nameAndFoodData;
 
     if (file.is_open()) {
         while (getline(file, currentLine)) {
             Helper::splitString(currentLine, lineSplit, "|");
 
-                if (lineSplit.size() == 4) {
-                    Helper::splitString(lineSplit[3], price, ".");
-                }
-                
-                //If there aren't exactly 4 pieces of data per line
-                if (lineSplit.size() != 4) {
-                    success = false;
-                    file.close();
-                }
-                //If the first letter of the food code isn't F
-                else if (lineSplit[0][0] != 'F') {
-                    success = false;
-                    file.close();
-               } 
-                //If the price is not a decimal number
-                else if (!lineSplit[3].find(".")) {
-                    success = false;
-                    file.close();
-                }
-                //If there is no cents place
-                else if (price.size() != 2) {
-                        cout << "\nIs not a full decimal number!";
-                        success = false;
-                        file.close();
-                }
-                else {
-                    success = true;
-                    foodCounter++;
-                    nameAndFoodData[lineSplit[1]]=lineSplit;//Store data mapping to map
+            if (lineSplit.size() == 4) {
+                Helper::splitString(lineSplit[3], price, ".");
+            }
+
+            // If there aren't exactly 4 pieces of data per line
+            if (lineSplit.size() != 4) {
+                success = false;
+                file.close();
+            }
+            // If the first letter of the food code isn't F
+            else if (lineSplit[0][0] != 'F') {
+                success = false;
+                file.close();
+            } 
+            // If the price is not a decimal number
+            else if (!lineSplit[3].find(".")) {
+                success = false;
+                file.close();
+            }
+            // If there is no cents place
+            else if (price.size() != 2) {
+                cout << "\nIs not a full decimal number!";
+                success = false;
+                file.close();
+            }
+            else {
+                success = true;
+                foodCounter++;
+                nameAndFoodData[lineSplit[1]] = lineSplit; // Store data mapping to map
             }
         }
-        if (success){
-        //Only initialize food linked list if the whole process is success
-            //To aid in keep track of previous and next node of current node in linked list
-            // std::shared_ptr<FoodItem> head = nullptr;
-            // std::shared_ptr<FoodItem> tail = nullptr;
-            for (auto &key:nameAndFoodData){
+        if (success) {
+            // Only initialize food linked list if the whole process is success
+            for (auto& key : nameAndFoodData) {
                 auto newFoodItem = make_shared<FoodItem>(key.second[0], key.second[1], key.second[2], stod(key.second[3]));
-                // //Finally add it to the linked list
-                refMap[key.second[0]]=foodList.addEnd(newFoodItem); 
+                refMap[key.second[0]] = foodList.addEnd(newFoodItem); 
             }
         }
-    file.close();
-    
+        file.close();
     }
     cout << "\n\n" << success;
     return success;
@@ -491,11 +433,11 @@ bool verifyCoinsFile(int argc, char** argv) {
     bool success = false;
     string coinFile = argv[2];
     string currentLine = "";
-    vector <string> coinsSplit;
+    vector<string> coinsSplit;
 
     fstream file;
 
-    cout << coinFile <<"\n";
+    cout << coinFile << "\n";
 
     file.open(coinFile);
     if (file.is_open()) {
@@ -515,13 +457,13 @@ bool verifyCoinsFile(int argc, char** argv) {
             else {
                 success = true;
             }
-            
         }
         file.close();
     }
-    cout <<"Check coin file is success:"<<success<<"\n";
+    cout << "Check coin file is success:" << success << "\n";
     return success;
 }
+
 
 // Old demo
 // void LinkedListDemo(int argc) {
@@ -633,23 +575,6 @@ bool verifyCoinsFile(int argc, char** argv) {
 //                     std::cerr << "Error: Key " << key << " not found in reference map." << endl;
 //                     continue; // Skip to next iteration if key doesn't exist
 //                 }
-
-                // Access the corresponding FoodItem using the key
-                shared_ptr<Node> nodePtr = refMap[key];
-                if (nodePtr)  {
-                    string line = nodePtr->dataFood->getInfo();
-                    cout << line;
-                }
-                else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
-            }
-        }
-    }else{
-        //Incorrect number of file inputs
-        cout << "Expect 2 file inputs!\n";
-        cout << "Usage: ./main coin.dat food.dat\n";
-    }
-        
-// }
 
 //Hung stuff
 std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName) {
