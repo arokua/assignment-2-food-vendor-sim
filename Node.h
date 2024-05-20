@@ -52,7 +52,8 @@ public:
     std::string getId();
     bool sold(); //Food is sucessfully sold if its still have stock
     void reStock(int); //Restock to an integer value
-    void printInfo();
+    //Return the information for current node as a string
+    std::string getInfo();
     void printInfoBrief();
     ~FoodItem();
 };

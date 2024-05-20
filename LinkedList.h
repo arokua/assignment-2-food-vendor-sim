@@ -11,6 +11,8 @@ using std::shared_ptr;
 using std::make_shared;
 using std::cout;
 using std::endl;
+using std::ofstream;
+using std::string;
 
 class LinkedList {
 public:
@@ -24,11 +26,15 @@ public:
     shared_ptr<Node> addEnd( shared_ptr<FoodItem>& foodData);
     void addAtPosition(int pos, int data);
     void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
+    //Placeholder method for printing items in a formatted way in the display meal options menu choice.
     void printItemsBrief();
     void deleteFront();
     void deleteEnd();
     void deletePosition(int pos);
+    //Return an item in the linked list as a string at the position passed in. Used for saving items to the file.
+    string getItemDetails(int listPosition);
     void printItems();
+    void saveCurrentItemsToFile();
     int search(int item);
     //Get item, 1-based indexing
     int getItem(int p);

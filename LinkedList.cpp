@@ -135,14 +135,48 @@ void LinkedList::deletePosition(int pos) {
 
 //Ultility methods
 void LinkedList::printItems() {
+    string currentItem = "";
     auto temp = head;
     while (temp) {
         if (temp->dataFood) {
-            (*temp->dataFood).printInfo();
+            currentItem = (*temp->dataFood).getInfo();
+            cout << currentItem;
         }
         temp = temp->next;
     }
     cout << endl;
+}
+
+
+/*
+    A specific list position is passed in, returns a string.
+    With each iteration of loop, check if listPosition is the same position as the currentListPosition.
+    If it is, return details of current position in format suitable for saving to the .dat file, and end lookingForItem loop
+    If not, increment the position and set the currentNode to the next node in the linked list, as long as next node isn't null
+
+    This is a new method as I didn't want to mess with the above printItems method too much in case it broke too much.
+*/
+string LinkedList::getItemDetails(int listPosition) {
+    string itemInfo = "";
+    shared_ptr<Node> currentNode = head;
+    int currentListPosition = 0;
+    bool lookingForItem = true;
+    
+    while (lookingForItem) {
+        if (currentListPosition == listPosition) {  
+            itemInfo = currentNode->dataFood->getInfo();
+            //cout << itemInfo;
+            //cout << currentNode->dataFood->getId() << endl;
+            lookingForItem = false;
+        }
+        else {
+            currentListPosition++;            
+            if (currentNode->next != nullptr) currentNode = currentNode->next;
+            else lookingForItem = false;
+
+        }
+    }
+    return itemInfo;
 }
 
 int LinkedList::search(int item) {
