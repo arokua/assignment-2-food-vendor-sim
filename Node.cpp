@@ -3,23 +3,25 @@
 
 using std::string;
 using std::cout;
-using std::endl;
 
-FoodItem::FoodItem(){
+Node::Node() : 
+    next(nullptr),
+    prev(nullptr)
+{}
+
+FoodItem::FoodItem() {
     id="FXXXX";
     name="Name";
     description="DESC";
-    price=0.0;
+    price=0.00;
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
-FoodItem::FoodItem(string ID,string Name,string desc,double P) {
-    this->id=ID;
-    this->name=Name;
-    this->description=desc;
-    this->price=P;
-    this->on_hand=DEFAULT_FOOD_STOCK_LEVEL;
-}
+FoodItem::FoodItem(string ID, string name, string desc, double P) :
+    id(ID), name(name), description(desc), price(P) 
+    {
+        on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+    }
 
 bool FoodItem::sold(){
     bool soldable=true;
@@ -29,46 +31,35 @@ bool FoodItem::sold(){
 }
 
 void FoodItem::reStock(){
-    // when restocking, the value always return to DEFAULT_FOOD_STOCK_LEVEL
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
 
-Node::Node(): 
-    dataFood(nullptr),
-    next(nullptr)
-    {}
 
-Node::Node(const Node& other){
-    this->dataFood = other.dataFood;
-    this->next = other.next;
-}
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
+    dataFood(foodData),next(next),prev(prev) {}
 
 
-// creating a Node based on specified pointer to a FoodItem
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node> nextNode) {
-    if (foodData != nullptr) {
-        this->dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
-        // dataFood (Node's pointer) is pointing to foodData (FoodItem's pointer) 
-        // which points to FoodItem object 
-        this->next = nextNode;
-    }
-}
 
 void FoodItem::printInfo(){
     if (id!=""){
-        cout << getID() << "|" << getName() << "|" << getDesc() 
-             << "|" << getPrice() << "|" << getOnHand() << endl;
+        cout <<id<<"|"<<this->name<<"|"<<description<<"|"<<price <<"\n";
     }
 }
 
+
+void FoodItem::printInfoBrief() {
+        if (id!=""){
+            cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
+    }
+}
 
 
 
 std::string FoodItem::getName(){
     return name;
 }
-std::string FoodItem::getID(){
+std::string FoodItem::getID() {
     return id;
 }
 std::string FoodItem::getDesc(){

@@ -29,7 +29,18 @@ public:
             cout << item << endl;
         }
     }
-    static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
+    //Compare if string A is lexographically smaller than string B
+    //By default, if length of string A is smaler than B then
+    // It is consider smaller, hence 
+    //Butch might be insert to the begginning of a linked list 
+    // Starting with Baklava despite the letter u comes after the letter a
+    static bool strSmaller(string &AA, string& B);
+    
+    //Splits a string into a vector
+    static void splitString(string s, vector<std::string>& tokens, string delimeter);
+
+    //Checks if a string is completely numeric
+    static bool isNumber(std::string number);
 
 };
 

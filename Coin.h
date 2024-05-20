@@ -59,4 +59,4 @@ public:
     static int change_making(vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount);
 };
 
-#endif //COIN_H
+#endif // COIN_H

@@ -1,13 +1,5 @@
-/*Manul compile command because make isn't making a runnable file for some reason...
-  g++ -Wall -Werror -std=c++14 -O -o ftt main.cpp Coin.cpp Helper.cpp LinkedList.cpp Node.cpp
- ./ftt
-*/
 #include <limits>
 #include <algorithm>
-#include <map>
-#include <string>
-#include <iostream>
-#include <cmath>
 #include <fstream>
 
 #include "Node.h"
@@ -18,7 +10,7 @@
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
 Select your option (1-7) :\n\n\
-DEBUG: 99. LinkedList test/demo implementation "
+DEBUG: 9. LinkedList test/demo implementation "
 
 using std::map;
 using std::vector;
@@ -30,8 +22,6 @@ using std::stoi;
 using std::to_string;
 using std::fstream;
 using std::ostream;
-
-//Move this inside a method somewhere?
 
 bool isFoodFileValid(std::fstream& fileStream);
 bool isCoinFileValid(std::fstream& fileStream);
@@ -55,7 +45,15 @@ void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector)
     }
 }
 
+// void MakeFoodID(string &current) {
+//     // Check if the ID is "F9999"
+//     if (current == "F9999") {
+//         return; // Do nothing
+//     }
 
+//     // Start the increment process from the last character
+//     IncrementID(current, current.length() - numeroUno);
+// }
 
 int main(int argc, char ** argv){
 
@@ -108,11 +106,6 @@ int main(int argc, char ** argv){
     
     // //Correct number of argument, initialize an empty food linked list
     // //Assumme the type of denominations are set
-
-    // while (mainMenuLoop) {
-    //     cout << MENU_DESC;
-    //     cin >> menuChoice;
-    //     cin.ignore();
 
 
     //         if (cin.fail()) {
@@ -187,9 +180,6 @@ int main(int argc, char ** argv){
     
  
 }
-
-
-    
 
 
     
@@ -455,8 +445,6 @@ std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName)
 
 
 
-
-
 // since there's a fileReader function, this verification only needs to pass in the reference file
 bool isFoodFileValid(std::fstream& fileStream) {
         bool success = false;
@@ -517,7 +505,8 @@ bool isFoodFileValid(std::fstream& fileStream) {
 bool isCoinFileValid(std::fstream& fileStream) {
     bool success = false;
     string currentLine = "";
-    vector <string> coinsSplit;
+    vector<string> coinsSplit;
+    vector<string> price;
 
     try {
         if (fileStream.is_open()) {
@@ -537,10 +526,15 @@ bool isCoinFileValid(std::fstream& fileStream) {
                     else { //If there aren't exactly 2 pieces of data per line
                         throw std::invalid_argument("Invalid number of data arguments!");
                     }
-                }  
-            }
+                }
+            }  
             fileStream.close();
+
+        } else { // if can't locate/open data file
+            throw std::ifstream::failure("Failed to open file");
         }
+    } catch (const std::ifstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
     } catch (const std::invalid_argument& e) {
         std::cout << "Error: " << e.what() << std::endl;
     }

@@ -3,6 +3,7 @@
 #include <memory>
 
 Helper::Helper(){}
+Helper::~Helper(){}
 
 
 vector<string> Helper::takeInput(int nNodes=0){
@@ -42,6 +43,7 @@ vector<string> Helper::takeInput(int nNodes=0){
     return pp;
 }
 
+
 void Helper::splitString(string s, vector<string>& tokens, string delimiter)
 {
     tokens.clear();
@@ -61,4 +63,39 @@ void Helper::splitString(string s, vector<string>& tokens, string delimiter)
     if (prev < s.length()) {
         tokens.push_back(s.substr(prev));
     }
+}
+
+
+bool Helper::isNumber(string number) {
+    bool checkingNumber = true;
+    bool isNumber = true;
+
+    while (checkingNumber) {
+        for (long unsigned int i = 0;i < number.size();i++) {
+            if (isdigit(number[i])) {
+                isNumber = true;   
+            }
+            else {
+                isNumber = false;
+                checkingNumber = false;
+            }
+        }
+        checkingNumber = false;
+    }
+    return isNumber;
+}
+
+
+bool Helper::strSmaller(string& AA, string& B) {
+    size_t lenA = AA.length();
+    size_t lenB = B.length();
+    size_t minLength = std::min(lenA, lenB);
+    for (size_t i = 0; i < minLength; ++i) {
+        if (AA[i] < B[i]) {
+            return true; // AA is smaller
+        } else if (AA[i] > B[i]) {
+            return false; // AA is larger
+        }
+    }
+    return AA.length() < B.length();
 }

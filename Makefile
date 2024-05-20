@@ -7,7 +7,7 @@ SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
 # Define test data pattern
-TEST_FILES = coins.dat foods.dat
+TEST_FILES = foods.dat coins.dat
 EXPECTED_OUTPUT = expect1.dat.out
 NUM_TESTS = 1
 # Default target

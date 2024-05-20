@@ -19,7 +19,7 @@
 
 #define FOODITEM_DELIM "|"  // delimiter 
 
-#define FOODITEM_ARGC 4
+#define FOODITEM_ARGC 4 // Number of args for FoodItem 
 
 
 /**
@@ -41,12 +41,13 @@ public:
     double price;
     
     // how many of this food item do we have on hand? 
-    unsigned on_hand; 
-    
+    unsigned on_hand;
+
     //Default constructor
     FoodItem();
     //Initialize with value
     FoodItem(std::string id, std::string name, std::string desc, double price);
+    ~FoodItem();
 
     // Getter & Setter
     std::string getID();
@@ -59,7 +60,8 @@ public:
     bool sold(); //Food is sucessfully sold if its still have stock
     void reStock(); 
     void printInfo();
-    ~FoodItem();
+    void printInfoBrief();
+    
 };
 
 /**
@@ -68,13 +70,18 @@ public:
 class Node {
 public:
     Node();
-    Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr);
+    Node(int data, std::shared_ptr<Node> next = nullptr);
+    Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr,
+    std::shared_ptr<Node> prev = nullptr);
     Node(const Node& other);
     ~Node();
 
+    // ptr to the FoodItem
     std::shared_ptr<FoodItem> dataFood;
-    
-    std::shared_ptr<Node> next;  // Now using shared_ptr for next
+
+    // ptr to the next node and the previous node
+    std::shared_ptr<Node> next;  
+    std::shared_ptr<Node> prev;
 };
 
 
