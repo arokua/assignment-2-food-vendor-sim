@@ -3,6 +3,7 @@
 
 using std::string;
 using std::cout;
+using std::to_string;
 
 Node::Node() : 
     next(nullptr),
@@ -41,13 +42,23 @@ Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std:
 
 
 
-void FoodItem::printInfo(){
-    if (id!=""){
-        cout <<id<<"|"<<this->name<<"|"<<description<<"|"<<price <<"\n";
+string FoodItem::getInfo(){
+    string line = "";
+    if (id != ""){
+        line = id + "|" + this->name + "|" + description + "|" + to_string(price) + "\n";
     }
+    return line;
 }
 
+/*string FoodItem::getInfoForSaveFile() {
+    string line = id + "," + this->name + "," + description + "," + to_string(price) + "\n";
+    return line;
+}*/
 
+// bruh what is this
+//It was meant to be a placeholder for formatting the display meal options. 
+//It's "brief" as the example program doesn't print out the description like the above printInfo()
+//Yes it's lazy
 void FoodItem::printInfoBrief() {
         if (id!=""){
             cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";

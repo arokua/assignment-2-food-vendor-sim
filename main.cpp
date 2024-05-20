@@ -5,10 +5,10 @@
 #include "Helper.h"
 #include "Coin.h"
 #include <cmath>
+#include <iostream>
 #include <fstream>
 #include <string.h>
 #include <iomanip>
-
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -25,6 +25,7 @@ using std::stoi;
 using std::to_string;
 using std::fstream;
 using std::ostream;
+using std::ofstream;
 
 //Define the first 3 basic coin type, which serves as a basic for all other coins and larger denominations
 #define fiveCents 5
@@ -77,6 +78,7 @@ bool verifyCoinsFile(int argc, char ** argv);
 // }
 
 int main(int argc, char ** argv){
+    
 
     int menuChoice = 0;
     bool mainMenuLoop = false;
@@ -176,6 +178,9 @@ int main(int argc, char ** argv){
     
     Helper helperObject; //Create an instance of helper to call some of it functions
     while (mainMenuLoop) {
+
+        foods.getItemDetails(8);
+
         cout << MENU_DESC;
         cin >> menuChoice;
         cin.ignore();
@@ -286,11 +291,29 @@ int main(int argc, char ** argv){
 
             } 
 
+            //Save and exit
             else if (menuChoice == 3) {
-                cout << "\nSaving data...";
-                cout << "\nSAVING TBD\n\n";
+                cout << "\nSaving data.";
+                string currentLine = "";
+                ofstream foodSaveFile("food_new.dat");
+  
+                /*
+                    Go through each linked list item
+                    Get all details of current item/node in the linked list, in a format suitable for saving as a string
+                    Append that to the new save file
+                */
+                if (foodSaveFile.is_open()) {
+                    for (int i = 0;i<foods.getSize();i++) {
+                        currentLine = foods.getItemDetails(i);
+                        //cout << currentLine;
+                        foodSaveFile << currentLine;
+                    }
+                }
+                foodSaveFile.close();
+
+                cout << "\nSave completed. Now exiting...\n\n";
                 //Once save completed, exit so
-                menuChoice=7;
+                mainMenuLoop = false;
             } 
             else if (menuChoice == 4) {
                 string addFoodId = "";
@@ -611,17 +634,20 @@ bool verifyCoinsFile(int argc, char** argv) {
 //                     continue; // Skip to next iteration if key doesn't exist
 //                 }
 
-//                 // Access the corresponding FoodItem using the key
-//                 shared_ptr<Node> nodePtr = refMap[key];
-//                 if (nodePtr)  nodePtr->dataFood->printInfo();
-//                 else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
-//             }
-//         }
-//     }else{
-//         //Incorrect number of file inputs
-//         cout << "Expect 2 file inputs!\n";
-//         cout << "Usage: ./main coin.dat food.dat\n";
-//     }
+                // Access the corresponding FoodItem using the key
+                shared_ptr<Node> nodePtr = refMap[key];
+                if (nodePtr)  {
+                    string line = nodePtr->dataFood->getInfo();
+                    cout << line;
+                }
+                else std::cerr << "Error: Unexpected error retrieving FoodItem." << std::endl;
+            }
+        }
+    }else{
+        //Incorrect number of file inputs
+        cout << "Expect 2 file inputs!\n";
+        cout << "Usage: ./main coin.dat food.dat\n";
+    }
         
 // }
 

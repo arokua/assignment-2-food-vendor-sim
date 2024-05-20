@@ -58,9 +58,11 @@ public:
     unsigned int getOnHand();
 
     // Functions
-    bool sold(); //Food is sucessfully sold if its still have stock
-    void reStock(); 
+    bool sold(); 
     void printInfo();
+    void reStock(int); //Restock to an integer value
+    //Return the information for current node as a string
+    std::string getInfo();
     void printInfoBrief();
     
 };
