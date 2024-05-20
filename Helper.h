@@ -18,7 +18,8 @@ using std::endl;
 
 class Helper{
 public:
-    Helper();//Default constructor
+    Helper(); //Default constructor
+    ~Helper(); //Default destructor
 
     
 
