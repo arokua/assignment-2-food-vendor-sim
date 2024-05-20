@@ -146,6 +146,7 @@ std::shared_ptr<FoodItem> LinkedList::searchFoodItemByName(std::string name) {
     } catch (const std::runtime_error& e) {
         cout << "Error: "<< e.what() << endl;
     } 
+    return searchedFoodItem;
 }
 
 

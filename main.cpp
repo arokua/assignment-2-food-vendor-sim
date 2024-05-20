@@ -30,6 +30,9 @@ std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string&
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName);
 
+void updateFoodFile();
+void updateCoinFile();
+
 
 void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector) {
     for (size_t i = 1; i < coinsVector.size(); ++i) {
