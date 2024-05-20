@@ -3,66 +3,67 @@
 Helper::Helper(){
 
 }
-int Helper::change_making(vector<int>& coins, vector<int>& counts, int n) {
+// old change_making function
+// int Helper::change_making(vector<int>& coins, vector<int>& counts, int n) {
     
-    int numCoins = coins.size();
+//     int numCoins = coins.size();
     
-    vector<int> m(n + 1, numeric_limits<int>::max());
-    // Use 2D vector of size (n+1) for tracking used coins 
-    vector<vector<int>> used_coins(n + 1);
+//     vector<int> m(n + 1, numeric_limits<int>::max());
+//     // Use 2D vector of size (n+1) for tracking used coins 
+//     vector<vector<int>> used_coins(n + 1);
 
-    // Initialize the zero amount case
-    m[0] = 0;
+//     // Initialize the zero amount case
+//     m[0] = 0;
 
-    // Fill the DP table
-    for (int amount = 1; amount <= n; ++amount) {
-        for (int c = 0; c < numCoins; ++c) {
-            int coin = coins[c];
-            if (coin <= amount) {
-                if (m[amount - coin] + 1 < m[amount] && counts[c] > 0) {
-                    m[amount] = m[amount - coin] + 1;
-                    used_coins[amount] = used_coins[amount - coin];
-                    used_coins[amount].push_back(c);
-                }
-            }
-        }
-    }
+//     // Fill the DP table
+//     for (int amount = 1; amount <= n; ++amount) {
+//         for (int c = 0; c < numCoins; ++c) {
+//             int coin = coins[c];
+//             if (coin <= amount) {
+//                 if (m[amount - coin] + 1 < m[amount] && counts[c] > 0) {
+//                     m[amount] = m[amount - coin] + 1;
+//                     used_coins[amount] = used_coins[amount - coin];
+//                     used_coins[amount].push_back(c);
+//                 }
+//             }
+//         }
+//     }
 
-    // Check if a solution exists
-    if (m[n] == numeric_limits<int>::max() || m[n] == numeric_limits<int>::min()) {
-        cout << "Not possible to do transaction" << endl;
-        return 0;
-    }   
+//     // Check if a solution exists
+//     if (m[n] == numeric_limits<int>::max() || m[n] == numeric_limits<int>::min()) {
+//         cout << "Not possible to do transaction" << endl;
+//         return 0;
+//     }   
 
-    // Compute the count of each coin used
-    vector<int> coinUsage(numCoins, 0);
-    for (int idx : used_coins[n]) {
-        coinUsage[idx]++;
-    }
+//     // Compute the count of each coin used
+//     vector<int> coinUsage(numCoins, 0);
+//     for (int idx : used_coins[n]) {
+//         coinUsage[idx]++;
+//     }
 
-    // Update counts directly within the loop for efficiency
-    cout << "Minimum coins used: " << m[n] << endl;
-    cout << "Coins used:" << endl;
-    for (int i = 0; i < numCoins; ++i) {
-        if (coinUsage[i] > 0) {
-            cout << coins[i] << " x " << coinUsage[i] << ", ";
-            counts[i] -= coinUsage[i];
-        }
-    }
-    cout<<endl;
+//     // Update counts directly within the loop for efficiency
+//     cout << "Minimum coins used: " << m[n] << endl;
+//     cout << "Coins used:" << endl;
+//     for (int i = 0; i < numCoins; ++i) {
+//         if (coinUsage[i] > 0) {
+//             cout << coins[i] << " x " << coinUsage[i] << ", ";
+//             counts[i] -= coinUsage[i];
+//         }
+//     }
+//     cout<<endl;
 
-    // // Print remaining counts conditionally to avoid unnecessary output
-    if (any_of(counts.begin(), counts.end(), [](int count) { return count > 0; })) {
-        cout << "Remaining coin counts:" << endl;
-        for (int i = 0; i < numCoins; ++i) {
-            if (counts[i] > 0) {
-                cout << coins[i] << ": " << counts[i] << endl;
-            }
-        }
-    }
+//     // // Print remaining counts conditionally to avoid unnecessary output
+//     if (any_of(counts.begin(), counts.end(), [](int count) { return count > 0; })) {
+//         cout << "Remaining coin counts:" << endl;
+//         for (int i = 0; i < numCoins; ++i) {
+//             if (counts[i] > 0) {
+//                 cout << coins[i] << ": " << counts[i] << endl;
+//             }
+//         }
+//     }
     
-    return 1;
-}
+//     return 1;
+// }
 
 vector<string> Helper::takeInput(int nNodes=0){
     // Get input from console
@@ -132,8 +133,9 @@ bool Helper::isNumber(string number) {
                 isNumber = true;   
             }
             else {
+                if (int(number[i]) > 48){
                 isNumber = false;
-                checkingNumber = false;
+                checkingNumber = false;}
             }
         }
         checkingNumber = false;
@@ -153,4 +155,8 @@ bool Helper::strSmaller(string& AA, string& B) {
         }
     }
     return AA.length() < B.length();
+}
+
+Helper::~Helper(){
+
 }

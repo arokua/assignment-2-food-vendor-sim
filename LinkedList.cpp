@@ -3,27 +3,23 @@
 
 LinkedList::LinkedList() : head(nullptr), mySize(0) {}
 
-LinkedList::LinkedList(vector<int> a,int nNodes)  {
-    for (int i = a.size() - 1; i >= 0; --i) {
-        addFront(a[i]);
+// new Linked List via FoodItem map
+LinkedList::LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap){
+    // Accessing value in each pair containing shared_ptr points to the object
+    for (auto& pair : foodsMap) {
+        addEnd(pair.second->dataFood);
     }
+    
 }
 
 LinkedList::~LinkedList() {
     // shared_ptr automatically deletes nodes when the last reference goes out of scope
 }
 
-void LinkedList::addFront(int data) {
-    //Int data, for demo
-    auto newNode = make_shared<Node>(data);
-    newNode->next = head;
-    head = newNode;
-    mySize++;
-}
 
 void LinkedList::addFront(shared_ptr<FoodItem>& foodData) {
     //Food data for vendor
-    auto newNode = make_shared<Node>(foodData, nullptr, nullptr);
+    shared_ptr<Node> newNode = make_shared<Node>(foodData, nullptr, nullptr);
     if (head) {
         head->prev = newNode;
         newNode->next = head;
@@ -32,22 +28,10 @@ void LinkedList::addFront(shared_ptr<FoodItem>& foodData) {
     mySize++;
 }
 
-void LinkedList::addEnd(int data) {
-    auto newNode = make_shared<Node>(data, nullptr);
-    if (!head) {
-        head = newNode;
-        tail = newNode;
-    } else {
-        tail->next = newNode;
-        newNode->prev = tail;
-        tail = newNode;
-    }
-    mySize++;
-}
 
 shared_ptr<Node> LinkedList::addEnd(shared_ptr<FoodItem>& foodData) {
     //For food item type, return the newly added node
-    auto newNode = make_shared<Node>(foodData, nullptr, nullptr);
+    shared_ptr<Node> newNode = make_shared<Node>(foodData, nullptr, nullptr);
     if (!head) {
         head = newNode;
         tail = newNode;
@@ -56,29 +40,15 @@ shared_ptr<Node> LinkedList::addEnd(shared_ptr<FoodItem>& foodData) {
         newNode->prev = tail;
         tail = newNode;
     }
+    
     mySize++;
     return newNode;
 }
 
-void LinkedList::addAtPosition(int pos, int data) {
-    if (pos <= 0) {
-        addFront(data);
-    } else if (pos >= mySize) {
-        addEnd(data);
-    } else {
-        auto temp = head;
-        for (int i = 1; i < pos; ++i) {
-            temp = temp->next;
-        }
-        auto newNode = make_shared<Node>(data, temp->next);
-        temp->next = newNode;
-        mySize++;
-    }
-}
 
- shared_ptr<Node> LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap) {
+void LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap) {
     // Create a new node for the food data
-    auto newNode = make_shared<Node>(newFoodData);
+    shared_ptr<Node> newNode = make_shared<Node>(newFoodData);
 
     if (!head || Helper::strSmaller(newFoodData->name, head->dataFood->name)) {
         //If food is before head
@@ -107,7 +77,7 @@ void LinkedList::addAtPosition(int pos, int data) {
         refMap[newFoodData->id] = newNode;
         mySize++;
     }
-    return newNode;
+    // return newNode;
 }
 
 void LinkedList::addAtPosition(int pos,  shared_ptr<FoodItem>& foodData) {
@@ -150,24 +120,6 @@ void LinkedList::deleteEnd() {
     }
 }
 
-void LinkedList::deletePosition(int pos) {
-    if (pos <= 0 || pos > mySize) {
-        cout << "Position out of range\n";
-        return;
-    }
-
-    if (pos == 1) {
-        deleteFront();
-        return;
-    }
-
-    auto temp = head;
-    for (int i = 1; i < pos - 1; ++i) {
-        temp = temp->next;
-    }
-    temp->next = temp->next->next;
-    mySize--;
-}
 
 //Ultility methods
 void LinkedList::printItems() {
@@ -181,27 +133,49 @@ void LinkedList::printItems() {
     cout << endl;
 }
 
-int LinkedList::search(int item,shared_ptr<FoodItem>& foodData) {
-    int pos = 1;
-    auto temp = head;
-    while (temp) {
-        if (temp->data == item) {
-            cout << pos << "\n";
-            return pos;
+std::shared_ptr<FoodItem> LinkedList::searchFoodItemByName(std::string name) {
+    auto& temp = head;
+    std::shared_ptr<FoodItem> searchedFoodItem = nullptr; 
+    bool found = false;
+    try {
+        while (temp && !found) {
+            if (temp->dataFood->getName() == name) {
+                searchedFoodItem = temp->dataFood;
+                found = true;
+            }
+            temp = temp->next;
         }
-        temp = temp->next;
-        pos++;
-    }
-    cout << "0\n";
-    return 0;
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
+    } 
+    return searchedFoodItem;
 }
+
+
+std::shared_ptr<FoodItem> LinkedList::searchFoodItemByID(std::string ID) {
+    auto& temp = head;
+    std::shared_ptr<FoodItem> searchedFoodItem = nullptr;
+    bool found = false;
+    try {
+        while (temp && !found) {
+            if (temp->dataFood->getID() == ID) {
+                searchedFoodItem = temp->dataFood; // assign to the empty ptr
+                found = true;
+            }
+            temp = temp->next;
+        }
+    } catch (const std::runtime_error& e) {
+        cout << "Error: "<< e.what() << endl;
+    } 
+    return searchedFoodItem;
+}
+
 
 void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap) {
     auto it = refMap.find(foodID);
     if (it == refMap.end()) {
         cout << "Food item with ID " << foodID << " not found." << endl;
     }
-
     else{
         //Node do exists to be deleted
         // Get the node to be deleted
@@ -236,27 +210,6 @@ void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>&
         cout << "Food item with ID " << foodID << " has been removed from the system." << endl;}
 }
 
-int LinkedList::getItem(int p) {
-    if (p < 1) {
-        cout << std::numeric_limits<int>::max() << "\n";
-        return std::numeric_limits<int>::max();
-    }
-    auto temp = head;
-    for (int pos = 1; temp && pos <= p; ++pos, temp = temp->next) {
-        if (pos == p) {
-            cout << temp->data << "\n";
-            return temp->data;
-        }
-    }
-    cout << std::numeric_limits<int>::max() << "\n";
-    return std::numeric_limits<int>::max();
-}
-
-int LinkedList::getSize(){
-    return mySize;
-}
-
-// shared_ptr<Node> LinkedList::getItem(int p);
 
 void LinkedList::printItemsBrief() {
     auto temp = head;
@@ -267,4 +220,9 @@ void LinkedList::printItemsBrief() {
         temp = temp->next;
     }
     cout << endl;
+}
+
+
+int LinkedList::getSize(){
+    return mySize;
 }

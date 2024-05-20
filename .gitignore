@@ -1,4 +1,3 @@
-*.o
 *.exe
 .env.local
 Helper.o

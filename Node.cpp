@@ -1,25 +1,27 @@
-
 #include "Node.h"
 #include <iostream>
 
 using std::string;
 using std::cout;
 
-Node::Node() : next(nullptr) {
+Node::Node() : 
+    next(nullptr),
+    prev(nullptr)
+{}
 
-}
-
-FoodItem::FoodItem():nextFood(nullptr),previousFood(nullptr){
-    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+FoodItem::FoodItem() {
     id="FXXXX";
     name="Name";
     description="DESC";
     price=0.00;
-}
-
-FoodItem::FoodItem(string ID,string name,string desc,double P) :id(ID),name(name),description(desc),price(P) {
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
+
+FoodItem::FoodItem(string ID, string name, string desc, double P) :
+    id(ID), name(name), description(desc), price(P) 
+    {
+        on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+    }
 
 bool FoodItem::sold(){
     bool soldable=true;
@@ -28,21 +30,16 @@ bool FoodItem::sold(){
     return soldable;
 }
 
-void FoodItem::reStock(int val){
-    on_hand=val;
+void FoodItem::reStock(){
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
-FoodItem::~FoodItem(){
-
-}
-
-Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {
-
-}
 
 
 Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
- dataFood(foodData),next(next),prev(prev) {}
+    dataFood(foodData),next(next),prev(prev) {}
+
+
 
 void FoodItem::printInfo(){
     if (id!=""){
@@ -50,20 +47,30 @@ void FoodItem::printInfo(){
     }
 }
 
+
 void FoodItem::printInfoBrief() {
         if (id!=""){
             cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
     }
 }
 
-string FoodItem::getId() {
+
+
+std::string FoodItem::getName(){
+    return name;
+}
+std::string FoodItem::getID() {
     return id;
 }
-
-double FoodItem::getPrice() {
+std::string FoodItem::getDesc(){
+    return description;
+}
+double FoodItem::getPrice(){
     return price;
 }
-
-
-Node::~Node(){
+unsigned int FoodItem::getOnHand(){
+    return on_hand;
 }
+
+Node::~Node(){}
+FoodItem::~FoodItem(){}
