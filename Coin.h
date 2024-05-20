@@ -58,6 +58,10 @@ public:
 
     static void updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment = {});
     static int change_making(vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount);
+    // Overload the less-than operator for comparison
+    bool operator<(const Coin& other) const {
+        return denom < other.denom;
+    }
 };
 
 #endif // COIN_H
