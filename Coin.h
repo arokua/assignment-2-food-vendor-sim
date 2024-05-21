@@ -55,6 +55,7 @@ public:
     void printInfo();
     static bool isMoneyValidforPurchase(unsigned int input);
     static bool purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& cashRegister, std::vector<int> currentPayment = {});
+    static void displayBalance(std::vector<std::shared_ptr<Coin>>& coinVector);
 
     static void updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVector, std::vector<int> userPayment = {});
     static int change_making(vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount);

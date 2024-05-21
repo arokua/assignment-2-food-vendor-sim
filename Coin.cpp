@@ -25,6 +25,28 @@ void Coin::setCount(unsigned count) {
     this->count = count;
 }
 
+void Coin::displayBalance(std::vector<std::shared_ptr<Coin>>& coinVector) {
+    cout << "\n\nBalance Summary";
+    cout << "\n---------------";
+    cout << "\nDenom  | Quantity | Value";
+    cout << "\n----------------------------\n";
+    double sum=0;
+    for (auto& denom : coinVector){
+        double thisTypeTotal = denom->getCount() * (denom->getDenom() / 100.0);
+
+        std::ostringstream priceStream;
+        priceStream << std::fixed << std::setprecision(2) << thisTypeTotal;
+
+        cout << std::left << std::setw(7) << denom->getDenom() << "|"
+             << std::setw(10) << denom->getCount() << "|"  
+             << "$" << std::right << std::setw(7) << priceStream.str() << endl;
+        sum+=thisTypeTotal;
+    }
+    cout << "----------------------------\n";
+    cout << std::right << std::setw(20) << "$"
+         << std::right << std::setw(7) << std::fixed << std::setprecision(2) << sum << endl;
+};
+
 
 
 bool Coin::isMoneyValidforPurchase(unsigned int input){

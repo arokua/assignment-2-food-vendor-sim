@@ -51,11 +51,11 @@ void FoodItem::printInfo(){ // fully detailed printing function
 void FoodItem::printInfoBrief() { // printing function that used in printMenuItems function
     if (id != "") {
         std::ostringstream priceStream;
-        priceStream << std::fixed << std::setprecision(2) << "$" << price;
+        priceStream << std::fixed << std::setprecision(2) << price;
 
         std::cout << std::left << std::setw(5) << id << "|"
-                  << std::setw(45) << this->name << "|"
-                  << std::right << std::setw(5) << priceStream.str() << "\n";
+                  << std::setw(45) << name << "|"
+                  << "$" << std::right << std::setw(5) << priceStream.str() << std::endl;
     }
 }
 

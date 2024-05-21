@@ -1,17 +1,13 @@
-#include <limits>
-#include <algorithm>
 #include <fstream>
 
 #include "Node.h"
 #include "LinkedList.h"
 #include "Helper.h"
 #include "Coin.h"
-#include <iomanip>
 
 #define MENU_DESC "\nMain Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
-Select your option (1-7) :\n\n\
-DEBUG: 9. LinkedList test/demo implementation "
+Select your option (1-7): "
 
 using std::map;
 using std::vector;
@@ -29,43 +25,21 @@ bool isCoinFileValid(std::fstream& fileStream);
 
 std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName);
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
+
 std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName);
 
 void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName);
 void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName);
 
+// this sorting function is used to specifically sort coin vector
+void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector);
 
-void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector) {
-    for (size_t i = 1; i < coinsVector.size(); ++i) {
-        auto key = coinsVector[i];
-        int j = i - 1;
-
-        // Move elements of vec[0..i-1], that are greater than key->denom, to one position ahead of their current position
-        while (j >= 0 && coinsVector[j]->denom > key->denom) {
-            coinsVector[j + 1] = coinsVector[j];
-            --j;
-        }
-        coinsVector[j + 1] = key;
-    }
-}
-
-// void MakeFoodID(string &current) {
-//     // Check if the ID is "F9999"
-//     if (current == "F9999") {
-//         return; // Do nothing
-//     }
-
-//     // Start the increment process from the last character
-//     IncrementID(current, current.length() - numeroUno);
-// }
 
 int main(int argc, char ** argv){
-
     int menuChoice = 0;
     bool mainMenuLoop = false;
     string foodIdSelection = "";
 
-    // will be disable when doing tests
     if (argc != 3) {
         cout << "Incorrect number of arguments supplied." << endl;
         cout << "./ftt <food file> <coin file>" << endl;
@@ -77,10 +51,8 @@ int main(int argc, char ** argv){
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
     LinkedList foodsLinkedList(refMap);
 
-
     std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
 
-    
 
     cout << "Coin Vector" << endl;
     for (auto coin : coinVector) {
@@ -91,37 +63,6 @@ int main(int argc, char ** argv){
     foodsLinkedList.printMenuFood();
     cout << endl;
 
-
-    // cout << "Before sorting\n" << endl;
-    // insertionSortIncrementally(coinVector);
-    // cout << "After sorting\n" << endl;
-
-    // for (size_t i = 0; i < coinVector.size(); i++){
-    //     coinVector[i]->printInfo();
-    // }
-    
-    // cout << endl;
-
-    // for (const auto& pair : coinMap) {
-    //     std::cout << pair.first << ": " << pair.second << std::endl;
-    // }
-
-    
-    
-    // cout << endl;
-
-    // while(true) {
-    //     if (Coin::purchaseMeal(foodsLinkedList, coinVector)) {
-    //         cout << endl;
-    //         for (size_t i = 0; i < coinVector.size(); i++) {
-    //             coinVector[i]->printInfo();
-    //         }
-    //         return EXIT_SUCCESS;
-    //     } else {}
-    // }
-    
-    //Correct number of argument, initialize an empty food linked list
-    //Assumme the type of denominations are set
 
     mainMenuLoop = true;
 
@@ -148,19 +89,15 @@ int main(int argc, char ** argv){
         
         else if (menuChoice == 1) {
             foodsLinkedList.printMenuFood();
-            cout << "\n";
         } 
         else if (menuChoice == 2) {
             // bool payingForItem = false;
-
             cout << "\nPurchase Meal";
             cout << "\n-------------\n";
-            
             Coin::purchaseMeal(foodsLinkedList, coinVector);
-            // menuChoice.clear();
-            } 
-
+        } 
         else if (menuChoice == 3) {
+            // argv[1] is food file, argv [2] is coin file
             updateFoodFile(foodsLinkedList, argv[1]);
             updateCoinFile(coinVector, argv[2]);
             mainMenuLoop = false;
@@ -176,11 +113,7 @@ int main(int argc, char ** argv){
 
             cout << "\n\n\nFoods size: " << "\n" << foodsLinkedList.getSize() << "\n\n";
                 
-            /*  (Chris)
-                Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
-                (I hate this so fucking much)
-
-                Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
+            /*  Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
                 Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
                 If next is 2 digits long, append to ID that is missing 2 digits, etc
                 Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
@@ -238,19 +171,7 @@ int main(int argc, char ** argv){
             foodsLinkedList.deleteFood(foodIdSelection, refMap);
         } 
         else if (menuChoice == 6) {
-            cout << "\n\nBalance Summary";
-            cout << "\n---------------";
-            cout << "\nDenom  | Quantity | Value";
-            cout << "\n---------------------------\n";
-            double sum=0;
-            for (auto& k : coinVector){
-                double thisTypeTotal = k->getCount() * (k->getDenom() / 100.0);
-                cout << k->getDenom() <<"|\t"<< k->getCount()<<"|\t"<<"$ "<< std::fixed 
-                << std::setprecision(2)<< thisTypeTotal<<"\n";
-                sum+=thisTypeTotal;
-            }
-            cout << "---------------------------\n";
-            cout <<"\t\t  $ "<< std::fixed << std::setprecision(2)<<sum<<"\n";
+            Coin::displayBalance(coinVector);
         } 
         else if (menuChoice == 7) {
             mainMenuLoop = false;
@@ -326,6 +247,8 @@ std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string&
     } catch (const std::ifstream::failure& e) {
         std::cout << "Error: " << e.what() << std::endl;
     } catch (const std::runtime_error& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch (const std::invalid_argument& e) {
         std::cout << "Error: " << e.what() << std::endl;
     }
     
@@ -447,6 +370,169 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
 }
 
 
+void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName){
+    /***
+     * @brief Updating the food file by iterating through the vector and overwrite
+     * existing file
+     * @param foodsLinkedList Linked list that holds food information
+     * @param fileName File name that was passed in the command line argument
+    ***/
+    cout << "\nSaving data...." << endl;
+    string currentLine = "";
+    std::ofstream foodSaveFile(fileName);
+    /*
+        Go through each linked list item
+        Get all details of current item/node in the linked list, in a format suitable for saving as a string
+        Append that to the new save file
+    */
+    if (foodSaveFile.is_open()) {
+        for (int i = 0; i < foodsLinkedList.getSize(); i++) {
+            currentLine = foodsLinkedList.getItemDetails(i);
+            // cout << currentLine;
+            foodSaveFile << currentLine;
+        }
+    }
+    foodSaveFile.close();
+
+    cout << "\nSave completed. Now exiting...\n\n";
+    // Once save completed, exit so
+}
+
+
+void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName){
+    /***
+     * @brief Updating the coin file by iterating through the vector and overwrite
+     * existing file
+     * @param coinsVector Vector that contains coins information
+     * @param fileName File name that was passed in the command line argument
+    ***/
+    cout << "\nSaving data....." << endl;
+    string currentLine = "";
+    std::ofstream coinSaveFile(fileName);
+    
+    if (coinSaveFile.is_open()) {
+        for (auto& denom : coinsVector) {
+            currentLine = denom->getDenom() + "," + denom->getCount();
+            // cout << currentLine;
+            coinSaveFile << currentLine;
+        }
+    }
+    coinSaveFile.close();
+
+    cout << "\nSave completed. Now exiting...\n\n";
+}
+
+
+// since there's a fileReader function, this verification only needs to pass in the reference file
+bool isFoodFileValid(std::fstream& fileStream) {
+        bool success = false;
+        string currentLine = "";
+        vector<string> lineSplit;
+        vector<string> price;
+
+        try {
+            if (fileStream.is_open()) {
+                while (getline(fileStream, currentLine)) {    
+                    // skip empty line
+                    if (!currentLine.empty()) {
+                        // splitting data
+                        Helper::splitString(currentLine, lineSplit, FOODITEM_DELIM); // "|"
+
+                        // check if the data is sufficient
+                        if (lineSplit.size() == FOODITEM_ARGC) { // 4
+                            // If the first letter of the food code isn't F
+                            if (lineSplit[0][0] != 'F') {
+                                throw std::invalid_argument("The ID does not follow the correct format!");
+                            } else {
+                                // If the rest of the ID char are not ints
+                                for (size_t i = 1; i < lineSplit[0].size(); i++) {
+                                    if (!isdigit(lineSplit[0][i])) {
+                                        throw std::invalid_argument("The ID does not follow the correct format!");
+                                    }
+                                }
+                            }
+
+                            // validating each data length
+                            if (lineSplit[0].length() > IDLEN) {
+                                throw std::invalid_argument("An error in ID detected!");
+                            }
+
+                            if (lineSplit[1].length() > NAMELEN) {
+                                throw std::invalid_argument("An error in Name detected!");
+                            }
+
+                            if (lineSplit[2].length() > DESCLEN) {
+                                throw std::invalid_argument("An error in Description detected!");
+                            }
+
+                            //If the price is not a double number
+                            Helper::splitString(lineSplit[3], price, ".");
+                            if (!lineSplit[3].find(".") || price.size() != 2) {
+                                throw std::invalid_argument("The price does not follow the correct format!");
+                            }
+
+                            success = true;
+                        }
+                        
+                        else { // If there aren't exactly 4 pieces of data per line
+                            throw std::invalid_argument("Invalid number of data arguments!");
+                        }
+                    }
+                }
+                fileStream.close();
+
+            } else { // if can't locate/open data file
+                throw std::ifstream::failure("Failed to open file");
+            }
+        } catch (const std::ifstream::failure& e) {
+            std::cout << "Error: " << e.what() << std::endl;
+        } catch (const std::invalid_argument& e) {
+            std::cout << "Error: " << e.what() << std::endl;
+        }
+        return success;
+}
+
+
+bool isCoinFileValid(std::fstream& fileStream) {
+    bool success = false;
+    string currentLine = "";
+    vector<string> coinsSplit;
+    vector<string> price;
+
+    try {
+        if (fileStream.is_open()) {
+            while (getline(fileStream, currentLine)) {
+                // for debug
+                // cout << currentLine << "\n";
+                if (!currentLine.empty()) {
+                    Helper::splitString(currentLine, coinsSplit, COIN_DELIM); // ","
+                    if (coinsSplit.size() == COIN_ARGC) { // 2
+                        // If the data are not int
+                        if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[1]) ) {
+                            throw std::invalid_argument("The coins data does not follow the correct format!");
+                        } 
+                        success = true;
+                    }
+                    
+                    else { //If there aren't exactly 2 pieces of data per line
+                        throw std::invalid_argument("Invalid number of data arguments!");
+                    }
+                }
+            }  
+            fileStream.close();
+
+        } else { // if can't locate/open data file
+            throw std::ifstream::failure("Failed to open file");
+        }
+    } catch (const std::ifstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+    return success;
+}
+
+
 // map version of the readCoinDataFile function
 std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName) {
     std::string line;
@@ -535,155 +621,17 @@ std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName)
 }
 
 
-void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName){
-    /***
-     * @brief Updating the food file by iterating through the vector and overwrite
-     * existing file
-     * @param foodsLinkedList Linked list that holds food information
-     * @param fileName File name that was passed in the command line argument
-    ***/
-    cout << "\nSaving data...." << endl;
-    string currentLine = "";
-    std::ofstream foodSaveFile(fileName);
-    /*
-        Go through each linked list item
-        Get all details of current item/node in the linked list, in a format suitable for saving as a string
-        Append that to the new save file
-    */
-    if (foodSaveFile.is_open()) {
-        for (int i = 0; i < foodsLinkedList.getSize(); i++) {
-            currentLine = foodsLinkedList.getItemDetails(i);
-            // cout << currentLine;
-            foodSaveFile << currentLine;
+void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector) {
+    // this sorting function is used to specifically sort coin vector
+    for (size_t i = 1; i < coinsVector.size(); ++i) {
+        auto key = coinsVector[i];
+        int j = i - 1;
+
+        // Move elements of vec[0..i-1], that are greater than key->denom, to one position ahead of their current position
+        while (j >= 0 && coinsVector[j]->denom > key->denom) {
+            coinsVector[j + 1] = coinsVector[j];
+            --j;
         }
+        coinsVector[j + 1] = key;
     }
-    foodSaveFile.close();
-
-    cout << "\nSave completed. Now exiting...\n\n";
-    // Once save completed, exit so
-}
-
-
-void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName){
-    /***
-     * @brief Updating the coin file by iterating through the vector and overwrite
-     * existing file
-     * @param coinsVector Vector that contains coins information
-     * @param fileName File name that was passed in the command line argument
-    ***/
-    cout << "\nSaving data....." << endl;
-    string currentLine = "";
-    std::ofstream coinSaveFile(fileName);
-    
-    if (coinSaveFile.is_open()) {
-        for (auto& denom : coinsVector) {
-            currentLine = denom->getDenom() + "," + denom->getCount();
-            // cout << currentLine;
-            coinSaveFile << currentLine;
-        }
-    }
-    coinSaveFile.close();
-
-    cout << "\nSave completed. Now exiting...\n\n";
-    // Once save completed, exit so
-}
-
-
-
-
-
-// since there's a fileReader function, this verification only needs to pass in the reference file
-bool isFoodFileValid(std::fstream& fileStream) {
-        bool success = false;
-        string currentLine = "";
-        vector<string> lineSplit;
-        vector<string> price;
-
-        try {
-            if (fileStream.is_open()) {
-                while (getline(fileStream, currentLine)) {    
-                    // skip empty line
-                    if (!currentLine.empty()) {
-                        // splitting data
-                        Helper::splitString(currentLine, lineSplit, FOODITEM_DELIM); // "|"
-
-                        // check if the data is sufficient
-                        if (lineSplit.size() == FOODITEM_ARGC) { // 4
-                            // If the first letter of the food code isn't F
-                            if (lineSplit[0][0] != 'F') {
-                                throw std::invalid_argument("The ID does not follow the correct format!");
-                            } else {
-                                // If the rest of the ID char are not ints
-                                for (size_t i = 1; i < lineSplit[0].size(); i++) {
-                                    if (!isdigit(lineSplit[0][i])) {
-                                        throw std::invalid_argument("The ID does not follow the correct format!");
-                                    }
-                                }
-                            }
-
-                            //If the price is not a double number
-                            Helper::splitString(lineSplit[3], price, ".");
-                            if (!lineSplit[3].find(".") || price.size() != 2) {
-                                throw std::invalid_argument("The price does not follow the correct format!");
-                            }
-
-                            success = true;
-                        }
-                        
-                        else { // If there aren't exactly 4 pieces of data per line
-                            throw std::invalid_argument("Invalid number of data arguments!");
-                        }
-                    }
-                }
-                fileStream.close();
-
-            } else { // if can't locate/open data file
-                throw std::ifstream::failure("Failed to open file");
-            }
-        } catch (const std::ifstream::failure& e) {
-            std::cout << "Error: " << e.what() << std::endl;
-        } catch (const std::invalid_argument& e) {
-            std::cout << "Error: " << e.what() << std::endl;
-        }
-        return success;
-}
-
-
-bool isCoinFileValid(std::fstream& fileStream) {
-    bool success = false;
-    string currentLine = "";
-    vector<string> coinsSplit;
-    vector<string> price;
-
-    try {
-        if (fileStream.is_open()) {
-            while (getline(fileStream, currentLine)) {
-                // for debug
-                // cout << currentLine << "\n";
-                if (!currentLine.empty()) {
-                    Helper::splitString(currentLine, coinsSplit, COIN_DELIM); // ","
-                    if (coinsSplit.size() == COIN_ARGC) { // 2
-                        // If the data are not int
-                        if (!stoi(coinsSplit[0]) || !stoi(coinsSplit[1]) ) {
-                            throw std::invalid_argument("The coins data does not follow the correct format!");
-                        } 
-                        success = true;
-                    }
-                    
-                    else { //If there aren't exactly 2 pieces of data per line
-                        throw std::invalid_argument("Invalid number of data arguments!");
-                    }
-                }
-            }  
-            fileStream.close();
-
-        } else { // if can't locate/open data file
-            throw std::ifstream::failure("Failed to open file");
-        }
-    } catch (const std::ifstream::failure& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    } catch (const std::invalid_argument& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
-    return success;
 }
