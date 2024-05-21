@@ -72,7 +72,7 @@ void LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_pt
             tail = newNode;
         }
 
-        refMap[newFoodData->id] = newNode;
+        refMap[newFoodData->name] = newNode;
         mySize++;
     }
     // return newNode;
@@ -169,8 +169,12 @@ std::shared_ptr<FoodItem> LinkedList::searchFoodItemByID(std::string ID) {
 }
 
 
+// the function is currently searching for pair via ID (which should be via names)
 void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap) {
-    auto it = refMap.find(foodID);
+    
+    std::shared_ptr<FoodItem> chosenFoodItem = searchFoodItemByID(foodID);
+    
+    auto it = refMap.find(chosenFoodItem->getName());
     if (it == refMap.end()) {
         cout << "Food item with ID " << foodID << " not found." << endl;
     }
@@ -204,6 +208,7 @@ void LinkedList::deleteFood(const string& foodID, map<string, shared_ptr<Node>>&
 
         // Decrement the size of the linked list
         mySize--;
+        chosenFoodItem = nullptr;
 
         cout << "Food item with ID " << foodID << " has been removed from the system." << endl;}
 }

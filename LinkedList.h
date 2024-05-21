@@ -51,7 +51,7 @@ public:
 private:
     shared_ptr<Node> head;
     shared_ptr<Node> tail;
-    int mySize;
+    int mySize = 0;
 };
 
 #endif //LINKEDLIST_H 

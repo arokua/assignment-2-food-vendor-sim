@@ -7,7 +7,7 @@
 #include "Helper.h"
 #include "Coin.h"
 
-#define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
+#define MENU_DESC "\nMain Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
 Select your option (1-7) :\n\n\
 DEBUG: 9. LinkedList test/demo implementation "
@@ -62,7 +62,7 @@ int main(int argc, char ** argv){
 
     int menuChoice = 0;
     bool mainMenuLoop = false;
-    bool verifyFiles = true;
+    // bool verifyFiles = true;
     string foodIdSelection = "";
 
     // will be disable when doing tests
@@ -70,15 +70,25 @@ int main(int argc, char ** argv){
         cout << "Incorrect number of arguments supplied." << endl;
         cout << "./ftt <food file> <coin file>" << endl;
         mainMenuLoop = false;
-        verifyFiles = false;
+        // verifyFiles = false;
     }
-    if (verifyFiles) {}
+    // if (verifyFiles) {}
 
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
     std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
 
     LinkedList foodsLinkedList(refMap);
+
+    cout << "Coin Vector" << endl;
+    for (auto coin : coinVector) {
+        coin->printInfo();
+    }
+    cout << endl;
+    cout << "Linked List" << foodsLinkedList.getSize() << endl;
+    foodsLinkedList.printItems();
+    cout << endl;
+
 
     // cout << "Before sorting\n" << endl;
     // insertionSortIncrementally(coinVector);
@@ -110,7 +120,6 @@ int main(int argc, char ** argv){
     
     //Correct number of argument, initialize an empty food linked list
     //Assumme the type of denominations are set
-
 
     mainMenuLoop = true;
 
@@ -149,26 +158,99 @@ int main(int argc, char ** argv){
             } 
 
         else if (menuChoice == 3) {
-            cout << "\nSaving data...";
-            cout << "\nSAVING TBD\n\n";
-            //Once save completed, exit so
-            menuChoice=7;
+            cout << "\nSaving data.";
+            string currentLine = "";
+            std::ofstream foodSaveFile("foods.dat");
+
+            /*
+                Go through each linked list item
+                Get all details of current item/node in the linked list, in a format suitable for saving as a string
+                Append that to the new save file
+            */
+            if (foodSaveFile.is_open()) {
+                for (int i = 0; i < foodsLinkedList.getSize(); i++) {
+                    currentLine = foodsLinkedList.getItemDetails(i);
+                    // cout << currentLine;
+                    foodSaveFile << currentLine;
+                }
+            }
+            foodSaveFile.close();
+
+            cout << "\nSave completed. Now exiting...\n\n";
+            // Once save completed, exit so
+            mainMenuLoop = false;
         } 
         else if (menuChoice == 4) {
             string addFoodId = "";
             string addFoodName = "";
             string addFoodDesc = "";
+            string addFood="";
             string addFoodPrice = "";
             bool freeSlotAvailable = true;
             bool inputtingPrice = false;
-            if (freeSlotAvailable) {}
-            if (inputtingPrice) {}
-        }
+
+            cout << "\n\n\nFoods size: " << "\n" << foodsLinkedList.getSize() << "\n\n";
+                
+            /*  (Chris)
+                Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
+                (I hate this so fucking much)
+
+                Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
+                Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
+                If next is 2 digits long, append to ID that is missing 2 digits, etc
+                Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
+            */
+            if (foodsLinkedList.getSize() + 1 <= 9) {
+                addFoodId = "F000";
+            }
+            else if (foodsLinkedList.getSize() + 1 > 9 && foodsLinkedList.getSize() + 1 < 100) {
+                addFoodId = "F00";
+            }
+            else if (foodsLinkedList.getSize() + 1 > 99 && foodsLinkedList.getSize() + 1 < 1000) {
+                addFoodId = "F0";
+            }
+            else if (foodsLinkedList.getSize() + 1 > 999 && foodsLinkedList.getSize() + 1 < 10000) {
+                addFoodId = "F";
+            }
+            else {
+                cout << "Maximum number of food items reached!\n";
+                freeSlotAvailable = false;
+            }
+
+            if (freeSlotAvailable) {
+                // Still able to add food
+                addFoodId.append(to_string(foodsLinkedList.getSize() + 1));
+                cout << "\n\n" << addFoodId;
+
+                cout << "\nThe new meal item will have the item id of " << addFoodId;
+                cout << "\nEnter the item name: ";
+                getline(cin, addFoodName);
+                cout << "\nEnter the item description: ";
+                getline(cin, addFoodDesc);
+
+                inputtingPrice = true;
+
+                while (inputtingPrice) {
+                    cout << "\nEnter the item price: ";
+                    getline(cin, addFoodPrice);
+
+                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
+                        cout << "Error: money is not formatted correctly";
+                    }
+                    else {
+                        auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
+                        foodsLinkedList.insert(newFood, refMap); // Orderly insertion with use of refMap
+                        
+                        inputtingPrice = false;
+                    }
+                }
+            }
+        } 
 
         else if (menuChoice == 5) {
             cout << "Please enter the ID of the food to remove from the menu: ";
             cin >> foodIdSelection;
-            cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+            foodsLinkedList.deleteFood(foodIdSelection, refMap);
         } 
         else if (menuChoice == 6) {
             cout << "\n\nBalance Summary";

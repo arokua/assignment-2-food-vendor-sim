@@ -1,5 +1,7 @@
 #include "Node.h"
 #include <iostream>
+#include <sstream> 
+#include <iomanip>
 
 using std::string;
 using std::cout;
@@ -81,8 +83,11 @@ FoodItem::~FoodItem(){}
 
 string FoodItem::getInfo(){
     string line = "";
+    std::ostringstream priceStream;
+    priceStream << std::fixed << std::setprecision(2) << price;
+    std::string priceStr = priceStream.str();
     if (id != ""){
-        line = id + "|" + this->name + "|" + description + "|" + to_string(price) + "\n";
+        line = id + "|" + this->name + "|" + description + "|" + priceStr + "\n";
     }
     return line;
 }
