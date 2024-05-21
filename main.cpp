@@ -14,8 +14,7 @@
 
 #define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
-Select your option (1-7) :\n\n\
-DEBUG: 9. LinkedList test/demo implementation "
+Select your option (1-7) :\n"
 
 using std::map;
 using std::vector;
@@ -100,149 +99,176 @@ int main(int argc, char** argv) {
     }
 
     Helper helperObject; // Create an instance of helper to call some of its functions
+    string dumbInput="";
     while (mainMenuLoop) {
-        foods.getItemDetails(8);
+        // foods.getItemDetails(8);
 
         cout << MENU_DESC;
-        cin >> menuChoice;
-        cin.ignore();
-
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore();
+        
+        dumbInput=helperObject.processInput();
+        if (dumbInput=="||") {
             cout << "\nError in input. Please try again.\n";
-            menuChoice = 0;
-        } else if (menuChoice == 1) {
-            cout << "\nFood Menu\n";
-            cout << "\n---------";
-            cout << "\nID |Name                                                |Length";
-            cout << "\n------------------------------------------------------------------\n";
-            foods.printItems(); // Print the food out
-            cout << "\n";
-        } else if (menuChoice == 2) {
-            cout << "\nPurchase Meal";
-            cout << "\n-------------";
-            bool purchaseSuccess = Coin::purchaseMeal(foods, cashRegister);
-            if (purchaseSuccess) {
-                // Update the original coin map based on the new coin counts
-                coinMap.clear();
-                for (auto& coin : cashRegister) {
-                    coinMap[*coin] = coin->getCount();
-                }
-            }
-        } else if (menuChoice == 3) {
-            cout << "\nSaving data.";
-            string currentLine = "";
-            ofstream foodSaveFile("food_new.dat");
+            cin.clear();
+            mainMenuLoop=false;
+        } else {
+            try{
+                //If input is not EOF or '\n' and is a number
+                menuChoice = stoi(dumbInput);
+                if (menuChoice == 1) {
+                    cout << "\nFood Menu\n";
+                    cout << "\n---------";
+                    cout << "\nID |Name                                                |Length";
+                    cout << "\n------------------------------------------------------------------\n";
+                    foods.printItems(); // Print the food out
+                    cout << "\n";
+                } else if (menuChoice == 2) {
+                    cout << "\nPurchase Meal";
+                    cout << "\n-------------";
+                    bool purchaseSuccess = Coin::purchaseMeal(foods, cashRegister);
+                    if (purchaseSuccess) {
+                        // Update the original coin map based on the new coin counts
+                        coinMap.clear();
+                        for (auto& coin : cashRegister) {
+                            coinMap[*coin] = coin->getCount();
+                        }
+                    }
+                } else if (menuChoice == 3) {
+                    cout << "\nSaving data.";
+                    string currentLine = "";
+                    ofstream foodSaveFile("food_new.dat");
 
-            /*
-                Go through each linked list item
-                Get all details of current item/node in the linked list, in a format suitable for saving as a string
-                Append that to the new save file
-            */
-            if (foodSaveFile.is_open()) {
-                for (int i = 0; i < foods.getSize(); i++) {
-                    currentLine = foods.getItemDetails(i);
-                    // cout << currentLine;
-                    foodSaveFile << currentLine;
-                }
-            }
-            foodSaveFile.close();
+                    /*
+                        Go through each linked list item
+                        Get all details of current item/node in the linked list, in a format suitable for saving as a string
+                        Append that to the new save file
+                    */
+                    if (foodSaveFile.is_open()) {
+                        for (int i = 0; i < foods.getSize(); i++) {
+                            currentLine = foods.getItemDetails(i);
+                            // cout << currentLine;
+                            foodSaveFile << currentLine;
+                        }
+                    }
+                    foodSaveFile.close();
 
-            cout << "\nSave completed. Now exiting...\n\n";
-            // Once save completed, exit so
-            mainMenuLoop = false;
-        } else if (menuChoice == 4) {
-            string addFoodId = "";
-            string addFoodName = "";
-            string addFoodDesc = "";
-            string addFood="";
-            string addFoodPrice = "";
-            bool freeSlotAvailable = true;
-            bool inputtingPrice = false;
+                    cout << "\nSave completed. Now exiting...\n\n";
+                    // Once save completed, exit so
+                    mainMenuLoop = false;
+                } else if (menuChoice == 4) {
+                    string addFoodId = "";
+                    string addFoodName = "";
+                    string addFoodDesc = "";
+                    string addFood="";
+                    string addFoodPrice = "";
+                    bool freeSlotAvailable = true;
+                    bool inputtingPrice = false;
 
-            cout << "\n\n\nFoods size: " << "\n" << to_string(foods.getSize()) << "\n\n";
-                
-            /*  (Chris)
-                Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
-                (I hate this so fucking much)
+                    cout << "\n\n\nFoods size: " << "\n" << to_string(foods.getSize()) << "\n\n";
+                        
+                    /*  (Chris)
+                        Stupid brute force way to get a proper food ID because I can't figure out our specific LL implementation in time 
+                        (I hate this so fucking much)
 
-                Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
-                Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
-                If next is 2 digits long, append to ID that is missing 2 digits, etc
-                Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
-            */
-            if (foods.getSize() + 1 <= 9) {
-                addFoodId = "F000";
-            }
-            else if (foods.getSize() + 1 > 9 && foods.getSize() + 1 < 100) {
-                addFoodId = "F00";
-            }
-            else if (foods.getSize() + 1 > 99 && foods.getSize() + 1 < 1000) {
-                addFoodId = "F0";
-            }
-            else if (foods.getSize() + 1 > 999 && foods.getSize() + 1 < 10000) {
-                addFoodId = "F";
-            }
-            else {
-                cout << "Maximum number of food items reached!\n";
-                freeSlotAvailable = false;
-            }
-
-            if (freeSlotAvailable) {
-                // Still able to add food
-                addFoodId.append(to_string(foods.getSize() + 1));
-                cout << "\n\n" << addFoodId;
-
-                cout << "\nThe new meal item will have the item id of " << addFoodId;
-                cout << "\nEnter the item name: ";
-                cin >> addFoodName;
-                cout << "\nEnter the item description: ";
-                cin >> addFoodDesc;
-
-                inputtingPrice = true;
-
-                while (inputtingPrice) {
-                    cout << "\nEnter the item price: ";
-                    getline(cin, addFoodPrice);
-
-                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
-                        cout << "Error: money is not formatted correctly";
+                        Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
+                        Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
+                        If next is 2 digits long, append to ID that is missing 2 digits, etc
+                        Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
+                    */
+                    if (foods.getSize() + 1 <= 9) {
+                        addFoodId = "F000";
+                    }
+                    else if (foods.getSize() + 1 > 9 && foods.getSize() + 1 < 100) {
+                        addFoodId = "F00";
+                    }
+                    else if (foods.getSize() + 1 > 99 && foods.getSize() + 1 < 1000) {
+                        addFoodId = "F0";
+                    }
+                    else if (foods.getSize() + 1 > 999 && foods.getSize() + 1 < 10000) {
+                        addFoodId = "F";
                     }
                     else {
-                        auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
-                        foods.insert(newFood, refMap); // Orderly insertion with use of refMap
-                        
-                        inputtingPrice = false;
+                        cout << "Maximum number of food items reached!\n";
+                        freeSlotAvailable = false;
                     }
+
+                    if (freeSlotAvailable) {
+                        // Still able to add food
+                        addFoodId.append(to_string(foods.getSize() + 1));
+                        cout << "\n\n" << addFoodId;
+
+                        cout << "\nThe new meal item will have the item id of " << addFoodId;
+                        cout << "\nEnter the item name: ";
+                        addFoodName=helperObject.processInput();
+                        if (addFoodName !="||" && addFoodName !="|"){
+
+                            //Exit option when pressed enter
+                            cout << "\nEnter the item description: ";
+                            addFoodDesc=helperObject.processInput();
+                            if (addFoodDesc !="||" && addFoodDesc !="|") inputtingPrice = true;
+                            else {
+                                freeSlotAvailable=false;
+                                cin.clear();
+                                menuChoice=0;
+                            }
+                            
+                        }else {
+                            freeSlotAvailable=false;
+                            cin.clear();
+                            menuChoice=0;
+                        }
+
+                        while (inputtingPrice) {
+                            cout << "\nEnter the item price: ";
+                            getline(cin, addFoodPrice);
+
+                            if (addFoodPrice.find('.') > addFoodPrice.length()) {
+                                cout << "Error: money is not formatted correctly";
+                            }
+                            else {
+                                auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
+                                foods.insert(newFood, refMap); // Orderly insertion with use of refMap
+                                
+                                inputtingPrice = false;
+                            }
+                        }
+                    }
+                } 
+                else if (menuChoice == 5) {
+                    cout << "Please enter the ID of the food to remove from the menu: ";
+                    foodIdSelection = helperObject.processInput();
+                    while (foodIdSelection=="||") {
+                        cout << "Invalid input. Please try again: ";
+                        cin.clear();
+                        foodIdSelection = helperObject.processInput();
+                    }
+                    foods.deleteFood(foodIdSelection, refMap);
+                } 
+                else if (menuChoice == 6) {
+                    cout << "\n\nBalance Summary";
+                    cout << "\n---------------";
+                    cout << "\nDenom  | Quantity | Value";
+                    cout << "\n---------------------------\n";
+                    double sum = 0;
+                    for (auto& k : coinMap) {
+                        double thisTypeTotal = k.first.denom * (k.second / 100.0);
+                        cout << k.first.denom << "|\t" << k.second << "|\t" << "$ " << std::fixed 
+                        << std::setprecision(significant_figures + 1) << thisTypeTotal << "\n";
+                        sum += thisTypeTotal;
+                    }
+                    cout << "---------------------------\n";
+                    cout << "\t\t  $ " << std::fixed << std::setprecision(significant_figures) << sum << "\n";
+                } 
+                else if (menuChoice == 7) {
+                    mainMenuLoop = false;
+                } 
+                else if (menuChoice < 1 || menuChoice > 9) {
+                    cout << "\nError: number was outside of range.\n";
                 }
+            } catch (std::invalid_argument& e) {
+                cout << "\nError: " << e.what() << "\n";
+                cout <<"Not a number!\n";
             }
-        } 
-        else if (menuChoice == 5) {
-            cout << "Please enter the ID of the food to remove from the menu: ";
-            cin >> foodIdSelection;
-            foods.deleteFood(foodIdSelection, refMap);
-        } 
-        else if (menuChoice == 6) {
-            cout << "\n\nBalance Summary";
-            cout << "\n---------------";
-            cout << "\nDenom  | Quantity | Value";
-            cout << "\n---------------------------\n";
-            double sum = 0;
-            for (auto& k : coinMap) {
-                double thisTypeTotal = k.first.denom * (k.second / 100.0);
-                cout << k.first.denom << "|\t" << k.second << "|\t" << "$ " << std::fixed 
-                << std::setprecision(significant_figures + 1) << thisTypeTotal << "\n";
-                sum += thisTypeTotal;
-            }
-            cout << "---------------------------\n";
-            cout << "\t\t  $ " << std::fixed << std::setprecision(significant_figures) << sum << "\n";
-        } 
-        else if (menuChoice == 7) {
-            mainMenuLoop = false;
-        } 
-        else if (menuChoice < 1 || menuChoice > 9) {
-            cout << "\nError: number was outside of range.\n";
+            
         }
     }
 

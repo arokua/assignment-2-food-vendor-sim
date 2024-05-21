@@ -20,8 +20,9 @@ class Helper{
 public:
     Helper(); //Default constructor
     ~Helper(); //Default destructor
-
-    vector<string> takeInput(int);
+    //Takes a inpu
+    string processInput();
+    //Prints a vector
     template<typename T>
     void vectorPrint(const vector<T>& v) {
         for (const T& item : v) {

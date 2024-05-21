@@ -94,7 +94,7 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
             getline(std::cin, line);
             
             // check for ctrl+D or empty line -> exiting the function
-            if (std::cin.eof() || line.empty()) { 
+            if (std::cin.eof() || (line.empty() && std::cin.fail())) { 
                 currentPayment.clear(); // deleting current payment
                 done = true;
                 chosenFoodItem.reset();
@@ -126,7 +126,8 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
                 
                 if (currentBalance <= 0) {
                     done = true;
-                    chosenFoodItem = nullptr;
+                    // chosenFoodItem = nullptr;
+                    chosenFoodItem->sold();
                     updateCoinVector(cashRegister, currentPayment);
                 }
             }
