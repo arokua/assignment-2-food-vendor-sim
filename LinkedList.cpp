@@ -224,3 +224,33 @@ void LinkedList::printItemsBrief() {
 int LinkedList::getSize(){
     return mySize;
 }
+
+
+
+
+
+
+
+
+std::string LinkedList::getItemDetails(int listPosition) {
+    string itemInfo = "";
+    shared_ptr<Node> currentNode = head;
+    int currentListPosition = 0;
+    bool lookingForItem = true;
+    
+    while (lookingForItem) {
+        if (currentListPosition == listPosition) {  
+            itemInfo = currentNode->dataFood->getInfo();
+            //cout << itemInfo;
+            //cout << currentNode->dataFood->getId() << endl;
+            lookingForItem = false;
+        }
+        else {
+            currentListPosition++;            
+            if (currentNode->next != nullptr) currentNode = currentNode->next;
+            else lookingForItem = false;
+
+        }
+    }
+    return itemInfo;
+}

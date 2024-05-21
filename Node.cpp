@@ -3,6 +3,7 @@
 
 using std::string;
 using std::cout;
+using std::to_string;
 
 Node::Node() : 
     next(nullptr),
@@ -74,3 +75,14 @@ unsigned int FoodItem::getOnHand(){
 
 Node::~Node(){}
 FoodItem::~FoodItem(){}
+
+
+
+
+string FoodItem::getInfo(){
+    string line = "";
+    if (id != ""){
+        line = id + "|" + this->name + "|" + description + "|" + to_string(price) + "\n";
+    }
+    return line;
+}

@@ -126,9 +126,14 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
                 
                 if (currentBalance <= 0) {
                     done = true;
+                    if (done){
+                        chosenFoodItem->sold();
+                    }
                     chosenFoodItem = nullptr;
                     updateCoinVector(cashRegister, currentPayment);
                 }
+
+                
             }
         }
         

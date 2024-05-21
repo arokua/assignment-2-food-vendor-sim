@@ -46,6 +46,7 @@ public:
     // shared_ptr<Node> getItem(int p);
     std::shared_ptr<FoodItem> searchFoodItemByName(std::string name);
     std::shared_ptr<FoodItem> searchFoodItemByID(std::string ID);
+    std::string getItemDetails(int listPosition);
 
 private:
     shared_ptr<Node> head;

@@ -60,42 +60,43 @@ void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector)
 
 int main(int argc, char ** argv){
 
-    // int menuChoice = 0;
+    int menuChoice = 0;
     bool mainMenuLoop = false;
     bool verifyFiles = true;
-    // string foodIdSelection = "";
+    string foodIdSelection = "";
 
     // will be disable when doing tests
     if (argc != 3) {
-        cout << "Incorrect number of arguments supplied.\n";
+        cout << "Incorrect number of arguments supplied." << endl;
+        cout << "./ftt <food file> <coin file>" << endl;
         mainMenuLoop = false;
         verifyFiles = false;
     }
-    if (verifyFiles){}
-    if (mainMenuLoop){}
+    if (verifyFiles) {}
 
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
     std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
-
-    cout << "Before sorting\n" << endl;
-    insertionSortIncrementally(coinVector);
-    cout << "After sorting\n" << endl;
-
-    for (size_t i = 0; i < coinVector.size(); i++){
-        coinVector[i]->printInfo();
-    }
-    
-    cout << endl;
-
-    for (const auto& pair : coinMap) {
-        std::cout << pair.first << ": " << pair.second << std::endl;
-    }
-
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
 
     LinkedList foodsLinkedList(refMap);
+
+    // cout << "Before sorting\n" << endl;
+    // insertionSortIncrementally(coinVector);
+    // cout << "After sorting\n" << endl;
+
+    // for (size_t i = 0; i < coinVector.size(); i++){
+    //     coinVector[i]->printInfo();
+    // }
     
-    cout << endl;
+    // cout << endl;
+
+    // for (const auto& pair : coinMap) {
+    //     std::cout << pair.first << ": " << pair.second << std::endl;
+    // }
+
+    
+    
+    // cout << endl;
 
     // while(true) {
     //     if (Coin::purchaseMeal(foodsLinkedList, coinVector)) {
@@ -107,82 +108,102 @@ int main(int argc, char ** argv){
     //     } else {}
     // }
     
-    // //Correct number of argument, initialize an empty food linked list
-    // //Assumme the type of denominations are set
+    //Correct number of argument, initialize an empty food linked list
+    //Assumme the type of denominations are set
 
 
-    //         if (cin.fail()) {
-    //             cin.clear();
-    //             cin.ignore();
-    //             cout << "\nError in input. Please try again.\n";
-    //             menuChoice=0;
-    //         }
+    mainMenuLoop = true;
+
+    while(mainMenuLoop) {
+        foodsLinkedList.getItemDetails(8);
+
+        cout << MENU_DESC;
+        cin.clear();
+        cin >> menuChoice;
+        
+        cin.ignore();
+        if (cin.fail() || cin.eof()) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "\nError in input. Please try again.\n";
+            menuChoice = 0;
+        }
+        
+        else if (menuChoice == 1) {
+            cout << "\nFood Menu\n";
+            cout << "\n---------";
+            cout << "\nID |Name                                                |Length";
+            cout << "\n------------------------------------------------------------------\n";
+            foodsLinkedList.printItems();
+            cout << "\n";
             
-    //         else if (menuChoice == 1) {
-    //             cout << "\nFood Menu\n";
-    //             cout << "\n---------";
-    //             cout << "\nID |Name                                                |Length";
-    //             cout << "\n------------------------------------------------------------------\n";
-    //             foodsLinkedList.printItems();
-    //             cout << "\n";
-                
-    //         } 
-    //         else if (menuChoice == 2) {
-    //             bool payingForItem = false;
+        } 
+        else if (menuChoice == 2) {
+            // bool payingForItem = false;
 
-    //             cout << "\nPurchase Meal";
-    //             cout << "\n-------------";
-                
-    //             Coin::purchaseMeal(foodsLinkedList, coinVector);
-    //             } 
+            cout << "\nPurchase Meal";
+            cout << "\n-------------\n";
+            
+            Coin::purchaseMeal(foodsLinkedList, coinVector);
+            // menuChoice.clear();
+            } 
 
-    //         else if (menuChoice == 3) {
-    //             cout << "\nSaving data...";
-    //             cout << "\nSAVING TBD\n\n";
-    //             //Once save completed, exit so
-    //             menuChoice=7;
-    //         } 
-    //         else if (menuChoice == 4) {
-    //             string addFoodId = "";
-    //             string addFoodName = "";
-    //             string addFoodDesc = "";
-    //             string addFoodPrice = "";
-    //             bool freeSlotAvailable = true;
-    //             bool inputtingPrice = false;
-    //         }
+        else if (menuChoice == 3) {
+            cout << "\nSaving data...";
+            cout << "\nSAVING TBD\n\n";
+            //Once save completed, exit so
+            menuChoice=7;
+        } 
+        else if (menuChoice == 4) {
+            string addFoodId = "";
+            string addFoodName = "";
+            string addFoodDesc = "";
+            string addFoodPrice = "";
+            bool freeSlotAvailable = true;
+            bool inputtingPrice = false;
+            if (freeSlotAvailable) {}
+            if (inputtingPrice) {}
+        }
 
-    //         else if (menuChoice == 5) {
-    //             cout << "Please enter the ID of the food to remove from the menu: ";
-    //             cin >> foodIdSelection;
-    //             cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
-    //         } 
-    //         else if (menuChoice == 6) {
-    //             cout << "\n\nBalance Summary";
-    //             cout << "\n---------------";
-    //             cout << "\nDenom  | Quantity | Value";
-    //             cout << "\n---------------------------\n";
-    //             double sum=0;
-    //             for (auto& k : myBalance){
-    //                 double thisTypeTotal = k.first * (k.second / 100.0);
-    //                 cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
-    //                 << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
-    //                 sum+=thisTypeTotal;
-    //             }
-    //             cout << "---------------------------\n";
-    //             cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
-    //         } 
-    //         else if (menuChoice == 7) {
-    //             mainMenuLoop = false;
-    //         } 
-    //         else if (menuChoice < 1 || menuChoice > 7 ) {
-    //             cout << "\nError: number was outside of range.\n";
-    //         }
-    // }
+        else if (menuChoice == 5) {
+            cout << "Please enter the ID of the food to remove from the menu: ";
+            cin >> foodIdSelection;
+            cout << "<ITEM ID, NAME, DESC HERE> has been removed from the system";
+        } 
+        else if (menuChoice == 6) {
+            cout << "\n\nBalance Summary";
+            cout << "\n---------------";
+            cout << "\nDenom  | Quantity | Value";
+            cout << "\n---------------------------\n";
+            // double sum=0;
+            // for (auto& k : myBalance){
+            //     double thisTypeTotal = k.first * (k.second / 100.0);
+            //     cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
+            //     << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
+            //     sum+=thisTypeTotal;
+            // }
+            // cout << "---------------------------\n";
+            // cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
+        } 
+        else if (menuChoice == 7) {
+            mainMenuLoop = false;
+        } 
+        else if (menuChoice < 1 || menuChoice > 7 ) {
+            cout << "\nError: number was outside of range.\n";
+        }
+    }
+    
 
     return EXIT_SUCCESS;
     
  
 }
+
+
+
+
+
+
 
 
     
@@ -350,9 +371,9 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
     }
     
     // printing out Coin
-    for (size_t i = 0; i < coinVector.size(); i++) {
-        coinVector[i]->printInfo();
-    }
+    // for (size_t i = 0; i < coinVector.size(); i++) {
+    //     coinVector[i]->printInfo();
+    // }
 
     // return a vector containing shared_ptr pointing to each Coin
     return coinVector;

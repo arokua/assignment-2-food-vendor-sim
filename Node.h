@@ -61,6 +61,11 @@ public:
     void reStock(); 
     void printInfo();
     void printInfoBrief();
+
+
+    std::string getInfo();
+
+
     
 };
 
