@@ -6,6 +6,7 @@
 #include "LinkedList.h"
 #include "Helper.h"
 #include "Coin.h"
+#include <iomanip>
 
 #define MENU_DESC "\nMain Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
@@ -30,8 +31,8 @@ std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string&
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName);
 
-void updateFoodFile();
-void updateCoinFile();
+void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName);
+void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName);
 
 
 void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector) {
@@ -62,7 +63,6 @@ int main(int argc, char ** argv){
 
     int menuChoice = 0;
     bool mainMenuLoop = false;
-    // bool verifyFiles = true;
     string foodIdSelection = "";
 
     // will be disable when doing tests
@@ -70,23 +70,25 @@ int main(int argc, char ** argv){
         cout << "Incorrect number of arguments supplied." << endl;
         cout << "./ftt <food file> <coin file>" << endl;
         mainMenuLoop = false;
-        // verifyFiles = false;
+
     }
-    // if (verifyFiles) {}
 
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
-    std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
-
     LinkedList foodsLinkedList(refMap);
+
+
+    std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
+
+    
 
     cout << "Coin Vector" << endl;
     for (auto coin : coinVector) {
         coin->printInfo();
     }
     cout << endl;
-    cout << "Linked List" << foodsLinkedList.getSize() << endl;
-    foodsLinkedList.printItems();
+    cout << "Linked List\t" << foodsLinkedList.getSize() << endl;
+    foodsLinkedList.printMenuFood();
     cout << endl;
 
 
@@ -124,28 +126,29 @@ int main(int argc, char ** argv){
     mainMenuLoop = true;
 
     while(mainMenuLoop) {
-        foodsLinkedList.getItemDetails(8);
 
         cout << MENU_DESC;
         cin.clear();
         cin >> menuChoice;
         
-        cin.ignore();
-        if (cin.fail() || cin.eof()) {
+        if (cin.fail()) {
             cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cin.ignore();
             cout << "\nError in input. Please try again.\n";
             menuChoice = 0;
         }
+
+        else if (cin.eof()) {
+            cin.clear();
+            cin.ignore();
+            cout << "\nEOF has been detected. Exiting the program\n";
+            menuChoice = 0;
+            mainMenuLoop = false;
+        }
         
         else if (menuChoice == 1) {
-            cout << "\nFood Menu\n";
-            cout << "\n---------";
-            cout << "\nID |Name                                                |Length";
-            cout << "\n------------------------------------------------------------------\n";
-            foodsLinkedList.printItems();
+            foodsLinkedList.printMenuFood();
             cout << "\n";
-            
         } 
         else if (menuChoice == 2) {
             // bool payingForItem = false;
@@ -158,26 +161,8 @@ int main(int argc, char ** argv){
             } 
 
         else if (menuChoice == 3) {
-            cout << "\nSaving data.";
-            string currentLine = "";
-            std::ofstream foodSaveFile("foods.dat");
-
-            /*
-                Go through each linked list item
-                Get all details of current item/node in the linked list, in a format suitable for saving as a string
-                Append that to the new save file
-            */
-            if (foodSaveFile.is_open()) {
-                for (int i = 0; i < foodsLinkedList.getSize(); i++) {
-                    currentLine = foodsLinkedList.getItemDetails(i);
-                    // cout << currentLine;
-                    foodSaveFile << currentLine;
-                }
-            }
-            foodSaveFile.close();
-
-            cout << "\nSave completed. Now exiting...\n\n";
-            // Once save completed, exit so
+            updateFoodFile(foodsLinkedList, argv[1]);
+            updateCoinFile(coinVector, argv[2]);
             mainMenuLoop = false;
         } 
         else if (menuChoice == 4) {
@@ -257,15 +242,15 @@ int main(int argc, char ** argv){
             cout << "\n---------------";
             cout << "\nDenom  | Quantity | Value";
             cout << "\n---------------------------\n";
-            // double sum=0;
-            // for (auto& k : myBalance){
-            //     double thisTypeTotal = k.first * (k.second / 100.0);
-            //     cout << k.first <<"|\t"<< k.second<<"|\t"<<"$ "<< std::fixed 
-            //     << std::setprecision(significant_figures+1)<< thisTypeTotal<<"\n";
-            //     sum+=thisTypeTotal;
-            // }
-            // cout << "---------------------------\n";
-            // cout <<"\t\t  $ "<< std::fixed << std::setprecision(significant_figures)<<sum<<"\n";
+            double sum=0;
+            for (auto& k : coinVector){
+                double thisTypeTotal = k->getCount() * (k->getDenom() / 100.0);
+                cout << k->getDenom() <<"|\t"<< k->getCount()<<"|\t"<<"$ "<< std::fixed 
+                << std::setprecision(2)<< thisTypeTotal<<"\n";
+                sum+=thisTypeTotal;
+            }
+            cout << "---------------------------\n";
+            cout <<"\t\t  $ "<< std::fixed << std::setprecision(2)<<sum<<"\n";
         } 
         else if (menuChoice == 7) {
             mainMenuLoop = false;
@@ -548,6 +533,62 @@ std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName)
 
     return coinMap;
 }
+
+
+void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName){
+    /***
+     * @brief Updating the food file by iterating through the vector and overwrite
+     * existing file
+     * @param foodsLinkedList Linked list that holds food information
+     * @param fileName File name that was passed in the command line argument
+    ***/
+    cout << "\nSaving data...." << endl;
+    string currentLine = "";
+    std::ofstream foodSaveFile(fileName);
+    /*
+        Go through each linked list item
+        Get all details of current item/node in the linked list, in a format suitable for saving as a string
+        Append that to the new save file
+    */
+    if (foodSaveFile.is_open()) {
+        for (int i = 0; i < foodsLinkedList.getSize(); i++) {
+            currentLine = foodsLinkedList.getItemDetails(i);
+            // cout << currentLine;
+            foodSaveFile << currentLine;
+        }
+    }
+    foodSaveFile.close();
+
+    cout << "\nSave completed. Now exiting...\n\n";
+    // Once save completed, exit so
+}
+
+
+void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName){
+    /***
+     * @brief Updating the coin file by iterating through the vector and overwrite
+     * existing file
+     * @param coinsVector Vector that contains coins information
+     * @param fileName File name that was passed in the command line argument
+    ***/
+    cout << "\nSaving data....." << endl;
+    string currentLine = "";
+    std::ofstream coinSaveFile(fileName);
+    
+    if (coinSaveFile.is_open()) {
+        for (auto& denom : coinsVector) {
+            currentLine = denom->getDenom() + "," + denom->getCount();
+            // cout << currentLine;
+            coinSaveFile << currentLine;
+        }
+    }
+    coinSaveFile.close();
+
+    cout << "\nSave completed. Now exiting...\n\n";
+    // Once save completed, exit so
+}
+
+
 
 
 

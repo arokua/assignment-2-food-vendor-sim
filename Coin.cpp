@@ -1,7 +1,6 @@
 #include "Coin.h"
 #include "Helper.h"
 
-#include <iostream>
 
 Coin::Coin(Denomination denom, unsigned count) {
     this->denom = denom;
@@ -129,7 +128,6 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
                     if (done){
                         chosenFoodItem->sold();
                     }
-                    chosenFoodItem = nullptr;
                     updateCoinVector(cashRegister, currentPayment);
                 }
 

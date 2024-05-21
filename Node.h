@@ -3,6 +3,9 @@
 
 #include <string> 
 #include <memory> 
+#include <sstream> 
+#include <iomanip>
+#include <iostream>
 
 
 //The length of the id string not counting the nul terminator

@@ -2,6 +2,7 @@
 #define COIN_H
 
 #include <string>
+#include <iostream>
 
 #include "LinkedList.h"
 
