@@ -25,13 +25,8 @@ public:
     // initializing the linked list with the FoodItem Vector
     LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap);
 
-    // void addFront(shared_ptr<Node>& insertingNode);
-    // void addEnd(shared_ptr<Node>& insertingNode);
-    // void addAtPosition(int pos, shared_ptr<Node>& insertingNode);
-
-    void addFront(shared_ptr<Node>& foodData);
-    void addEnd(shared_ptr<Node>& foodData);
-    // void addAtPosition(int pos, shared_ptr<FoodItem>& foodData);
+    void addFront(shared_ptr<FoodItem>& foodData);
+    void addEnd(shared_ptr<FoodItem>& foodData);
 
     //Insert by alphabetical with aid of a dictionary for quick lookup
     void insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap);

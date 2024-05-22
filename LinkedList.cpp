@@ -9,31 +9,33 @@ LinkedList::LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap) :
 {
     // Accessing value in each pair containing shared_ptr points to the object
     for (auto& pair : foodsMap) {
-        addEnd(pair.second);
+        addEnd(pair.second->dataFood);
     }
 }
 
 
-void LinkedList::addFront(shared_ptr<Node>& foodNode) {
+void LinkedList::addFront(shared_ptr<FoodItem>& foodData) {
     //Food data for vendor
+    shared_ptr<Node> newNode = make_shared<Node>(foodData, nullptr, nullptr);
     if (head) {
-        head->prev = foodNode;
-        foodNode->next = head;
+        head->prev = newNode;
+        newNode->next = head;
     }
-    head = foodNode;
+    head = newNode;
     mySize++;
 }
 
 
-void LinkedList::addEnd(shared_ptr<Node>& foodNode) {
+void LinkedList::addEnd(shared_ptr<FoodItem>& foodData) {
     //For food item type, return the newly added node
+    shared_ptr<Node> newNode = make_shared<Node>(foodData, nullptr, nullptr);
     if (!head) {
-        head = foodNode;
-        tail = foodNode;
+        head = newNode;
+        tail = newNode;
     } else {
-        tail->next = foodNode;
-        foodNode->prev = tail;
-        tail = foodNode;
+        tail->next = newNode;
+        newNode->prev = tail;
+        tail = newNode;
     }
     mySize++;
 }
@@ -87,7 +89,7 @@ void LinkedList::printMenuFood() {
 
 
 std::shared_ptr<FoodItem> LinkedList::searchFoodItemByName(std::string name) {
-    auto& temp = head;
+    auto temp = head;
     std::shared_ptr<FoodItem> searchedFoodItem = nullptr; 
     bool found = false;
     try {
@@ -106,7 +108,7 @@ std::shared_ptr<FoodItem> LinkedList::searchFoodItemByName(std::string name) {
 
 
 std::shared_ptr<FoodItem> LinkedList::searchFoodItemByID(std::string ID) {
-    auto& temp = head;
+    auto temp = head;
     std::shared_ptr<FoodItem> searchedFoodItem = nullptr;
     bool found = false;
     try {
@@ -154,7 +156,7 @@ void LinkedList::insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_pt
 
     if (!head || Helper::strSmaller(newFoodData->name, head->dataFood->name)) {
         //If food is before head
-        addFront(newNode);
+        addFront(newNode->dataFood);
         refMap[newFoodData->name] = head;
     }
     else{

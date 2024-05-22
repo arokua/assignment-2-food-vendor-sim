@@ -82,9 +82,12 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
         cout << "Please enter Ctrl-D or Enter on a new line to cancel this purchase." << endl;
         cout << "\nPlease enter the ID of the food you wish to purchase: ";
         string foodIdSelection;
-        getline(std::cin, foodIdSelection);
+        cin >> foodIdSelection;
         if (std::cin.eof() || foodIdSelection.empty()) { 
             done = true;
+            if (foodIdSelection.empty()) {
+                cout << "empty" << endl;
+            }
             throw std::invalid_argument("Cancelling purchase");
         } 
         // search and create a pointer to the object
@@ -112,7 +115,7 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
             std::string line; // only used for checking empty line
 
             std::cout << "You still need to give us $" << currentBalance << ": ";
-            getline(std::cin, line);
+            cin >> line;
             
             // check for ctrl+D or empty line -> exiting the function
             if (std::cin.eof() || line.empty()) { 

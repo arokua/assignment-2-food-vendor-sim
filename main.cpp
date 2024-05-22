@@ -20,14 +20,15 @@ using std::to_string;
 using std::fstream;
 using std::ostream;
 
+// file verification
 bool isFoodFileValid(std::fstream& fileStream);
 bool isCoinFileValid(std::fstream& fileStream);
 
+// file reader
 std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName);
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
 
-std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName);
-
+// file update
 void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName);
 void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName);
 
@@ -50,19 +51,6 @@ int main(int argc, char ** argv){
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
     LinkedList foodsLinkedList(refMap);
-
-    std::map<Denomination, int> coinMap = readCoinDataFileintoMap(argv[2]);
-
-
-    cout << "Coin Vector" << endl;
-    for (auto coin : coinVector) {
-        coin->printInfo();
-    }
-    cout << endl;
-    cout << "Linked List\t" << foodsLinkedList.getSize() << endl;
-    foodsLinkedList.printMenuFood();
-    cout << endl;
-
 
     mainMenuLoop = true;
 
@@ -174,27 +162,16 @@ int main(int argc, char ** argv){
             Coin::displayBalance(coinVector);
         } 
         else if (menuChoice == 7) {
+            cout << "Aborting program" << endl;
             mainMenuLoop = false;
         } 
         else if (menuChoice < 1 || menuChoice > 7 ) {
             cout << "\nError: number was outside of range.\n";
         }
     }
-    
-
     return EXIT_SUCCESS;
-    
- 
 }
 
-
-
-
-
-
-
-
-    
 
 
 std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName){
@@ -530,94 +507,6 @@ bool isCoinFileValid(std::fstream& fileStream) {
         std::cout << "Error: " << e.what() << std::endl;
     }
     return success;
-}
-
-
-// map version of the readCoinDataFile function
-std::map<Denomination, int> readCoinDataFileintoMap(const std::string& fileName) {
-    std::string line;
-    std::fstream openfile(fileName);
-    std::map<Denomination, int> coinMap;
-
-    try {
-        if (!isCoinFileValid(openfile)) {
-            throw std::runtime_error("Invalid coin data file!");
-        }
-
-        std::fstream openfile(fileName); // re-open file data
-        if (openfile.is_open()) {
-            while(std::getline(openfile, line)) { // reading each line in the file
-                // skip empty line
-                if (!line.empty()) {
-                    std::vector<std::string> dataVector;
-                    // splitting data with "|" delimiter
-                    Helper::splitString(line, dataVector, COIN_DELIM);
-
-                    if (std::stoi(dataVector[1]) >= 0) {
-                        bool duplication = false;
-
-                        for (auto& coin : coinMap) { // if the Denom exists, increase the counts on the existed Denom
-                            if (coin.first == std::stoi(dataVector[0])) {
-                                duplication = true;
-                                coin.second += std::stoi(dataVector[1]);  
-                            }
-                        }
-
-                        // if not, create new pair in the map
-                        if (!duplication) {
-                            if (std::stoi(dataVector[0]) == 5) {
-                                coinMap.insert({Denomination::FIVE_CENTS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 10) {
-                                coinMap.insert({Denomination::TEN_CENTS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 20) {
-                                coinMap.insert({Denomination::TWENTY_CENTS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 50) {
-                                coinMap.insert({Denomination::FIFTY_CENTS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 100) {
-                                coinMap.insert({Denomination::ONE_DOLLAR, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 200) {
-                                coinMap.insert({Denomination::TWO_DOLLARS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 500) {
-                                coinMap.insert({Denomination::FIVE_DOLLARS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 1000) {
-                                coinMap.insert({Denomination::TEN_DOLLARS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 2000) {
-                                coinMap.insert({Denomination::TWENTY_DOLLARS, std::stoi(dataVector[1])});
-
-                            } else if (std::stoi(dataVector[0]) == 5000) {
-                                coinMap.insert({Denomination::FIFTY_DOLLARS, std::stoi(dataVector[1])});
-                            }
-                        }
-                            
-                    } else {
-                        throw std::invalid_argument("Invalid data arguments!"); // invalid counts 
-                    }
-                    dataVector.clear();
-                }
-            }
-                
-            openfile.close();
-        } else { // if can't locate/open data file
-            throw std::ifstream::failure("Failed to open file");
-        }
-        
-    } catch (const std::ifstream::failure& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    } catch (const std::invalid_argument& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    } catch (const std::runtime_error& e) {
-        std::cout << "Error: " << e.what() << std::endl;
-    }
-
-    return coinMap;
 }
 
 
