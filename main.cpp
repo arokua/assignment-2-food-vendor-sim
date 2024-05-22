@@ -5,7 +5,7 @@
 #include "Helper.h"
 #include "Coin.h"
 
-#define MENU_DESC "\nMain Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
+#define MENU_DESC "Main Menu:\n1. Display Meal Options\n2. Purchase Meal\n3. Save and Exit\n\
 Administrator-Only Menu:\n4. Add Food\n5. Remove Food\n6. Display Balance\n7. Abort Program\n\
 Select your option (1-7): "
 
@@ -23,23 +23,23 @@ using std::ostream;
 // file verification
 bool isFoodFileValid(std::fstream& fileStream);
 bool isCoinFileValid(std::fstream& fileStream);
-
 // file reader
 std::map<std::string ,std::shared_ptr<Node>> readFoodDataFile(const std::string& fileName);
 std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName);
-
 // file update
 void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName);
 void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fileName);
-
 // this sorting function is used to specifically sort coin vector
 void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector);
+
+
+
 
 
 int main(int argc, char ** argv){
     int menuChoice = 0;
     bool mainMenuLoop = false;
-    string foodIdSelection = "";
+    // string foodIdSelection = "";
 
     if (argc != 3) {
         cout << "Incorrect number of arguments supplied." << endl;
@@ -54,120 +54,65 @@ int main(int argc, char ** argv){
 
     mainMenuLoop = true;
 
-    while(mainMenuLoop) {
+    try {
+        while(mainMenuLoop) {
 
-        cout << MENU_DESC;
-        cin.clear();
-        cin >> menuChoice;
-        
-        if (cin.fail()) {
+            cout << MENU_DESC;
             cin.clear();
+            cin >> menuChoice;
             cin.ignore();
-            cout << "\nError in input. Please try again.\n";
-            menuChoice = 0;
+            cout << endl;
+            
+            if (cin.eof()) {
+                cin.clear();
+                cin.ignore();
+                cout << "\nEOF has been detected. Exiting the program\n";
+                menuChoice = 0;
+                mainMenuLoop = false;
+            }
+            else if (cin.fail()) {
+                cin.clear();
+                cin.ignore();
+                cout << "\nError in input. Please try again.\n";
+                menuChoice = 0;
+            }
+            
+            else if (menuChoice == 1) {
+                foodsLinkedList.printMenuFood();
+            } 
+            else if (menuChoice == 2) {
+                // bool payingForItem = false;
+                cout << "\nPurchase Meal";
+                cout << "\n-------------\n";
+                Coin::purchaseMeal(foodsLinkedList, coinVector);
+            } 
+            else if (menuChoice == 3) {
+                // argv[1] is food file, argv [2] is coin file
+                updateFoodFile(foodsLinkedList, argv[1]);
+                updateCoinFile(coinVector, argv[2]);
+                mainMenuLoop = false;
+            } 
+            else if (menuChoice == 4) {
+                foodsLinkedList.addNewFood(refMap);
+            } 
+            else if (menuChoice == 5) {
+                foodsLinkedList.deleteFood(refMap);
+            } 
+            else if (menuChoice == 6) {
+                insertionSortIncrementally(coinVector);
+                Coin::displayBalance(coinVector);
+            } 
+            else if (menuChoice == 7) {
+                cout << "Aborting program" << endl;
+                mainMenuLoop = false;
+            } 
+            else if (menuChoice < 1 || menuChoice > 7 ) {
+                cout << "\nError: number was outside of range.\n";
+            }
         }
-
-        else if (cin.eof()) {
-            cin.clear();
-            cin.ignore();
-            cout << "\nEOF has been detected. Exiting the program\n";
-            menuChoice = 0;
-            mainMenuLoop = false;
-        }
-        
-        else if (menuChoice == 1) {
-            foodsLinkedList.printMenuFood();
-        } 
-        else if (menuChoice == 2) {
-            // bool payingForItem = false;
-            cout << "\nPurchase Meal";
-            cout << "\n-------------\n";
-            Coin::purchaseMeal(foodsLinkedList, coinVector);
-        } 
-        else if (menuChoice == 3) {
-            // argv[1] is food file, argv [2] is coin file
-            updateFoodFile(foodsLinkedList, argv[1]);
-            updateCoinFile(coinVector, argv[2]);
-            mainMenuLoop = false;
-        } 
-        else if (menuChoice == 4) {
-            string addFoodId = "";
-            string addFoodName = "";
-            string addFoodDesc = "";
-            string addFood="";
-            string addFoodPrice = "";
-            bool freeSlotAvailable = true;
-            bool inputtingPrice = false;
-
-            cout << "\n\n\nFoods size: " << "\n" << foodsLinkedList.getSize() << "\n\n";
-                
-            /*  Check the range of the next food ID to be added (current list size + 1) and append to end of appropriate ID
-                Eg: if next ID 1 digit long, append to an ID string that is missing 1 digit
-                If next is 2 digits long, append to ID that is missing 2 digits, etc
-                Caps at 4 digits. If next ID is 5 digits, display error message and cancel adding a new item.
-            */
-            if (foodsLinkedList.getSize() + 1 <= 9) {
-                addFoodId = "F000";
-            }
-            else if (foodsLinkedList.getSize() + 1 > 9 && foodsLinkedList.getSize() + 1 < 100) {
-                addFoodId = "F00";
-            }
-            else if (foodsLinkedList.getSize() + 1 > 99 && foodsLinkedList.getSize() + 1 < 1000) {
-                addFoodId = "F0";
-            }
-            else if (foodsLinkedList.getSize() + 1 > 999 && foodsLinkedList.getSize() + 1 < 10000) {
-                addFoodId = "F";
-            }
-            else {
-                cout << "Maximum number of food items reached!\n";
-                freeSlotAvailable = false;
-            }
-
-            if (freeSlotAvailable) {
-                // Still able to add food
-                addFoodId.append(to_string(foodsLinkedList.getSize() + 1));
-                cout << "\n\n" << addFoodId;
-
-                cout << "\nThe new meal item will have the item id of " << addFoodId;
-                cout << "\nEnter the item name: ";
-                getline(cin, addFoodName);
-                cout << "\nEnter the item description: ";
-                getline(cin, addFoodDesc);
-
-                inputtingPrice = true;
-
-                while (inputtingPrice) {
-                    cout << "\nEnter the item price: ";
-                    getline(cin, addFoodPrice);
-
-                    if (addFoodPrice.find('.') > addFoodPrice.length()) {
-                        cout << "Error: money is not formatted correctly";
-                    }
-                    else {
-                        auto newFood = make_shared<FoodItem>(addFoodId, addFoodName, addFoodDesc, stod(addFoodPrice));
-                        foodsLinkedList.insert(newFood, refMap); // Orderly insertion with use of refMap
-                        
-                        inputtingPrice = false;
-                    }
-                }
-            }
-        } 
-
-        else if (menuChoice == 5) {
-            cout << "Please enter the ID of the food to remove from the menu: ";
-            cin >> foodIdSelection;
-            foodsLinkedList.deleteFood(foodIdSelection, refMap);
-        } 
-        else if (menuChoice == 6) {
-            Coin::displayBalance(coinVector);
-        } 
-        else if (menuChoice == 7) {
-            cout << "Aborting program" << endl;
-            mainMenuLoop = false;
-        } 
-        else if (menuChoice < 1 || menuChoice > 7 ) {
-            cout << "\nError: number was outside of range.\n";
-        }
+    } catch (const std::invalid_argument& e) {
+        cout << "Error: " << e.what() << std::endl;
+        throw;
     }
     return EXIT_SUCCESS;
 }
@@ -223,10 +168,13 @@ std::map<std::string, std::shared_ptr<Node>> readFoodDataFile(const std::string&
         }
     } catch (const std::ifstream::failure& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     } catch (const std::runtime_error& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     } catch (const std::invalid_argument& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     }
     
     // printing out FoodItem
@@ -331,10 +279,13 @@ std::vector<std::shared_ptr<Coin>> readCoinDataFile(const std::string& fileName)
         
     } catch (const std::ifstream::failure& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     } catch (const std::invalid_argument& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     } catch (const std::runtime_error& e) {
         std::cout << "Error: " << e.what() << std::endl;
+        throw;
     }
     
     // printing out Coin
@@ -354,25 +305,37 @@ void updateFoodFile(LinkedList& foodsLinkedList, const string& fileName){
      * @param foodsLinkedList Linked list that holds food information
      * @param fileName File name that was passed in the command line argument
     ***/
-    cout << "\nSaving data...." << endl;
-    string currentLine = "";
-    std::ofstream foodSaveFile(fileName);
-    /*
-        Go through each linked list item
-        Get all details of current item/node in the linked list, in a format suitable for saving as a string
-        Append that to the new save file
-    */
-    if (foodSaveFile.is_open()) {
-        for (int i = 0; i < foodsLinkedList.getSize(); i++) {
-            currentLine = foodsLinkedList.getItemDetails(i);
-            // cout << currentLine;
-            foodSaveFile << currentLine;
-        }
-    }
-    foodSaveFile.close();
 
-    cout << "\nSave completed. Now exiting...\n\n";
-    // Once save completed, exit so
+    try {
+        cout << "\nSaving data...." << endl;
+        string currentLine = "";
+        std::ofstream foodSaveFile(fileName);
+        /*
+            Go through each linked list item
+            Get all details of current item/node in the linked list, in a format suitable for saving as a string
+            Append that to the new save file
+        */
+        if (foodSaveFile.is_open()) {
+            for (int i = 0; i < foodsLinkedList.getSize(); i++) {
+                currentLine = foodsLinkedList.getItemDetails(i);
+                // cout << currentLine;
+                foodSaveFile << currentLine;
+            }
+        }
+        foodSaveFile.close();
+
+        cout << "\nSave completed. Now exiting...\n\n";
+        // Once save completed, exit so    
+    } catch (const std::ofstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    } catch (const std::runtime_error& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    }
 }
 
 
@@ -383,20 +346,32 @@ void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fi
      * @param coinsVector Vector that contains coins information
      * @param fileName File name that was passed in the command line argument
     ***/
-    cout << "\nSaving data....." << endl;
-    string currentLine = "";
-    std::ofstream coinSaveFile(fileName);
-    
-    if (coinSaveFile.is_open()) {
-        for (auto& denom : coinsVector) {
-            currentLine = denom->getDenom() + "," + denom->getCount();
-            // cout << currentLine;
-            coinSaveFile << currentLine;
-        }
-    }
-    coinSaveFile.close();
 
-    cout << "\nSave completed. Now exiting...\n\n";
+    try {
+        cout << "\nSaving data....." << endl;
+        string currentLine = "";
+        std::ofstream coinSaveFile(fileName);
+        
+        if (coinSaveFile.is_open()) {
+            for (auto& denom : coinsVector) {
+                currentLine = denom->getDenom() + "," + denom->getCount();
+                // cout << currentLine;
+                coinSaveFile << currentLine;
+            }
+        }
+        coinSaveFile.close();
+
+        cout << "\nSave completed. Now exiting...\n\n";
+    } catch (const std::ofstream::failure& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    } catch (const std::runtime_error& e) {
+        std::cout << "Error: " << e.what() << std::endl;
+        throw;
+    }
 }
 
 
@@ -431,15 +406,15 @@ bool isFoodFileValid(std::fstream& fileStream) {
 
                             // validating each data length
                             if (lineSplit[0].length() > IDLEN) {
-                                throw std::invalid_argument("An error in ID detected!");
+                                throw std::invalid_argument("An error in reading ID detected!");
                             }
 
                             if (lineSplit[1].length() > NAMELEN) {
-                                throw std::invalid_argument("An error in Name detected!");
+                                throw std::invalid_argument("An error in reading Name detected!");
                             }
 
                             if (lineSplit[2].length() > DESCLEN) {
-                                throw std::invalid_argument("An error in Description detected!");
+                                throw std::invalid_argument("An error in reading Description detected!");
                             }
 
                             //If the price is not a double number

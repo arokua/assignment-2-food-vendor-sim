@@ -65,11 +65,8 @@ public:
     void printInfo();
     void printInfoBrief();
 
-
     std::string getInfo();
 
-
-    
 };
 
 /**
@@ -78,7 +75,6 @@ public:
 class Node {
 public:
     Node();
-    Node(int data, std::shared_ptr<Node> next = nullptr);
     Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr,
     std::shared_ptr<Node> prev = nullptr);
     Node(const Node& other);

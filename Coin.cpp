@@ -1,29 +1,11 @@
 #include "Coin.h"
 #include "Helper.h"
 
-
 Coin::Coin(Denomination denom, unsigned count) {
     this->denom = denom;
     this->count = count;
 }
 
-void Coin::printInfo(){
-    if (count > 0) {
-        std::cout << denom << "," << count << std::endl;
-    }    
-}
-
-Denomination Coin::getDenom() {
-    return denom;
-}
-
-unsigned Coin::getCount() {
-    return count;
-}
-
-void Coin::setCount(unsigned count) {
-    this->count = count;
-}
 
 void Coin::displayBalance(std::vector<std::shared_ptr<Coin>>& coinVector) {
     cout << "\n\nBalance Summary";
@@ -46,7 +28,6 @@ void Coin::displayBalance(std::vector<std::shared_ptr<Coin>>& coinVector) {
     cout << std::right << std::setw(20) << "$"
          << std::right << std::setw(7) << std::fixed << std::setprecision(2) << sum << endl;
 };
-
 
 
 bool Coin::isMoneyValidforPurchase(unsigned int input){
@@ -79,17 +60,19 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
     bool done = false;
 
     try {
-        cout << "Please enter Ctrl-D or Enter on a new line to cancel this purchase." << endl;
-        cout << "\nPlease enter the ID of the food you wish to purchase: ";
+        cout << "Please enter the ID of the food you wish to purchase: ";
         string foodIdSelection;
-        cin >> foodIdSelection;
+        getline(cin, foodIdSelection);
+
         if (std::cin.eof() || foodIdSelection.empty()) { 
             done = true;
-            if (foodIdSelection.empty()) {
-                cout << "empty" << endl;
-            }
             throw std::invalid_argument("Cancelling purchase");
         } 
+
+        if (foodIdSelection.length() > IDLEN) { // Fxxxx length was not followed
+            throw std::invalid_argument("Invalid ID");
+        }
+
         // search and create a pointer to the object
         std::shared_ptr<FoodItem> chosenFoodItem = list.searchFoodItemByID(foodIdSelection);
 
@@ -101,7 +84,7 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
         if (chosenFoodItem->getOnHand() <= 0) { 
             throw std::invalid_argument("Sorry, this item is currently out of stock!");
         }
-        unsigned int inputValue = 0; // used to hold current int input by the user
+        int inputValue = 0; // used to hold current int input by the user
 
         std::cout << std::endl;
         std::cout << "You have selected \"" << chosenFoodItem->getName() << " - " 
@@ -110,12 +93,13 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
         std::cout << "Please hand over the money - type in the value of each note/coin in cents.\n"
                   << "Please enter Ctrl-D or Enter on a new line to cancel this purchase." << endl;
         
-        double currentBalance = chosenFoodItem->getPrice() - (inputValue / 100.0);
+        double currentBalance = chosenFoodItem->getPrice();
+        
         while (!done) {
             std::string line; // only used for checking empty line
 
             std::cout << "You still need to give us $" << currentBalance << ": ";
-            cin >> line;
+            getline(cin, line);
             
             // check for ctrl+D or empty line -> exiting the function
             if (std::cin.eof() || line.empty()) { 
@@ -127,7 +111,11 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
 
             // check if user's input is a double
             if (line.find('.') != std::string::npos) {  
-                throw std::invalid_argument("Please enter an int value similar to the following example: 850 (8 dollars and 50 cents)");
+                cout << "Please enter an int value similar to the following example: 850 (8 dollars and 50 cents)" << endl;
+            }
+
+            else if (!Helper::isNumber(line)){
+                cout << "Invalid input" << endl;
             }
             
             // correct input format
@@ -135,28 +123,27 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
                 // incorrect coin denomination
                 inputValue = std::stoi(line);
                 if (!isMoneyValidforPurchase(inputValue)) {
-                    throw std::runtime_error("Invalid denomination encountered");
+                    cout << "Invalid denomination encountered" << endl;
                 }
-
-                // Insufficient amount of money -> skip
-                
-                if ((inputValue / 100.0) > currentBalance) { // returning change 
-                    // return an updated cashRegister (with deducted coin amount)
-                    Coin::change_making(cashRegister, static_cast<int>(inputValue - (currentBalance * 100)));
-                }
-
-                currentBalance -= (inputValue / 100.0);
-                currentPayment.push_back(inputValue);
-                
-                if (currentBalance <= 0) {
-                    done = true;
-                    if (done){
-                        chosenFoodItem->sold();
+                else {
+                    // Insufficient amount of money -> skip
+                    
+                    if ((inputValue / 100.0) > currentBalance) { // returning change 
+                        // return an updated cashRegister (with deducted coin amount)
+                        Coin::change_making(cashRegister, static_cast<int>(inputValue - (currentBalance * 100)));
                     }
-                    updateCoinVector(cashRegister, currentPayment);
-                }
 
-                
+                    currentBalance -= (inputValue / 100.0);
+                    currentPayment.push_back(inputValue);
+                    
+                    if (currentBalance <= 0) {
+                        done = true;
+                        if (done){
+                            chosenFoodItem->sold();
+                        }
+                        updateCoinVector(cashRegister, currentPayment);
+                    }
+                }
             }
         }
         
@@ -170,7 +157,7 @@ bool Coin::purchaseMeal(LinkedList& list, std::vector<std::shared_ptr<Coin>>& ca
         if (std::string(e.what()).empty()) {
             std::cout << "Invalid input. Please enter a valid number" << std::endl;
         } else {
-            std::cout << e.what() << std::endl;
+            std::cout << "Error: "<< e.what() << std::endl;
         }
     } 
     catch (const std::out_of_range& e) { // handling out of int value range conversion
@@ -189,20 +176,27 @@ void Coin::updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVecto
     * @param usedCoinVector Used coin/note vector (empty by default)
     ***/
 
-    int currentCoinDenom; // hold the current Denom
-    // receive coins/notes from the user's payment
-    if (userPayment.size() != 0) {
-        for (size_t i = 0; i < userPayment.size(); i++) {
-            currentCoinDenom = userPayment[i];
-            for (size_t j = 0; j < originalCoinVector.size(); j++) {
-                if (originalCoinVector[j]->getDenom() == currentCoinDenom) {
-                    originalCoinVector[j]->setCount(originalCoinVector[j]->getCount() + 1);
+    try {
+        if (originalCoinVector.size() == 0) {
+            throw std::invalid_argument("No coins available");
+        } else {
+            int currentCoinDenom; // hold the current Denom
+            // receive coins/notes from the user's payment
+            if (userPayment.size() != 0) {
+                for (size_t i = 0; i < userPayment.size(); i++) {
+                    currentCoinDenom = userPayment[i];
+                    for (size_t j = 0; j < originalCoinVector.size(); j++) {
+                        if (originalCoinVector[j]->getDenom() == currentCoinDenom) {
+                            originalCoinVector[j]->setCount(originalCoinVector[j]->getCount() + 1);
+                        }
+                    }
                 }
             }
-        }
+        } 
+    } catch (const std::invalid_argument& e) {
+        cout << "Error: " << e.what() << endl;
+        throw;
     }
-
-    // is there an exception to check for?
 }
 
 
@@ -215,11 +209,8 @@ void Coin::updateCoinVector(std::vector<std::shared_ptr<Coin>> originalCoinVecto
 // This function needs a vector that have the denomination of the coins in numerical values
 // And a vector that contain the current amount of each denomination
 
-// vector<int>& coins, vector<int>& counts
 int Coin::change_making(std::vector<std::shared_ptr<Coin>>& cashRegister, int paymentAmount) {
     /***
-     * @brief
-     * 
      * @param coins containing a vector of denominations in int value
      * @param counts containing a vector of each denomination counts
      * @param paymentAmount is the amount of money that this algorithm needs to reach
@@ -284,6 +275,25 @@ int Coin::change_making(std::vector<std::shared_ptr<Coin>>& cashRegister, int pa
     // }
     
     return 0;
+}
+
+
+void Coin::printInfo(){
+    if (count > 0) {
+        std::cout << denom << "," << count << std::endl;
+    }    
+}
+
+Denomination Coin::getDenom() {
+    return denom;
+}
+
+unsigned Coin::getCount() {
+    return count;
+}
+
+void Coin::setCount(unsigned count) {
+    this->count = count;
 }
 
 Coin::~Coin(){};

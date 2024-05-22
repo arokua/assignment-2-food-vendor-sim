@@ -1,6 +1,5 @@
 #include "Node.h"
 
-
 using std::string;
 using std::cout;
 using std::to_string;
@@ -9,6 +8,12 @@ Node::Node() :
     next(nullptr),
     prev(nullptr)
 {}
+
+Node::Node(const Node& other) {
+    dataFood = other.dataFood;
+    next = other.next;
+    prev = other.prev;
+}
 
 FoodItem::FoodItem() {
     id="FXXXX";
@@ -37,13 +42,13 @@ void FoodItem::reStock(){ // restock always return to pre-defined stock value
 
 
 Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
-    dataFood(foodData),next(next),prev(prev) {}
-
+    dataFood(foodData),next(next),prev(prev) 
+{}
 
 
 void FoodItem::printInfo(){ // fully detailed printing function
     if (id!=""){
-        cout <<id<<"|"<<this->name<<"|"<<description<<"|"<<price <<"\n";
+        cout <<id<<"|"<<name<<"|"<<description<<"|"<<price <<"\n";
     }
 }
 
@@ -66,11 +71,10 @@ string FoodItem::getInfo(){
     priceStream << std::fixed << std::setprecision(2) << price;
     std::string priceStr = priceStream.str();
     if (id != ""){
-        line = id + "|" + this->name + "|" + description + "|" + priceStr + "\n";
+        line = id + "|" + name + "|" + description + "|" + priceStr + "\n";
     }
     return line;
 }
-
 
 
 std::string FoodItem::getName(){
@@ -91,4 +95,3 @@ unsigned int FoodItem::getOnHand(){
 
 Node::~Node(){}
 FoodItem::~FoodItem(){}
-

@@ -6,6 +6,7 @@
 #include <limits>
 #include <algorithm>
 #include <string>
+#include <cctype>
 
 using std::vector;
 using std::numeric_limits;
@@ -21,7 +22,6 @@ public:
     Helper(); //Default constructor
     ~Helper(); //Default destructor
 
-    
 
     vector<string> takeInput(int);
     template<typename T>
@@ -30,6 +30,7 @@ public:
             cout << item << endl;
         }
     }
+
     //Compare if string A is lexographically smaller than string B
     //By default, if length of string A is smaler than B then
     // It is consider smaller, hence 
