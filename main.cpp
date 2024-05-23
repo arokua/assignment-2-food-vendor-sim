@@ -222,7 +222,7 @@ int main(int argc, char ** argv){
             else if (menuChoice == 3) {
                 cout << "\nSaving data.";
                 string currentLine = "";
-                ofstream foodSaveFile("food_new.dat");
+                ofstream foodSaveFile("food.dat");
   
                 /*
                     Go through each linked list item
