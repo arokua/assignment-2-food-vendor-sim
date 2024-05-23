@@ -1,5 +1,4 @@
 #include "Node.h"
-#include <iostream>
 
 using std::string;
 using std::cout;
@@ -9,6 +8,12 @@ Node::Node() :
     next(nullptr),
     prev(nullptr)
 {}
+
+Node::Node(const Node& other) {
+    dataFood = other.dataFood;
+    next = other.next;
+    prev = other.prev;
+}
 
 FoodItem::FoodItem() {
     id="FXXXX";
@@ -24,47 +29,52 @@ FoodItem::FoodItem(string ID, string name, string desc, double P) :
         on_hand=DEFAULT_FOOD_STOCK_LEVEL;
     }
 
-bool FoodItem::sold(){
+bool FoodItem::sold(){ // deduct on_hand by 1
     bool soldable=true;
     if (on_hand) on_hand--;
     else soldable=false;
     return soldable;
 }
 
-void FoodItem::reStock(int val){
-    on_hand=val;
+void FoodItem::reStock(){ // restock always return to pre-defined stock value
+    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
 
 
-
 Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
-    dataFood(foodData),next(next),prev(prev) {}
+    dataFood(foodData),next(next),prev(prev) 
+{}
 
+
+void FoodItem::printInfo(){ // fully detailed printing function
+    if (id!=""){
+        cout <<id<<"|"<<name<<"|"<<description<<"|"<<price <<"\n";
+    }
+}
+
+
+void FoodItem::printInfoBrief() { // printing function that used in printMenuItems function
+    if (id != "") {
+        std::ostringstream priceStream;
+        priceStream << std::fixed << std::setprecision(2) << price;
+
+        std::cout << std::left << std::setw(5) << id << "|"
+                  << std::setw(45) << name << "|"
+                  << "$" << std::right << std::setw(5) << priceStream.str() << std::endl;
+    }
+}
 
 
 string FoodItem::getInfo(){
     string line = "";
+    std::ostringstream priceStream;
+    priceStream << std::fixed << std::setprecision(2) << price;
+    std::string priceStr = priceStream.str();
     if (id != ""){
-        line = id + "|" + this->name + "|" + description + "|" + to_string(price) + "\n";
+        line = id + "|" + name + "|" + description + "|" + priceStr + "\n";
     }
     return line;
 }
-
-/*string FoodItem::getInfoForSaveFile() {
-    string line = id + "," + this->name + "," + description + "," + to_string(price) + "\n";
-    return line;
-}*/
-
-// bruh what is this
-//It was meant to be a placeholder for formatting the display meal options. 
-//It's "brief" as the example program doesn't print out the description like the above printInfo()
-//Yes it's lazy
-void FoodItem::printInfoBrief() {
-        if (id!=""){
-            cout <<id<<"|"<<this->name<<"                                           |"<<price <<"\n";
-    }
-}
-
 
 
 std::string FoodItem::getName(){

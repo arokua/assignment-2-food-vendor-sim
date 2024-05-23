@@ -1,14 +1,12 @@
-
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-#include <iostream>
 #include <vector>
-#include <memory>
 #include <limits>
 #include <map>
 
 #include "Node.h"
+#include "Helper.h"
 
 using std::string;
 using std::vector;
@@ -17,38 +15,34 @@ using std::make_shared;
 using std::cout;    
 using std::endl;
 using std::map;
-using std::ofstream;
-using std::string;
 
 class LinkedList {
 public:
     LinkedList();
-    
-    LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap);
     ~LinkedList();
 
-    // void addFront(int data);
-    void addFront( shared_ptr<FoodItem>& foodData);
-    // void addEnd(int data);
-    shared_ptr<Node> addEnd( shared_ptr<FoodItem>& foodData);
-    void addAtPosition(int pos,  shared_ptr<FoodItem>& foodData);
-    void insert(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap);
-    //Placeholder method for printing items in a formatted way in the display meal options menu choice.
-    void printItemsBrief();
+    // initializing the linked list with the FoodItem Vector
+    LinkedList(std::map<std::string, std::shared_ptr<Node>>& foodsMap);
+
+    // Add & Delete Method
+    void addFront(shared_ptr<FoodItem>& foodData);
+    void addEnd(shared_ptr<FoodItem>& foodData);
     void deleteFront();
     void deleteEnd();
-    void deletePosition(int pos);
-    //Return an item in the linked list as a string at the position passed in. Used for saving items to the file.
-    string getItemDetails(int listPosition);
-    void printItems();
-    void saveCurrentItemsToFile();
-    void deleteFood(const string& foodID, map<string, shared_ptr<Node>>& refMap);
-    //Get item, 1-based indexing
-    int getItem(int p);
+
+    //Insert by alphabetical with aid of a dictionary for quick lookup
+    void insertNewPairtoMap(shared_ptr<FoodItem>& newFoodData, map<string, shared_ptr<Node>>& refMap);
+    void deleteFood(map<string, shared_ptr<Node>>& refMap); //Delete a node by food item id
+
+    // Getters & Setters
     int getSize(); // Return size of the linked list
-    // shared_ptr<Node> getItem(int p);
+
+    // Utility method
+    void printMenuFood();
+    void addNewFood(std::map<std::string, std::shared_ptr<Node>>& refMap);
     std::shared_ptr<FoodItem> searchFoodItemByName(std::string name);
     std::shared_ptr<FoodItem> searchFoodItemByID(std::string ID);
+    std::string getItemDetails(int listPosition);
 
 private:
     shared_ptr<Node> head;

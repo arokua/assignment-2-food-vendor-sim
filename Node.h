@@ -1,9 +1,11 @@
-
 #ifndef NODE_H
 #define NODE_H
 
 #include <string> 
 #include <memory> 
+#include <sstream> 
+#include <iomanip>
+#include <iostream>
 
 
 //The length of the id string not counting the nul terminator
@@ -58,13 +60,13 @@ public:
     unsigned int getOnHand();
 
     // Functions
-    bool sold(); 
+    bool sold(); //Food is sucessfully sold if its still have stock
+    void reStock(); 
     void printInfo();
-    void reStock(int); //Restock to an integer value
-    //Return the information for current node as a string
-    std::string getInfo();
     void printInfoBrief();
-    
+
+    std::string getInfo();
+
 };
 
 /**
@@ -73,7 +75,6 @@ public:
 class Node {
 public:
     Node();
-    Node(int data, std::shared_ptr<Node> next = nullptr);
     Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr,
     std::shared_ptr<Node> prev = nullptr);
     Node(const Node& other);

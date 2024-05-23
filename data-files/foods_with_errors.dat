@@ -1,0 +1,59 @@
+0001|Baklava|Rich Middle Eastern Cake of Thin Layers of flaky pastry filled with nuts and honey|8.50
+F0040|Baklava||8.50
+F0055|Cannoli|A tube-shaped Italian pastry filled with sweet ricotta cheese|2.0O
+F0068|Pudding|A dessert with a creamy consistency|30.00
+F0026||A baked dish of fruit, or meat and vegetables, typically with a top and base of pastry|3.75
+0081|Tiramisu|Classic Italian Dessert made of layered coffee-soaked ladyfingers and mascarpone cheese|12.00
+F0017|Mochi|A Japanese rice cake with a chewy texture and sweet filling|17.75
+F0052|Pavlova|A meringue-based dessert topped with fruit and whipped cream|5.50
+F0041|Tiramisu|Classic Italian Dessert made of layered coffee-soaked ladyfingers and mascarpone cheese|1X.00
+F0001Burger||12.99
+F0002|Pizza|A savory dish made with a flat bread base, tomato sauce, and various toppings|
+F0003|Sushi Roll||8.25y
+F0004|Pasta Carbonara|Spaghetti tossed with eggs, pancetta or bacon, parmesan cheese, and black pepper|14.75z
+F0005|Tacos|Corn or flour tortillas filled with seasoned meat, lettuce, cheese, and other toppings|
+F0006a||16.99
+F0007|Pad Thai|A classic Thai stir-fried rice noodle dish with shrimp, eggs, bean sprouts, and peanuts|11.95#
+F0008|Grilled Salmon||19.50$
+F0009|Caesar Salad||9.25%
+F0010||3.75
+F0011|||10.95&
+F0012|Lasagna||16.25*
+0013|Dumplings|Small pockets of dough filled with meat or vegetables, often steamed or pan-fried|7.50
+F0014||6.99
+F0015|Curry||13.75_
+F0016|Pancakes|Fluffy, griddle-cooked breakfast cakes served with syrup, butter, and various toppings|
+F0017||5.99=
+F0018|||12.50[
+F0019|Falafel|Deep-fried balls or patties made from chickpeas, herbs, and spices, often served in a pita|
+F0020|Chili||9.99{
+F0021|||4.25}
+F0022||11.50>
+F0023|Nachos||8.75?
+F0024|Risotto|A creamy and indulgent Italian dish made with Arborio rice, broth, and various additions|
+F0025|Churros||5.50\
+F0026|Spaghetti Bolognese|Spaghetti noodles served with a rich and meaty tomato sauce|13.25~
+F0027|Gyro||9.50`
+F0028|||2.75'
+F0029|Bibimbap|A Korean dish featuring rice topped with sautéed vegetables, gochujang sauce, and an egg|
+F0030|Chicken Tikka Masala|Tender chunks of chicken in a creamy, spiced tomato-based sauce|15.99<
+F0031|||!
+F0032|Poutine|A Canadian dish consisting of french fries topped with cheese curds and brown gravy|7.75@
+F0033|||3.99#
+F0034|Beef Stew|A hearty and comforting dish made with tender beef, vegetables, and a rich broth|
+F0035|Cheesecake||35.62%
+F0036|Guacamole|A fresh and flavorful dip made from mashed avocados, lime juice, onions, and cilantro|
+F0037|Crab Cakes|Savory patties made from lump crab meat, breadcrumbs, and various seasonings|15.75&
+F0038|Tiramisu|A classic Italian dessert featuring layers of ladyfingers, espresso, and mascarpone cheese|
+F0039|Chicken Pad Thai||12.50(
+F0040|Burritos|A Mexican dish featuring a large, rolled tortilla filled with rice, beans, meat, and toppings|
+F0041|Gnocchi|Small, soft dumplings made from potatoes, flour, and eggs, often served with sauce|13.99_
+F0042|||5.75+
+F0043|Panna Cotta|A creamy and silky Italian dessert made from sweetened cream and milk|
+F0044|Chicken Parmesan||16.75[
+F0045|Spring Rolls|Crispy, fried rolls filled with vegetables, sometimes shrimp or pork|
+F0046|Mushroom Risotto|A creamy and earthy risotto dish made with a variety of mushrooms|15.50{
+F0047|||11.99}
+F0048|Beef Stroganoff|Tender beef in a rich, creamy mushroom sauce, typically served over noodles|
+F0049|Banana Bread|A moist and flavorful quick bread made with ripe bananas and often nuts or chocolate chips|3.25?
+F0050|Paella||/
