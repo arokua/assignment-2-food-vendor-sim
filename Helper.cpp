@@ -179,7 +179,7 @@ string Helper::processInput(){
             return "|";
         }
 
-        std::cout << input << std::endl;
+        //std::cout << input << std::endl;
 
         return input;
     }
