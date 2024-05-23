@@ -216,7 +216,7 @@ void LinkedList::addNewFood(std::map<std::string, std::shared_ptr<Node>>& refMap
         bool isNameGood = true;
 
         for (char c : addFoodName) { // checks if the name contains non-alphabetic char
-            if (!std::isalpha(c)) {
+            if (!std::isalpha(c) && !std::isspace(c)) {
                 cout << "Error: Name contains non-alphabetic character" << endl;
                 isNameGood = false;
             }
@@ -233,7 +233,7 @@ void LinkedList::addNewFood(std::map<std::string, std::shared_ptr<Node>>& refMap
                         cout << "\nEnter the item price: ";
                         getline(cin, addFoodPrice);
 
-                        if (addFoodPrice.find('.') > addFoodPrice.length() || !Helper::isNumber(addFoodPrice)) {
+                        if (addFoodPrice.find('.') > addFoodPrice.length() || !Helper::isNumber(addFoodPrice) || addFoodPrice.find(' ') != std::string::npos) {
                             cout << "Error: money is not formatted correctly. (<dollars>.<cents>)";
                         }
                         else {
