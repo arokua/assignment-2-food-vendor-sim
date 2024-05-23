@@ -1,8 +1,9 @@
+
 #ifndef NODE_H
 #define NODE_H
+
 #include <string> 
 #include <memory> 
-#include "Coin.h"
 
 
 //The length of the id string not counting the nul terminator
@@ -14,14 +15,12 @@
 //The maximum length of a food item description not counting the nul terminator.
 #define DESCLEN 255
 
-//The default coin level to reset the coins to on request
-#define DEFAULT_COIN_COUNT 20
-
 //The possible default food stock level that all new stock should start at and that we should reset to on restock
 #define DEFAULT_FOOD_STOCK_LEVEL 20
 
-//The number of denominations of currency available in the system 
-#define NUM_DENOMS 8
+#define FOODITEM_DELIM "|"  // delimiter 
+
+#define FOODITEM_ARGC 4 // Number of args for FoodItem 
 
 
 /**
@@ -44,18 +43,28 @@ public:
     
     // how many of this food item do we have on hand? 
     unsigned on_hand;
+
     //Default constructor
     FoodItem();
     //Initialize with value
-    FoodItem(std::string,std::string,std::string,double price);
-    double getPrice(); // Return the price
-    std::string getId();
-    bool sold(); //Food is sucessfully sold if its still have stock
+    FoodItem(std::string id, std::string name, std::string desc, double price);
+    ~FoodItem();
+
+    // Getter & Setter
+    std::string getID();
+    std::string getName();
+    std::string getDesc();
+    double getPrice();
+    unsigned int getOnHand();
+
+    // Functions
+    bool sold(); 
+    void printInfo();
     void reStock(int); //Restock to an integer value
     //Return the information for current node as a string
     std::string getInfo();
     void printInfoBrief();
-    ~FoodItem();
+    
 };
 
 /**
@@ -65,13 +74,17 @@ class Node {
 public:
     Node();
     Node(int data, std::shared_ptr<Node> next = nullptr);
-    Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr);
+    Node(std::shared_ptr<FoodItem>& foodData, std::shared_ptr<Node> next = nullptr,
+    std::shared_ptr<Node> prev = nullptr);
     Node(const Node& other);
     ~Node();
 
+    // ptr to the FoodItem
     std::shared_ptr<FoodItem> dataFood;
-    int data;
-    std::shared_ptr<Node> next;  // Now using shared_ptr for next
+
+    // ptr to the next node and the previous node
+    std::shared_ptr<Node> next;  
+    std::shared_ptr<Node> prev;
 };
 
 

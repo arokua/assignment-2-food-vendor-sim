@@ -1,4 +1,3 @@
-
 #include "Node.h"
 #include <iostream>
 
@@ -6,22 +5,24 @@ using std::string;
 using std::cout;
 using std::to_string;
 
-Node::Node() : next(nullptr) {
+Node::Node() : 
+    next(nullptr),
+    prev(nullptr)
+{}
 
-}
-
-FoodItem::FoodItem(){
-    on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+FoodItem::FoodItem() {
     id="FXXXX";
     name="Name";
     description="DESC";
     price=0.00;
-}
-
-FoodItem::FoodItem(string ID,string name,string desc,double P) :id(ID),name(name),description(desc),price(P) {
-    std::cout<<"Gotten food name:\t"+name<<std::endl;
     on_hand=DEFAULT_FOOD_STOCK_LEVEL;
 }
+
+FoodItem::FoodItem(string ID, string name, string desc, double P) :
+    id(ID), name(name), description(desc), price(P) 
+    {
+        on_hand=DEFAULT_FOOD_STOCK_LEVEL;
+    }
 
 bool FoodItem::sold(){
     bool soldable=true;
@@ -34,20 +35,12 @@ void FoodItem::reStock(int val){
     on_hand=val;
 }
 
-FoodItem::~FoodItem(){
-
-}
-
-Node::Node(int data, std::shared_ptr<Node> next) : data(data), next(next) {
-
-}
 
 
-Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next) : next(next) {
-    if (foodData != nullptr) {
-    dataFood = std::make_shared<FoodItem>(*foodData); // Deep copy using copy constructor
-  }
-}
+Node::Node(std::shared_ptr<FoodItem>& foodData,  std::shared_ptr<Node>next, std::shared_ptr<Node> prev) :
+    dataFood(foodData),next(next),prev(prev) {}
+
+
 
 string FoodItem::getInfo(){
     string line = "";
@@ -72,14 +65,23 @@ void FoodItem::printInfoBrief() {
     }
 }
 
-string FoodItem::getId() {
+
+
+std::string FoodItem::getName(){
+    return name;
+}
+std::string FoodItem::getID() {
     return id;
 }
-
-double FoodItem::getPrice() {
+std::string FoodItem::getDesc(){
+    return description;
+}
+double FoodItem::getPrice(){
     return price;
 }
-
-
-Node::~Node(){
+unsigned int FoodItem::getOnHand(){
+    return on_hand;
 }
+
+Node::~Node(){}
+FoodItem::~FoodItem(){}

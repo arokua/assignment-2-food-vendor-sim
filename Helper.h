@@ -1,5 +1,6 @@
 #ifndef HELPER_H
 #define HELPER_H
+
 #include <vector>
 #include <iostream>
 #include <limits>
@@ -17,27 +18,26 @@ using std::endl;
 
 class Helper{
 public:
-    Helper();//Default constructor
-
-    //Modified function based on wikipedia.org/Change_making_problem
-    //This function return the minimum number of coins used to make the amount n
-    //If no solution exists, it returns -1
-    //The additional part to the original algorithm is that the coins set is finite
-    // Thus, additional comparision is made to see if the original optimal deno is suitable
-    // Then, a tracking matrix is used to keep track of all possible solutions
-    // This function needs a vector that have the denomination of the coins in numerical values
-    // And a vector that contain the current amount of each denomination
-    int change_making(vector<int>&coins,vector<int>&counts,int n);
-    vector<string> takeInput(int);
+    Helper(); //Default constructor
+    ~Helper(); //Default destructor
+    //Takes a inpu
+    string processInput();
+    //Prints a vector
     template<typename T>
     void vectorPrint(const vector<T>& v) {
         for (const T& item : v) {
             cout << item << endl;
         }
     }
+    //Compare if string A is lexographically smaller than string B
+    //By default, if length of string A is smaler than B then
+    // It is consider smaller, hence 
+    //Butch might be insert to the begginning of a linked list 
+    // Starting with Baklava despite the letter u comes after the letter a
+    static bool strSmaller(string &AA, string& B);
     
     //Splits a string into a vector
-    static void splitString(std::string s, std::vector<std::string>& tokens, std::string delimeter);
+    static void splitString(string s, vector<std::string>& tokens, string delimeter);
 
     //Checks if a string is completely numeric
     static bool isNumber(std::string number);
