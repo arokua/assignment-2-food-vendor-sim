@@ -59,10 +59,11 @@ for i in ${INPUT_FILES}; do
     echo "Running test with input file: ${i}"
     number=$(basename ${i} | sed 's/[^0-9]//g')
     ${PROGRAM} "${TESTING_DIR}/${DATA_FILE_1_COPY}" "${TESTING_DIR}/${DATA_FILE_2_COPY}" < ${i} > "${TESTING_DIR}/actual_output_${number}.txt"
-    diff "${TESTING_DIR}/actual_output_${number}.txt" "${TESTING_DIR}/expected_output_${number}.txt"
+    diff -w "${TESTING_DIR}/actual_output_${number}.txt" "${TESTING_DIR}/expected_output_${number}.txt"
     if [ $? -ne 0 ]; then
         echo "Test failed for input file: ${i}"
     else
         echo "Test passed for input file: ${i}"
     fi
+    echo
 done

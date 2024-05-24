@@ -38,8 +38,7 @@ void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector)
 
 int main(int argc, char ** argv){
     int menuChoice = 0;
-    bool mainMenuLoop = false;
-    // string foodIdSelection = "";
+    bool mainMenuLoop = true;
 
     if (argc != 3) {
         cout << "Incorrect number of arguments supplied." << endl;
@@ -48,31 +47,28 @@ int main(int argc, char ** argv){
 
     }
 
+    // create variable that holds data from input files
     std::vector<std::shared_ptr<Coin>> coinVector = readCoinDataFile(argv[2]);
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
     LinkedList foodsLinkedList(refMap);
 
-    mainMenuLoop = true;
-
     try {
         while(mainMenuLoop) {
-
             cout << MENU_DESC;
             cin.clear();
             cin >> menuChoice;
-            cin.ignore();
             cout << endl;
             
             if (cin.eof()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nEOF has been detected. Exiting the program\n";
                 menuChoice = 0;
                 mainMenuLoop = false;
             }
             else if (cin.fail()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nError in input. Please try again.\n";
                 menuChoice = 0;
             }
