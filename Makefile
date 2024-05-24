@@ -10,8 +10,8 @@ DATA_DIR = data-files
 TESTING_DIR = testing-files
 PROGRAM = ./ftt
 
-DATA_FILE_1 = data-files/foods.dat
-DATA_FILE_2 = data-files/coins.dat
+DATA_FILE_1 = foods.dat
+DATA_FILE_2 = coins.dat
 BASE_NAME_1 = $(basename $(DATA_FILE_1))
 BASE_NAME_2 = $(basename $(DATA_FILE_2))
 EXTENSION = $(suffix $(DATA_FILE_1))
