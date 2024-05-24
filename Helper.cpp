@@ -185,6 +185,3 @@ bool Helper::strSmaller(string& AA, string& B) {
         return input;
     }
 }*/
-Helper::~Helper(){
-
-}
