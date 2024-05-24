@@ -2,3 +2,4 @@
 .env.local
 ftt
 Helper.o
+*.o

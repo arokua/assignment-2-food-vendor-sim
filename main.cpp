@@ -38,8 +38,7 @@ void insertionSortIncrementally(std::vector<std::shared_ptr<Coin>>& coinsVector)
 
 int main(int argc, char ** argv){
     int menuChoice = 0;
-    bool mainMenuLoop = false;
-    // string foodIdSelection = "";
+    bool mainMenuLoop = true;
 
     if (argc != 3) {
         cout << "Incorrect number of arguments supplied." << endl;
@@ -52,8 +51,6 @@ int main(int argc, char ** argv){
     std::map<std::string, std::shared_ptr<Node>> refMap = readFoodDataFile(argv[1]);
     LinkedList foodsLinkedList(refMap);
 
-    mainMenuLoop = true;
-
     try {
         while(mainMenuLoop) {
 
@@ -65,14 +62,14 @@ int main(int argc, char ** argv){
             
             if (cin.eof()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nEOF has been detected. Exiting the program\n";
                 menuChoice = 0;
                 mainMenuLoop = false;
             }
             else if (cin.fail()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nError in input. Please try again.\n";
                 menuChoice = 0;
             }
@@ -353,9 +350,9 @@ void updateCoinFile(vector<std::shared_ptr<Coin>>& coinsVector, const string& fi
         std::ofstream coinSaveFile(fileName);
         
         if (coinSaveFile.is_open()) {
-            for (auto& denom : coinsVector) {
-                currentLine = denom->getDenom() + "," + denom->getCount();
-                // cout << currentLine;
+            for (auto coin : coinsVector) {
+                currentLine = to_string(coin->getDenom()) + "," + to_string(coin->getCount()) + "\n";
+                // cout << currentLine << endl;
                 coinSaveFile << currentLine;
             }
         }

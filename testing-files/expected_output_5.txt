@@ -1,3 +1,14 @@
+Main Menu:
+1. Display Meal Options
+2. Purchase Meal
+3. Save and Exit
+Administrator-Only Menu:
+4. Add Food
+5. Remove Food
+6. Display Balance
+7. Abort Program
+Select your option (1-7): 
+
 Balance Summary
 ---------------
 Denom  | Quantity | Value   
@@ -25,5 +36,4 @@ Administrator-Only Menu:
 6. Display Balance
 7. Abort Program
 Select your option (1-7): 
-
 Aborting program
