@@ -32,7 +32,7 @@ $(TARGET): $(OBJECTS)
 # Valgrind test
 val:
 	valgrind --tool=memcheck --log-file=valrep.txt --leak-check=full \
-	--track-origins=yes -v ./$(TARGET) $(word 1, $(TEST_FILES)) $(word 2, $(TEST_FILES))
+	--track-origins=yes -v ./$(TARGET) $(DATA_DIR)/$(DATA_FILE_1) $(DATA_DIR)/$(DATA_FILE_2)
 
 # Test target to run all tests
 .PHONY: test
