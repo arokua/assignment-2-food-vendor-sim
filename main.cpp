@@ -65,14 +65,14 @@ int main(int argc, char ** argv){
             
             if (cin.eof()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nEOF has been detected. Exiting the program\n";
                 menuChoice = 0;
                 mainMenuLoop = false;
             }
             else if (cin.fail()) {
                 cin.clear();
-                cin.ignore();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 cout << "\nError in input. Please try again.\n";
                 menuChoice = 0;
             }
